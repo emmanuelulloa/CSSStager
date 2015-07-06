@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CSSStager</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Chango' rel='stylesheet' type='text/css'>
+	<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<style type="text/css">
+		/*Reset*/
+		html, body, div, span, ul, li, p, h1, h2, h3{
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+		body {
+			line-height: 1;
+		}
+		ol, ul {
+			list-style: none;
+		}
+		html, body {
+			height: 100%;
+		}
+		body{
+			font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  			font-size: 14px;
+  			transform-style: preserve-3d;
+			-webkit-transform-style: preserve-3d;
+			width: 100%;
+			background-color: #eee;
+			color: #555;
+		}
+		h1 {
+			font-family: 'Chango', cursive;
+			font-size: 200%;
+			font-weight: bold;
+			padding-top: 20px;
+			margin-bottom: 10px;
+		}
+		p{
+			font-size: 90%;
+			margin-bottom: 20px;
+		}
+		a {color:#555;}
+		.wrapper{
+			width: 620px;
+			padding-left: 16px;
+			padding-right: 16px;
+			margin: 0 auto;
+		}
+		.tagline {
+			font-weight: bold;
+			font-style: italic;
+		}
+		.instructions{
+			line-height: 1.1;
+		}
+		.instructions li{
+			display: block;
+			margin-bottom: 10px;
+		}
+		._btn {
+			background-color: gainsboro;
+			color:grey;
+			border-radius: 5px;
+			text-decoration: none;
+			padding-left: 5px;
+			padding-bottom: 3px;
+			padding-top: 3px;
+			padding-right: 5px;
+			box-shadow: 0px 0px 3px #999;
+			transition: all 0.3s ease;
+			-webkit-transition: all 0.3s ease;
+		}
+		._btn:hover, ._btn:focus{
+			box-shadow: 0px 0px 3px #FFF;
+			background-color: crimson;
+			color:white;
+		}
+		
+		.output{
+			font-family: "Courier New", Courier, monospace;
+			width: 450px;
+			color:#555;
+			text-align: left;
+			padding: 5px;
+			border: 1px solid #555;
+			display: inline-block;
+			white-space: pre;
+  			word-wrap: normal;
+			overflow: auto;
+		}
+		.controls {
+			display: none;
+			border-radius: 10px;
+			font-size: 85%;
+			width: 450px;
+			height: 250px;
+			padding: 10px;
+			margin-bottom: 20px;
+			color:gray;
+			font-weight: bold;
+			line-height: 2;
+			border: 1px solid #ddd;
+			box-shadow: 0px 0px 3px #999;
+			/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f1f1f1+50,e1e1e1+51,f6f6f6+100;White+Gloss+%231 */
+			background: #ffffff; /* Old browsers */
+			background: -moz-linear-gradient(top,  #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f1f1f1), color-stop(51%,#e1e1e1), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* W3C */
+		}
+		.controls .left{
+			width: 49%;
+			padding-right: 1%;
+			float: left;
+			display: block;
+			text-align: right;
+			float: left;
+
+		}
+		.controls .right{
+			width: 49%;
+			padding-left: 1%;
+			float: right;
+			display: block;
+			text-align: left;
+			float: right;
+		}
+		.controls h2 {
+			font-variant: small-caps;
+			padding: 0;
+			font-size: 100%;
+			font-weight: bold;
+			display: block;
+			width: 100%;
+			text-align: justify;
+		}
+		.controls .lbl {
+			display: inline-block;
+			width: 60px;
+		}
+		/*Animations*/
+/* n:titleChar*11 dy:100ms e:linear d:0.4s to:cc kf:class|kf:0 rot:-45 op:0 sc:5|kf:66.67 sc:0.5 */
+@keyframes titleChar {
+	0% {
+		opacity : 0;
+		transform: scale(5) rotate(-45deg) ;
+	}
+	66.67% {
+		transform: scale(0.5) ;
+	}
+}
+@-webkit-keyframes titleChar {
+	0% {
+		opacity : 0;
+		-webkit-transform: scale(5) rotate(-45deg) ;
+	}
+	66.67% {
+		-webkit-transform: scale(0.5) ;
+	}
+}
+.logo {
+	border-radius: 3px;
+	margin-top: 5px;
+	color: #555;
+	padding: 8px;
+	width: 250px;
+}
+.titleChar {
+	transform-origin: center center;
+	-webkit-transform-origin: center center;
+	animation-name: titleChar;
+	animation-duration: 0.4s;
+	animation-timing-function: linear;
+	animation-iteration-count: 1;
+	animation-direction: normal;
+	animation-fill-mode: both;
+	animation-play-state: running;
+	-webkit-animation-name: titleChar;
+	-webkit-animation-duration: 0.4s;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-direction: normal;
+	-webkit-animation-fill-mode: both;
+	-webkit-animation-play-state: running;
+}
+.titleChar:nth-child(1) {
+	animation-delay: 0ms;
+	-webkit-animation-delay: 0ms;
+}
+.titleChar:nth-child(2) {
+	animation-delay: 100ms;
+	-webkit-animation-delay: 100ms;
+}
+.titleChar:nth-child(3) {
+	animation-delay: 200ms;
+	-webkit-animation-delay: 200ms;
+}
+.titleChar:nth-child(4) {
+	color:crimson;
+	animation-delay: 300ms;
+	-webkit-animation-delay: 300ms;
+}
+.titleChar:nth-child(5) {
+	color:crimson;
+	animation-delay: 400ms;
+	-webkit-animation-delay: 400ms;
+}
+.titleChar:nth-child(6) {
+	color:crimson;
+	animation-delay: 500ms;
+	-webkit-animation-delay: 500ms;
+}
+.titleChar:nth-child(7) {
+	color:crimson;
+	animation-delay: 600ms;
+	-webkit-animation-delay: 600ms;
+}
+.titleChar:nth-child(8) {
+	color:crimson;
+	animation-delay: 700ms;
+	-webkit-animation-delay: 700ms;
+}
+.titleChar:nth-child(9) {
+	color:crimson;
+	animation-delay: 800ms;
+	-webkit-animation-delay: 800ms;
+}
+.titleChar:nth-child(10) {
+	animation-delay: 900ms;
+	-webkit-animation-delay: 900ms;
+}
+.titleChar:nth-child(11) {
+	animation-delay: 1000ms;
+	-webkit-animation-delay: 1000ms;
+}
+.layer {
+	display: block;
+	cursor: pointer;
+	position: absolute;
+	opacity: 1;
+}
+.selected{
+	border:1px solid #00a8ff;
+}
+.numberInput{
+	width: 45px;
+}
+.row{
+	display: block;
+}
+.dropTarget {
+	display: block;
+	width: auto;
+	height: 20px;
+	margin: 5px 0 5px;
+}
+.to_md {
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+	background-color: white;
+	border: 1px solid #ccc;
+	float: left;
+	cursor:crosshair;
+	position: relative;
+}
+.to_ctrl{
+	display: inline-block;
+	float: right;
+}
+.to_marker{
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAAPUlEQVQIW32OSQoAMAgDM/9/tCUtaheoh6BMjKKu2HrcT5EUEc1gMWsBgBxsKGiQsTYccOW8m9+blXZ/OwDWfiIFjeCl0wAAAABJRU5ErkJggg==) no-repeat;
+	display: block;
+	width: 7px;
+	height: 7px;
+	position: relative;
+}
+.footer{
+	font-size: 85%;
+	display: block;
+	margin: 30px 0;
+}
+/*NEW DESIGN*/
+.app{
+	clear: left;
+	float: left;
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+.shell {
+	float:left;
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJ0lEQVQYV2M8c+bMfwYkYGxsjMxlYKSDgv///6O44ezZs6huoL0CAHomKYWYrWVpAAAAAElFTkSuQmCC) repeat;
+}
+.tools{
+	float:left;
+	display: block;
+	width: 33%;
+	padding-left: 1%;
+	padding-right: 1%;
+	height: 100%;
+	overflow: hidden;
+	background: #eee;
+}
+.stage-container{
+	float:left;
+	display: block;
+	width: 65%;
+	height: 100%;
+	overflow: hidden;
+	-webkit-box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
+	box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
+	position: relative;
+}
+.stage {
+	background-color: white;
+	border: 1px solid #555;
+	display: block;
+	margin: 0 auto;
+	vertical-align: middle;
+	overflow: hidden;
+	width: 550px;
+	height: 400px;
+	box-shadow: 0px 0px 3px #999;
+	position: inherit;
+	margin-top: 10%;
+	margin-bottom: 10%;
+}
+	</style>
+</head>
+<body>
+	<div class="app">
+	<div class="shell">
+		<div class="tools">
+			<h1 class="logo"><span class="titleChar">C</span><span class="titleChar">S</span><span class="titleChar">S</span><span class="titleChar">S</span><span class="titleChar">t</span><span class="titleChar">a</span><span class="titleChar">g</span><span class="titleChar">e</span><span class="titleChar">r</span></h1>
+			<p class='tagline'>Set DOM elements as you need them before starting your animations.</p>
+			<ul class='instructions'>
+			<li>Select a background or guide image (with the exact width and height you need): <input type='file' accept='image/*' id='guide_fl' class='_btn dropTarget' /></li>
+			<li>Size:
+				<select name="size_sl" id="size_sl">
+					<optgroup label='Select size:'>
+					<option value="500x400">500x400 New Document</option>
+					<option value="300x250">300x250 Medium Rectangle</option>
+					<option value="728x90">728x90 Leaderboard Banner</option>
+					<option value="160x600">160x600 Wide Skyscraper</option>
+					<option value="120x600">120x600 Skyscraper</option>
+					<option value="940x400">940x400 Website Slider</option>
+					<option value="720x300">720x300 Pop-Under</option>
+					<option value="300x600">300x600 Half Page Ad</option>
+					<option value="250x250">250x250 Square Popup</option>
+					<option value="428x60">428x60 Full Banner</option>
+					<option value="336x280">336x280 Square</option>
+					<option value="120x240">120x240 Vertical Banner</option>
+					<option value="240x400">240x400 Vertical Rectangle</option>
+					<option value="234x60">234x60 Half Banner</option>
+					<option value="180x150">180x150 Rectangle</option>
+					<option value="125x125">125x125 Square Button</option>
+					<option value="120x90">120x90 Button</option>
+					<option value="120x60">120x60 Button</option>
+					<option value="88x31">88x31 Micro Bar</option>
+					</optgroup>
+				</select>
+				</li>
+				<li>custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' /> <a href='#' id="size_btn" class='_btn'>Change size</a></li>
+			<li>Drag and drop images into the stage (image name will be used for the class name):</li>
+		</ul>
+			<div class="controls">
+				<div class="left">
+					<h2 id="element_lbl">Element: ?</h2>
+					<span class="row"><label for="left_txt">Left:</label> <input id="left_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
+					<span class="row"><label for="top_txt">Top:</label> <input id="top_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
+					<span class="row"><label for="opacity_rng">Opacity:</label> <input id="opacity_rng" type="range" value='100' min='0' max='100' /></span>
+					<h2>Transform Origin</h2>
+					<div class="to_md">
+						<div class="to_marker"></div>
+					</div>
+					<div class="to_ctrl">
+					<span class="row"><label for="tox_txt">X:</label> <input id="tox_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
+					<span class="row"><label for="toy_txt">Y:</label> <input id="toy_txt" type="number" size="4" value='0' class="numberInput" /> px</span>	
+					</div>
+				</div>
+				<div class="right">
+					<h2>Transform:</h2>
+					<span class="row"><label for="rot_rng" class="lbl">Rotation:</label> <input id="rot_rng" type="range" value='0' min='-180' max='180' /></span>
+					<span class="row"><label for="sc_rng" class="lbl">Scale:</label> <input id="sc_rng" type="range" value='100' min='0' max='200' /></span>
+					<span class="row"><label for="sk_rng" class="lbl">Skew:</label> <input id="sk_rng" type="range" value='0' min='-60' max='60' /></span>
+					<span class="row"><label for="rot_txt">Rotation: </label><input type="number" size="4" value='0' class="numberInput" id="rot_txt"> deg</span>
+					<span class="row"><label for="scx_txt">Scale X:</label> <input id="scx_txt" type="number" size="4" value='1' class="numberInput" /><label for="scy_txt"> Scale Y:</label> <input id="scy_txt" type="number" size="4" value='1' class="numberInput" /></span>
+					<span class="row"><label for="x_txt">Translate X:</label> <input id="x_txt" type="number" size="4" value='0' class="numberInput" />px</span>
+					<span class="row"><label for="y_txt">Translate Y:</label> <input id="y_txt" type="number" size="4" value='0' class="numberInput" />px</span>
+					<span class="row"><a href="#" id="reset_btn" class="_btn">RESET</a></span>
+				</div>
+			</div>
+		<p>Get your code (html/css):</p>
+		<div class="row">
+			<textarea name="htmlOutput" id="htmlOutput_txt" class="output" cols="15" rows="10"></textarea>
+		</div>
+		<p class="footer">&copy;2015 Emmanuel Ulloa</p>
+		</div>
+		<div class="stage-container">
+			<div id="stage" class="stage"></div>
+		</div>
+	</div>
+	</div>
+<script type='text/javascript'>
+$(function(){
+	//http://www.html5rocks.com/en/tutorials/file/dndfiles/
+	//http://blog.teamtreehouse.com/reading-files-using-the-html5-filereader-api
+	//http://keithclark.co.uk/articles/calculating-element-vertex-data-from-css-transforms/
+	var css = {
+		container : {width:550,height:400},
+		background : {file:null},
+		layers : [],
+		images : {},
+		layerTransforms : {},
+		currentLayer : null
+	}
+	var $stage = $('#stage'),
+		$size_btn = $('#size_btn'),
+		$size_sl = $('#size_sl'),
+		$width_txt = $('#width_txt'),
+		$height_txt = $('#height_txt'),
+		$guide_fl = $('#guide_fl');
+	//FUNCTIONS
+	function $id(i){
+		return document.getElementById(i);
+	}
+	var depth = 0;
+	function getNextHighestDepth(){
+		return ++depth;
+	}
+	var counter = 0, filesMax = 0;
+	var I_LAYER = '_iLayer';
+	var O_LAYER = '_oLayer';
+	function createLayer(files){
+		filesMax = files.length;
+		for(var i=0; i < files.length; i++){
+			var file = files[i];
+			if (file.type.match(/image.*/)){
+				var reader = new FileReader();
+				reader.onload = (function(file){
+					return function(evt){
+						++counter;
+						var img = new Image();
+						img.src = evt.target.result;
+						var name = file.name.split('.')[0];
+						css.images[name] = file.name;
+						var draggableLayer = document.createElement('div');
+						var opacityLayer = document.createElement('div');
+						var imageLayer = document.createElement('div');
+						//for events this is the layer you want to target, it also holds the className = layer and the selected border. This layer is the one to use to obtain left and top values
+						draggableLayer.id = name;
+						draggableLayer.className = 'layer';
+						//this layer holds opacity, transform-origin and transformations
+						opacityLayer.id = name + O_LAYER;
+						//this layer holds image-background, image-position, width, height
+						imageLayer.id = name + I_LAYER;
+						imageLayer.style.backgroundImage = 'url(' + img.src + ')';
+						imageLayer.style.width = img.width + 'px';
+						imageLayer.style.height = img.height + 'px';
+						delete img;
+						//Let's assemble
+						opacityLayer.appendChild(imageLayer);
+						draggableLayer.appendChild(opacityLayer);
+						$stage.append(draggableLayer);
+						var $draggableLayer = $(draggableLayer);
+						$draggableLayer.draggable({
+							start:onDragStart
+						},{
+							stop:onDragStop
+						});
+						$draggableLayer.click(function(evt){
+							var layer = getLayer(evt.target.id);
+							if(layer === this){
+								if($(layer).is('.ui-draggable-dragging')){
+									return;
+								}
+								selectLayer(layer);
+							}
+							return;
+						});
+						css.layerTransforms[name] = {};
+						css.layers.push(draggableLayer);
+						if(counter == filesMax){
+							selectLayer(getLayer(name));
+							openTools();
+						}
+					}
+				})(file);
+				reader.readAsDataURL(file);
+			}	
+		}
+	}
+	function getLayer(id){
+		if(id.indexOf(I_LAYER) !== -1){
+			return $id(id.replace(I_LAYER, ''));
+		}else if(id.indexOf(O_LAYER) !== -1){
+			return $id(id.replace(O_LAYER, ''));
+		}
+		return $id(id);
+	}
+	function openTools(){
+		$('.controls').slideDown();
+	}
+	function changeSize(w,h){
+		css.container.width = w;
+		css.container.height = h;
+		$width_txt.val(css.container.width);
+		$height_txt.val(css.container.height);
+		$stage.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
+	}
+	function setLayerBorder($layer, op){
+		$layer.css('border', '1px dashed rgba(255, 0, 255, ' + (1 - op) + ')');
+	}
+	function deselect(){
+		$('.layer').each(function(i,element){
+			$(element).removeClass('selected');
+		});
+	}
+	function selectLayer(el){
+		deselect();
+		css.currentLayer = $(el);
+		css.currentLayer.addClass('selected');
+		css.currentLayer.css('z-index',getNextHighestDepth());
+		updateHUD(css.currentLayer);
+	}
+	function updateHUD($layer){
+		var name = $layer.attr('id');
+		var $iLayer = $('#' + name + I_LAYER);
+		var $oLayer = $('#' + name + O_LAYER);
+		var layerTransform = css.layerTransforms[name];
+		$('#element_lbl').text('Element: ' + $layer.attr('id') + ' ' + $iLayer.css('width') + ' x ' + $iLayer.css('height'));
+		$('#left_txt').val($layer.css('left').replace('px',''));
+		$('#top_txt').val($layer.css('top').replace('px',''));
+		var op = parseFloat($iLayer.css('opacity'));
+		$('#opacity_rng').val(Math.round(op * 100) + '');
+		setLayerBorder($oLayer,op);
+		//Transform Origin thumbnail
+		var w = parseFloat($iLayer.css('width')), h = parseFloat($iLayer.css('height'));
+		var b = Math.max(w,h), ratio = 1, bgSize = {width:100,height:100};
+		if(b == w){
+			ratio = (100/w);
+			bgSize.height = ratio * h;
+		}else{
+			ratio = (100/h);
+			bgSize.width = ratio * w;
+		}
+		$('.to_md').css('background-image', $iLayer.css('background-image'));
+		$('.to_md').css('background-repeat', 'no-repeat');
+		$('.to_md').css('background-size', bgSize.width + 'px ' + bgSize.height + 'px');
+		var to = $iLayer.css('transform-origin').split(' ');
+		var tox = parseFloat(to[0]);
+		var toy = parseFloat(to[1]);
+		$('#tox_txt').val(tox);
+		$('#toy_txt').val(toy);
+		var rx = tox/w;
+		var ry = toy/h;
+		$('.to_marker').css('left',Math.round(rx * bgSize.width) + 'px');
+		$('.to_marker').css('top',Math.round(ry * bgSize.height) + 'px');
+		//TRANSFORMS
+		if(layerTransform.scale){
+			if(layerTransform.scale.x == layerTransform.scale.y){
+				$('#sc_rng').val((layerTransform.scale.x * 100));
+			}
+			$('#scx_txt').val(parseFloat(layerTransform.scale.x.toFixed(2)));
+			$('#scy_txt').val(parseFloat(layerTransform.scale.y.toFixed(2)));
+		}
+		if(layerTransform.rotate){
+			$('#rot_rng').val(layerTransform.rotate);
+			$('#rot_txt').val(layerTransform.rotate);
+		}
+		if(layerTransform.skew){
+			$('#sk_rng').val(layerTransform.skew);
+		}
+		$('#htmlOutput_txt').val(createHTML());
+	}
+	function onHUDEvents(){
+		$('.to_md').click(function(evt){
+			if(evt.target === this){
+				evt = evt || window.event;
+			    var target = evt.target || evt.srcElement,
+			        rect = target.getBoundingClientRect(),
+			        offsetX = evt.clientX - rect.left,
+			        offsetY = evt.clientY - rect.top;
+			    	rx = offsetX - 3,
+			    	ry = offsetY - 3;
+			    var w = parseFloat(css.currentLayer.css('width')),
+			    	h = parseFloat(css.currentLayer.css('height')),
+			    	$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER); 
+			    $iLayer.css('transform-origin', Math.round(rx/100 * w) + 'px ' + Math.round(ry/100 * h) + 'px');
+			    updateHUD(css.currentLayer);
+			}
+		});
+		$('#left_txt').change(function(evt){
+			var $this = $(evt.target);
+			$('#' + css.currentLayer.attr('id')).css('left', $this.val() + 'px');
+		});
+		$('#top_txt').change(function(evt){
+			var $this = $(evt.target);
+			$('#' + css.currentLayer.attr('id')).css('top', $this.val() + 'px');
+		});
+		$('#tox_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var to = $iLayer.css('transform-origin').split(' ');
+			$iLayer.css('transform-origin', $this.val() + 'px ' + to[1]);
+			updateHUD(css.currentLayer);
+		});
+		$('#toy_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var to = $iLayer.css('transform-origin').split(' ');
+			$iLayer.css('transform-origin', to[0] + ' ' + $this.val() + 'px');
+			updateHUD(css.currentLayer);
+		});
+		$('#opacity_rng').change(function(evt){
+			var $this = $(evt.target);
+			var op = parseFloat($this.val()) / 100;
+			css.currentLayer.find('#' + css.currentLayer.attr('id') + I_LAYER).css('opacity',op);
+			updateHUD(css.currentLayer);
+		})
+		//TRANSFORM
+		$('#rot_rng').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.rotate){
+				layerTransform.rotate = 0;
+			}
+			layerTransform.rotate = parseFloat($this.val());
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$('#rot_txt').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.rotate){
+				layerTransform.rotate = 0;
+			}
+			layerTransform.rotate = parseFloat($this.val());
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$('#sc_rng').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.scale){
+				layerTransform.scale = {x:1,y:1};
+			}
+			layerTransform.scale.x = parseFloat($this.val()) / 100;
+			layerTransform.scale.y = parseFloat($this.val()) / 100;
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$('#sk_rng').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.skew){
+				layerTransform.skew = 0;
+			}
+			layerTransform.skew = parseFloat($this.val());
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$('#x_txt').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.translate){
+				layerTransform.translate = {x:0,y:0};
+			}
+			layerTransform.translate.x = parseFloat($this.val());
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$('#y_txt').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.translate){
+				layerTransform.translate = {x:0,y:0};
+			}
+			layerTransform.translate.y = parseFloat($this.val());
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.currentLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$('#scx_txt').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.scale){
+				layerTransform.scale = {x:1,y:1};
+			}
+			layerTransform.scale.x = parseFloat($this.val());
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$('#scy_txt').change(function(evt){
+			var $this = $(evt.target);
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+			if(!layerTransform.scale){
+				layerTransform.scale = {x:1,y:1};
+			}
+			layerTransform.scale.y = parseFloat($this.val());
+			$iLayer.css('transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
+			updateHUD(css.currentLayer);
+		});
+		$(document).keyup(function(evt){
+			evt.stopPropagation();
+			evt.stopImmediatePropagation();
+    		evt.preventDefault();
+			if(evt.which > 36 && evt.which < 41){
+				css.currentLayer.focus();
+				var top = parseFloat(css.currentLayer.css('top'));
+				var left = parseFloat(css.currentLayer.css('left'));
+				var step = (evt.shiftKey) ? 10 : 1;
+				var name = css.currentLayer.attr('id');
+				var layerTransform = css.layerTransforms[name];
+				var $iLayer = $('#' + name + I_LAYER);
+				if(evt.altKey){
+					switch(evt.which){
+						case 38:
+							if(!layerTransform.scale){
+								layerTransform.scale = {x:1,y:1}
+							}
+							step = (evt.shiftKey) ? 0.5 : 0.1;
+							layerTransform.scale.x += step;
+							layerTransform.scale.y += step;
+						break;
+						case 40:
+							if(!layerTransform.scale){
+								layerTransform.scale = {x:1,y:1}
+							}
+							step = (evt.shiftKey) ? 0.5 : 0.1;
+							layerTransform.scale.x -= step;
+							layerTransform.scale.y -= step;
+						break;
+						case 37:
+							if(!layerTransform.rotate){
+								layerTransform.rotate = 0
+							}
+							layerTransform.rotate -= step;
+							layerTransform.rotate -= step;
+						break;
+						case 39:
+							if(!layerTransform.rotate){
+								layerTransform.rotate = 0
+							}
+							layerTransform.rotate += step;
+							layerTransform.rotate += step;
+						break;
+					}
+					css.currentLayer.css('transform', createTransform(layerTransform));
+					css.currentLayer.css('-webkit-transform', createTransform(layerTransform));
+				}else{
+					switch(evt.which){
+						case 38:
+							css.currentLayer.css('top', (top + (step * -1)) + 'px' );
+						break;
+						case 40:
+							css.currentLayer.css('top', (top + step) + 'px' );
+						break;
+						case 37:
+							css.currentLayer.css('left', (left + (step * -1)) + 'px' );
+						break;
+						case 39:
+							css.currentLayer.css('left', (left + step) + 'px' );
+						break;
+					}					
+				}
+				updateHUD(css.currentLayer);
+			}
+			return false;
+		});/**/
+		$('#reset_btn').click(function(evt){
+			var name = css.currentLayer.attr('id');
+			var layerTransform = css.layerTransforms[name];
+			var $iLayer = $('#' + name + I_LAYER);
+			layerTransform = {};
+			$iLayer.css('transform','none');
+			$iLayer.css('-webkit-transform','none');
+			//$iLayer.css('opacity','1');
+			console.log($iLayer, layerTransform);
+			updateHUD(css.currentLayer);
+			evt.preventDefault();
+			evt.stopPropagation();
+		});
+		$('#htmlOutput').click(function(evt){
+			$(this).select();
+		})
+	}
+  	function createTransform(o){
+		var s = '';
+			if('translate' in o || 'translateX' in o || 'translateY' in o || 'translateZ' in o || 'rotate' in o || 'skew' in o || 'scale' in o || 'scaleX' in o || 'scaleY' in o || 'perspective' in o || 'scale3d' in o || 'translate3d' in o || 'rotate3d' in o || 'rotateX' in o || 'rotateY' in o || 'rotateZ' in o){
+				if('perspective' in o){
+					s += o['perspective'];
+				}
+				if('translate3d' in o){
+					s += o['translate3d'];
+				}
+				if('scale3d' in o){
+					s += o['scale3d'];
+				}
+				if('rotate3d' in o){
+					s += o['rotate3d'];
+				}
+				if('rotateX' in o){
+					s += 'rotateX(' + o['rotateX'] + ') ';
+				}
+				if('rotateY' in o){
+					s += 'rotateY(' + o['rotateY']+ ') ';
+				}
+				if('rotateZ' in o){
+					s += 'rotateZ(' + o['rotateZ']+ ') ';
+				}
+				if('translateZ' in o){
+					s += o['translateZ'];
+				}
+				if('translateX' in o && 'translateY' in o){
+					s += 'translate('+ o['translateX'] + 'px, ' + o['translateY'] + 'px) ' ;
+				}else{
+					if('translateX' in o){
+						s += 'translateX(' + o['translateX'] + ') ' ;
+					}
+					if('translateY' in o){
+						s += 'translateY(' + o['translateY'] + ') ';
+					}				
+				}
+				if('translate' in o){
+					s += 'translate(' + o['translate']['x'] + 'px,' + o['translate']['y'] + 'px) ';
+				}
+				if('scaleX' in o){
+					s += o['scaleX'];
+				}
+				if('scaleY' in o){
+					s += o['scaleY'];
+				}
+				if('scale' in o){
+					s += 'scale('+o['scale']['x']+','+o['scale']['y']+') ';
+				}
+				if('rotate' in o){
+					s += 'rotate('+ o['rotate'] +'deg) ';
+				}
+				if('skew' in o){
+					s += 'skew('+ o['skew'] +'deg) ';
+				}
+			}
+		return s;
+	}
+	function createHTML(){
+		var s = '',
+			_n = '\n',
+			_t = '\t';
+		s += '<!DOCTYPE html>' + _n;
+		s += '<html lang="en">' + _n;
+		s += '<head>' + _n;
+		s += '<meta charset="UTF-8">' + _n;
+		s += '<title>Document</title>' + _n;
+		s += '<style type="text/css">' + _n;
+		s += createCSS();
+		s += '</style>' + _n;
+		s += '</head>' + _n;
+		s += '<body>' + _n;
+		s += '<div class="container">' + _n;
+		for(var i = 0; i < css.layers.length; i++){
+			s += _t + '<div class="' + $(css.layers[i]).attr('id') + '"></div>' + _n;
+		}
+		s += '</div>' + _n;
+		s += '</body>' + _n;
+		s += '</html>' + _n;
+		return s;
+	}
+	function createCSS(){
+		var s = '',
+			_n = '\n',
+			_t = '\t';
+		s += '.container {' + _n;
+		s += _t + 'width: ' + css.container.width + 'px;' + _n;
+		s += _t + 'height: ' + css.container.height + 'px;' + _n;
+		if(css.background.file){
+			s += _t + 'background: url(' + css.background.file.name + ') no-repeat;' + _n;
+		}
+		s += _t + 'border: 1px solid gray;' + _n;
+		s += _t + 'overflow: hidden;' + _n;
+		s += _t + 'display: block;' + _n;
+		s += _t + 'position: relative;' + _n;
+		s += _t + 'transform-style: preserve-3d;' + _n;
+		s += _t + '-webkit-transform-style: preserve-3d;' + _n;
+		s += '}' + _n;
+		for(var i = 0; i < css.layers.length; i++){
+			var $layer = $(css.layers[i]);
+			var name = $layer.attr('id');
+			var $oLayer = $('#' + name + O_LAYER);
+			var $iLayer = $('#' + name + I_LAYER);
+			var transform = $iLayer.css('transform') || $iLayer.css('-webkit-transform');
+			var to = $iLayer.css('transform-origin') || $iLayer.css('-webkit-transform-origin');
+			s += '.' + name + '{' + _n;
+			s += _t + 'background: url(' + css.images[name] + ') no-repeat;' + _n;
+			s += _t + 'left: ' + $layer.css('left') + ';' + _n;
+			s += _t + 'top: ' + $layer.css('top') + ';' + _n;
+			s += _t + 'width: ' + $iLayer.css('width') + ';' + _n;
+			s += _t + 'height: ' + $iLayer.css('height') + ';' + _n;
+			s += _t + 'opacity: ' + $iLayer.css('opacity') + ';' + _n;
+			if(transform != 'none'){
+				s += _t + 'transform: ' + transform + ';' + _n;
+				s += _t + '-webkit-transform: ' + transform + ';' + _n;
+			}
+			s += _t + 'transform-origin: ' + to + ';' + _n;
+			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
+			s += _t + 'display: block;' + _n;
+			s += _t + 'position: absolute;' + _n;
+			s += '}' + _n;
+		}	
+		return s;	
+	}
+	//EVENTS
+	$guide_fl.change(function(evt){
+		css.background.file = evt.target.files[0];
+		if (css.background.file.type.match(/image.*/)){
+			var reader = new FileReader();
+			reader.onload = function(evt){
+				var img = new Image();
+				img.src = reader.result;
+				changeSize(img.width,img.height);
+				delete img;
+				$stage.css('background-image', 'url(' + reader.result + ')');
+			}
+			reader.readAsDataURL(css.background.file);
+		}
+	});
+	$size_sl.change(function(evt){
+		evt.stopPropagation();
+		evt.preventDefault();
+		var raw = $(evt.target).val().split('x');
+		changeSize(raw[0],raw[1]);
+	});
+	$size_btn.click(function(evt){
+		evt.stopPropagation();
+		evt.preventDefault();
+		changeSize($width_txt.val(),$height_txt.val());
+		return false;
+	});
+	function onDragStart(evt){
+		var layer = getLayer(evt.target.id);
+		if(layer === this){
+			selectLayer(layer);
+		}
+	}
+	function onDragStop(evt){
+		var layer = getLayer(evt.target.id);
+		updateHUD($(layer));
+	}
+	function handleFileSelect(evt) {
+    	evt.stopPropagation();
+    	evt.preventDefault();
+    	createLayer(evt.dataTransfer.files)
+	}
+	function handleDragOver(evt){
+		evt.stopPropagation();
+    	evt.preventDefault();
+    	evt.dataTransfer.dropEffect = 'copy';
+	}
+	$id('stage').addEventListener('dragover', handleDragOver, false);
+  	$id('stage').addEventListener('drop', handleFileSelect, false);
+	//init
+	onHUDEvents();
+});
+</script>
+</body>
+</html>
