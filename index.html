@@ -779,21 +779,21 @@ $(function(){
 							layerTransform.rotate += step;
 						break;
 					}
-					css.currentLayer.css('transform', createTransform(layerTransform));
-					css.currentLayer.css('-webkit-transform', createTransform(layerTransform));
+					$iLayer.css('transform', createTransform(layerTransform));
+					$iLayer.css('-webkit-transform', createTransform(layerTransform));
 				}else{
 					switch(evt.which){
 						case 38:
-							css.currentLayer.css('top', (top + (step * -1)) + 'px' );
+							$iLayer.css('top', (top + (step * -1)) + 'px' );
 						break;
 						case 40:
-							css.currentLayer.css('top', (top + step) + 'px' );
+							$iLayer.css('top', (top + step) + 'px' );
 						break;
 						case 37:
-							css.currentLayer.css('left', (left + (step * -1)) + 'px' );
+							$iLayer.css('left', (left + (step * -1)) + 'px' );
 						break;
 						case 39:
-							css.currentLayer.css('left', (left + step) + 'px' );
+							$iLayer.css('left', (left + step) + 'px' );
 						break;
 					}					
 				}
