@@ -232,7 +232,7 @@
 	display: block;
 	width: 100%;
 	height: 100%;
-	overflow: hidden;
+	overflow: auto;
 }
 .shell {
 	float:left;
@@ -249,7 +249,7 @@
 	padding-left: 1%;
 	padding-right: 1%;
 	height: 100%;
-	overflow: hidden;
+	overflow: auto;
 	background: #eee;
 }
 .stage-container{
@@ -257,7 +257,7 @@
 	display: block;
 	width: 65%;
 	height: 100%;
-	overflow: hidden;
+	overflow: auto;
 	-webkit-box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
 	-moz-box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
 	box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
@@ -898,6 +898,10 @@ $(function(){
 		s += '</html>' + _n;
 		return s;
 	}
+	function getScale(transform){
+		var matrixArr = transform.replace('matrix(', '').replace(')', '').split(',');
+		return {x: parseFloat(matrixArr[0]), y: parseFloat(matrixArr[3])};
+	}
 	function createCSS(){
 		var s = '',
 			_n = '\n',
@@ -923,20 +927,29 @@ $(function(){
 			var transform = $iLayer.css('transform') || $iLayer.css('-webkit-transform');
 			var to = $iLayer.css('transform-origin') || $iLayer.css('-webkit-transform-origin');
 			s += '.' + name + '{' + _n;
-			s += _t + 'background: url(' + css.images[name] + ') no-repeat;' + _n;
+			s += _t + 'display: block;' + _n;
+			s += _t + 'position: absolute;' + _n;
+			s += _t + 'opacity: ' + $iLayer.css('opacity') + ';' + _n;
 			s += _t + 'left: ' + $layer.css('left') + ';' + _n;
 			s += _t + 'top: ' + $layer.css('top') + ';' + _n;
 			s += _t + 'width: ' + $iLayer.css('width') + ';' + _n;
 			s += _t + 'height: ' + $iLayer.css('height') + ';' + _n;
-			s += _t + 'opacity: ' + $iLayer.css('opacity') + ';' + _n;
+			s += _t + 'background-image: url('+ css.images[name] + ');' + _n;
+			s += _t + 'background-repeat: no-repeat;' + _n;
 			if(transform != 'none'){
+				console.log(getScale(transform));
+				s += _t + '/* without transform' + _n;
+				var tx = (Math.round(parseInt($iLayer.css('width'))  * getScale(transform).x));
+				var ty = (Math.round(parseInt($iLayer.css('height')) * getScale(transform).y));
+				s += _t + 'background-size: ' + tx + 'px ' + ty + 'px;' +_n;
+				s += _t + 'width: ' + tx + 'px;' + _n;
+				s += _t + 'height: ' + ty + 'px;' + _n;
+				s += _t + '*/' + _n;
 				s += _t + 'transform: ' + transform + ';' + _n;
 				s += _t + '-webkit-transform: ' + transform + ';' + _n;
 			}
 			s += _t + 'transform-origin: ' + to + ';' + _n;
 			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
-			s += _t + 'display: block;' + _n;
-			s += _t + 'position: absolute;' + _n;
 			s += '}' + _n;
 		}	
 		return s;	
