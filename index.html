@@ -193,6 +193,13 @@
 .row{
 	display: block;
 }
+.block-row{
+	display: block;
+	clear:both;
+	float:left;
+	width: 100%;
+	margin-bottom: 5px;
+}
 .dropTarget {
 	display: block;
 	width: auto;
@@ -269,7 +276,6 @@
 	display: block;
 	margin: 0 auto;
 	vertical-align: middle;
-	overflow: hidden;
 	width: 550px;
 	height: 400px;
 	box-shadow: 0px 0px 3px #999;
@@ -291,11 +297,9 @@
 			overflow: auto;
 		}
 		.controls {
-			display: none;
 			border-radius: 10px;
 			font-size: 85%;
 			width: 96%;
-			height: 250px;
 			padding: 10px;
 			margin: 0 auto 1%;
 			color:gray;
@@ -311,6 +315,17 @@
 			background: -o-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Opera 11.10+ */
 			background: -ms-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* IE10+ */
 			background: linear-gradient(to bottom,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* W3C */
+		}
+		.document-properties{
+			display: block;
+			height: 180px;
+		}
+		.elements-properties{
+			display: none;
+			height: 375px;
+		}
+		.hideOverflow {
+			overflow: hidden;
 		}
 		.controls .left{
 			width: 49%;
@@ -338,76 +353,434 @@
 			width: 100%;
 			text-align: justify;
 		}
+		.controls strong{
+			color: #555;
+			font-weight: bolder;
+		}
 		.controls .lbl {
 			display: inline-block;
 			width: 60px;
+		}
+		/* tranCiSSioner */
+		.overlay{
+			background-color: rgba(0,0,0,0.7);
+			position: fixed;
+			display: none;
+			width: 100%;
+			height: 100%;
+			z-index: 999;
+		}
+		.tools2 {
+			position: relative;
+			background-color: #FFF;
+			border-radius: 15px;
+			padding: 1%;
+			width: 70%;
+			height: 85%;
+			margin: 2% auto;
+		}
+		.tools2 .blueText{
+			color: dodgerblue;
+		}
+		.tools2 .col1{
+			width:33%;
+			padding: 0;
+			margin: 0;
+			float: left;
+			display: inline-block;
+		}
+		.tools2 .col2{
+			width:33%;
+			padding: 0;
+			margin: 0;
+			float: left;
+			display: inline-block;
+		}
+		.tools2 .col3{
+			width:33%;
+			padding: 0;
+			margin: 0;
+			float: left;
+			display: inline-block;
+		}
+		.tools2 .bottom{
+			clear: both;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+		}
+		.tools2 textarea{
+			width: 98%;
+		}
+		.tools2 .row{
+			margin-bottom: 5px;
+		}
+		.tools2 .lbl{
+			width: 75px;
+			display: inline-block;
+		}
+		.position_scene{
+			margin: 8px 0px;
+		}
+		.position_scene_tbl{
+			border: 1px solid #999;
+			width: 150px;
+			text-align: center;
+		}
+		.tools2 hr{
+			width: 80%;
+			text-align: center;
+			border: 1px dashed #CCC;
+		}
+		.tools2 .close{
+			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQklEQVQYV5WQQQoAQAgC9f+PdulQVHRwuxQ5oEVJAgCSjL6r9BwueGgBXPDelV0Xun1GGrk23HP/g5a1dYz9HvfhD17FP/tzvfJcAAAAAElFTkSuQmCC);
+			background-repeat: no-repeat;
+			background-position: 5px 5px;
+			border-radius: 10px;
+			width: 20px;
+			height: 20px;
+			text-align: center;
+			color: #FFF;
+			background-color: dodgerblue;
+			font-weight: bold;
+			font-size: 30px;
+			position: absolute;
+			display: block;
+			top: 10px;
+			right: 10px;
+			cursor: pointer;
+		}
+		.tools2 .create_btn{
+			color: white;
+			background-color: dodgerblue;
+			border-radius: 5px;
+			font-size: 14px;
+			font-weight: bold;
+			text-decoration: none;
+			padding: 8px;
+			margin: 3px;
+			display: inline-block;
+			transition: background-color 0.5s;
+			-webkit-transition: background-color 0.5s;
+		}
+		.tools2 .create_btn:hover{
+			background-color: skyblue;
 		}
 	</style>
 </head>
 <body>
 	<div class="app">
+	<div class="overlay">
+		<div class="tools2">
+			<h1>tran<span class="blueText">C</span>i<span class="blueText">SS</span>ioner</h1>
+			<div class="close"></div>
+			<div class="col1">
+				<span class="row"><label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'></span>
+				<hr />
+				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_in_txt" value="0" class='numberInput'></span>
+				<div class="position_scene">
+					<span class="row"><label for="" class="lbl">Position:</label></span>
+					<table class="position_scene_tbl">
+						<tr>
+							<td><input type="radio" name="scene_in_rb" id="tl_in_rb" value="tl" /></td>
+							<td><input type="radio" name="scene_in_rb" id="top_in_rb" value="top" /></td>
+							<td><input type="radio" name="scene_in_rb" id="tr_in_rb" value="tr" /></td>
+						</tr>
+						<tr>
+							<td><input type="radio" name="scene_in_rb" id="left_rb" value="left" /></td>
+							<td><input type="radio" name="scene_in_rb" id="none_in_rb" value="none" checked /></td>
+							<td><input type="radio" name="scene_in_rb" id="right_rb" value="right" /></td>
+						</tr>
+						<tr>
+							<td><input type="radio" name="scene_in_rb" id="bl_in_rb" value="bl" /></td>
+							<td><input type="radio" name="scene_in_rb" id="bottom_in_rb" value="bottom" /></td>
+							<td><input type="radio" name="scene_in_rb" id="br_in_rb" value="br"></td>
+						</tr>
+					</table>
+				</div>
+				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_in_txt" type="number" value="10" class='numberInput' />px</span>
+				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span>
+				<hr />
+				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Ease:</label>
+					<select id="ease_in_sl">
+						<option value="ease">ease</option>
+						<option value="ease-out" selected >ease-out</option>
+						<option value="ease-in">ease-in</option>
+						<option value="ease-in-out">ease-in-out</option>
+						<option value="linear">linear</option>
+						<option value="cubic-bezier(.65, 1.95, .03, .32)">bounce</option>
+						<option value="cubic-bezier(0.47, 2.02, 0.31, -0.36)">elastic</option>
+						<option value="cubic-bezier(.25,2,.75,.5)">spring</option>
+						<option value="cubic-bezier(.175, .885,.32,1.275)">swing</option>
+						<option value="cubic-bezier(.755,.05,.855,.06)">snap</option>
+						<option value="cubic-bezier(.2,1,.9,-0.5)">hesitate</option>
+						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
+						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
+						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+						<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+						<option value="cubic-bezier(0.4,0,0.2,1)">fast out - slow in</option>
+						<optgroup label='Penner easings:'>
+							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
+							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
+							<option value="cubic-bezier(.645,.045,.355,1)">easeInOutCubic</option>
+							<option value="cubic-bezier(.6,.04,.98,.335)">easeInCirc</option>
+							<option value="cubic-bezier(.075,.82,.165,1)">easeOutCirc</option>
+							<option value="cubic-bezier(.785,.135,.15,.86)">easeInOutCirc</option>
+							<option value="cubic-bezier(.95,.05,.795,.035)">easeInExpo</option>
+							<option value="cubic-bezier(.19,1,.22,1)">easeOutExpo</option>
+							<option value="cubic-bezier(1,0,0,1)">easeInOutExpo</option>
+							<option value="cubic-bezier(.55,.085,.68,.53)">easeInQuad</option>
+							<option value="cubic-bezier(.25,.46,.45,.94)">easeOutQuad</option>
+							<option value="cubic-bezier(.455,.03,.515,.955)">easeInOutQuad</option>
+							<option value="cubic-bezier(.895,.03,.685,.22)">easeInQuart</option>
+							<option value="cubic-bezier(.165,.84,.44,1)">easeOutQuart</option>
+							<option value="cubic-bezier(.77,0,.175,1)">easeInOutQuart</option>
+							<option value="cubic-bezier(.755,.05,.855,.06)">easeInQuint</option>
+							<option value="cubic-bezier(.23,1,.32,1)">easeOutQuint</option>
+							<option value="cubic-bezier(.86,0,.07,1)">easeInOutQuint</option>
+							<option value="cubic-bezier(.47,0,.745,.715)">easeInSine</option>
+							<option value="cubic-bezier(.39,.575,.565,1)">easeOutSine</option>
+							<option value="cubic-bezier(.445,.05,.55,.95)">easeInOutSine</option>
+							<option value="cubic-bezier(.6,-.28,.735,.045)">easeInBack</option>
+							<option value="cubic-bezier(.175, .885,.32,1.275)">easeOutBack</option>
+							<option value="cubic-bezier(.68,-.55,.265,1.55)">easeInOutBack</option>
+						</optgroup>
+					</select>
+				</span>
+				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" class='numberInput'>s</span>
+			</div>
+			<div class="col2">
+				<span class="row">Element: <input id="scene_element_txt" type="text" value=".myDiv" /></span>
+				<span class="row"><label for="left_scene_txt">X:</label> <input id="left_scene_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_scene_txt"> Y:</label> <input id="top_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
+			</div>
+			<div class="col3">
+				<span class="row"><label for="" class="lbl">Scene <strong>OUT</strong>:</label> <input id="scene_out_txt" type="number" min="1" step="1" value="2" class='numberInput'></span>
+				<hr />
+				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_out_txt" value="0" class='numberInput'></span>
+				<div class="position_scene">
+					<span class="row"><label for="" class="lbl">Position:</label></span>
+					<table class="position_scene_tbl">
+						<tr>
+							<td><input type="radio" name="scene_out_rb" id="tl_out_rb" value="tl" /></td>
+							<td><input type="radio" name="scene_out_rb" id="top_out_rb" value="top" /></td>
+							<td><input type="radio" name="scene_out_rb" id="tr_out_rb" value="tr" /></td>
+						</tr>
+						<tr>
+							<td><input type="radio" name="scene_out_rb" id="left_rb" value="left" /></td>
+							<td><input type="radio" name="scene_out_rb" id="none_out_rb" value="none" checked /></td>
+							<td><input type="radio" name="scene_out_rb" id="right_rb" value="right" /></td>
+						</tr>
+						<tr>
+							<td><input type="radio" name="scene_out_rb" id="bl_out_rb" value="bl" /></td>
+							<td><input type="radio" name="scene_out_rb" id="bottom_out_rb" value="bottom" /></td>
+							<td><input type="radio" name="scene_out_rb" id="br_out_rb" value="br"></td>
+						</tr>
+					</table>
+				</div>
+				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_out_txt" type="number" value="10" class='numberInput' />px</span>
+				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span>
+				<hr />
+				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Ease:</label>
+					<select id="ease_out_sl">
+						<option value="ease">ease</option>
+						<option value="ease-out">ease-out</option>
+						<option value="ease-in" selected >ease-in</option>
+						<option value="ease-in-out">ease-in-out</option>
+						<option value="linear">linear</option>
+						<option value="cubic-bezier(.65, 1.95, .03, .32)">bounce</option>
+						<option value="cubic-bezier(0.47, 2.02, 0.31, -0.36)">elastic</option>
+						<option value="cubic-bezier(.25,2,.75,.5)">spring</option>
+						<option value="cubic-bezier(.175, .885,.32,1.275)">swing</option>
+						<option value="cubic-bezier(.755,.05,.855,.06)">snap</option>
+						<option value="cubic-bezier(.2,1,.9,-0.5)">hesitate</option>
+						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
+						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
+						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+						<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+						<option value="cubic-bezier(0.4,0,0.2,1)">fast out - slow in</option>
+						<optgroup label='Penner easings:'>
+							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
+							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
+							<option value="cubic-bezier(.645,.045,.355,1)">easeInOutCubic</option>
+							<option value="cubic-bezier(.6,.04,.98,.335)">easeInCirc</option>
+							<option value="cubic-bezier(.075,.82,.165,1)">easeOutCirc</option>
+							<option value="cubic-bezier(.785,.135,.15,.86)">easeInOutCirc</option>
+							<option value="cubic-bezier(.95,.05,.795,.035)">easeInExpo</option>
+							<option value="cubic-bezier(.19,1,.22,1)">easeOutExpo</option>
+							<option value="cubic-bezier(1,0,0,1)">easeInOutExpo</option>
+							<option value="cubic-bezier(.55,.085,.68,.53)">easeInQuad</option>
+							<option value="cubic-bezier(.25,.46,.45,.94)">easeOutQuad</option>
+							<option value="cubic-bezier(.455,.03,.515,.955)">easeInOutQuad</option>
+							<option value="cubic-bezier(.895,.03,.685,.22)">easeInQuart</option>
+							<option value="cubic-bezier(.165,.84,.44,1)">easeOutQuart</option>
+							<option value="cubic-bezier(.77,0,.175,1)">easeInOutQuart</option>
+							<option value="cubic-bezier(.755,.05,.855,.06)">easeInQuint</option>
+							<option value="cubic-bezier(.23,1,.32,1)">easeOutQuint</option>
+							<option value="cubic-bezier(.86,0,.07,1)">easeInOutQuint</option>
+							<option value="cubic-bezier(.47,0,.745,.715)">easeInSine</option>
+							<option value="cubic-bezier(.39,.575,.565,1)">easeOutSine</option>
+							<option value="cubic-bezier(.445,.05,.55,.95)">easeInOutSine</option>
+							<option value="cubic-bezier(.6,-.28,.735,.045)">easeInBack</option>
+							<option value="cubic-bezier(.175, .885,.32,1.275)">easeOutBack</option>
+							<option value="cubic-bezier(.68,-.55,.265,1.55)">easeInOutBack</option>
+						</optgroup>
+					</select>
+				</span>
+				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" class='numberInput'>s</span>
+			</div>
+			<div class="bottom">
+				<a href="#" class="create_btn">Create CSS</a>
+				<textarea name="" id="transition_css_txt" cols="30" rows="10"></textarea>
+			</div>
+			<ul>
+				<li><a href="https://www.google.com/design/spec/animation/authentic-motion.html#authentic-motion-mass-weight" target="_blank">Animation guidelines by Google</a></li>
+				<li><a href="https://developers.google.com/web/fundamentals/look-and-feel/animations/?hl=en" target="_blank">Web Fundamentals: Animations by Google</a></li>
+			</ul>
+			
+		</div>
+	</div>
 	<div class="shell">
 		<div class="tools">
 			<h1 class="logo"><span class="titleChar">C</span><span class="titleChar">S</span><span class="titleChar">S</span><span class="titleChar">S</span><span class="titleChar">t</span><span class="titleChar">a</span><span class="titleChar">g</span><span class="titleChar">e</span><span class="titleChar">r</span></h1>
 			<p class='tagline'>Set DOM elements as you need them before starting your animations.</p>
-			<ul class='instructions'>
-			<li>Select a background or guide image (with the exact width and height you need): <input type='file' accept='image/*' id='guide_fl' class='_btn dropTarget' /></li>
-			<li>Size:
-				<select name="size_sl" id="size_sl">
-					<optgroup label='Select size:'>
-					<option value="500x400">500x400 New Document</option>
-					<option value="300x250">300x250 Medium Rectangle</option>
-					<option value="728x90">728x90 Leaderboard Banner</option>
-					<option value="160x600">160x600 Wide Skyscraper</option>
-					<option value="120x600">120x600 Skyscraper</option>
-					<option value="940x400">940x400 Website Slider</option>
-					<option value="720x300">720x300 Pop-Under</option>
-					<option value="300x600">300x600 Half Page Ad</option>
-					<option value="250x250">250x250 Square Popup</option>
-					<option value="428x60">428x60 Full Banner</option>
-					<option value="336x280">336x280 Square</option>
-					<option value="120x240">120x240 Vertical Banner</option>
-					<option value="240x400">240x400 Vertical Rectangle</option>
-					<option value="234x60">234x60 Half Banner</option>
-					<option value="180x150">180x150 Rectangle</option>
-					<option value="125x125">125x125 Square Button</option>
-					<option value="120x90">120x90 Button</option>
-					<option value="120x60">120x60 Button</option>
-					<option value="88x31">88x31 Micro Bar</option>
-					</optgroup>
-				</select>
-				</li>
-				<li>custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' /> <a href='#' id="size_btn" class='_btn'>Change size</a></li>
-			<li>Drag and drop images into the stage (image name will be used for the class name):</li>
-		</ul>
-			<div class="controls">
+			<div class="controls document-properties">
+				<h2>Document Properties</h2>
+				<span class="row">Background/Guide Image: <input type='file' accept='image/*' id='guide_fl' class='_btn dropTarget' /></span>
+				<span class="row">Banner size:
+					<select name="size_sl" id="size_sl">
+						<optgroup label='Select size:'>
+						<option value="500x400">500x400 New Document</option>
+						<option value="300x250">300x250 Medium Rectangle</option>
+						<option value="728x90">728x90 Leaderboard Banner</option>
+						<option value="160x600">160x600 Wide Skyscraper</option>
+						<option value="120x600">120x600 Skyscraper</option>
+						<option value="940x400">940x400 Website Slider</option>
+						<option value="720x300">720x300 Pop-Under</option>
+						<option value="300x600">300x600 Half Page Ad</option>
+						<option value="250x250">250x250 Square Popup</option>
+						<option value="428x60">428x60 Full Banner</option>
+						<option value="336x280">336x280 Square</option>
+						<option value="120x240">120x240 Vertical Banner</option>
+						<option value="240x400">240x400 Vertical Rectangle</option>
+						<option value="234x60">234x60 Half Banner</option>
+						<option value="180x150">180x150 Rectangle</option>
+						<option value="125x125">125x125 Square Button</option>
+						<option value="120x90">120x90 Button</option>
+						<option value="120x60">120x60 Button</option>
+						<option value="88x31">88x31 Micro Bar</option>
+						</optgroup>
+					</select>	
+				</span>
+				<span class="row">
+					Custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' />
+				</span>
+				<span class="row">Background Color: <input id="bgColor_txt" type="text" value="#FFF" class='numberInput' /> Border Color: <input id="borderColor_txt" type="text" value="#666" class='numberInput' /></span>
+				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label></span>
+			</div>
+			<div class="controls elements-properties">
 				<div class="left">
 					<h2 id="element_lbl">Element: ?</h2>
-					<span class="row"><label for="left_txt">Left:</label> <input id="left_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
-					<span class="row"><label for="top_txt">Top:</label> <input id="top_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
+					<span class="row"><strong>Element size and position:</strong></span>
+					<span class="row"><label for="left_txt">X:</label> <input id="left_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_txt"> Y:</label> <input id="top_txt" type="number" size="4" value='0' class="numberInput" /></span>
+					<span class="row">Element alignment: 
+						<select name="align_sl" id="align_sl">
+							<option value="top">top</option>
+							<option value="bottom">bottom</option>
+							<option value="left">left</option>
+							<option value="right">right</option>
+							<option value="center">center</option>
+							<option value="middle">middle</option>
+						</select>
+					</span>
+					<span class="row"><label for="w_txt">W:</label> <input id="w_txt" type="number" size="4" value='0' min="0" class="numberInput" /><label for="h_txt"> H:</label> <input id="h_txt" type="number" size="4" value='0' min="0" class="numberInput" /></span>
+					<span class="row">Scale w/o transform: <input id="scale_txt" type="number" min="0" value='100' class="numberInput">%</span>
 					<span class="row"><label for="opacity_rng">Opacity:</label> <input id="opacity_rng" type="range" value='100' min='0' max='100' /></span>
-					<h2>Transform Origin</h2>
-					<div class="to_md">
-						<div class="to_marker"></div>
-					</div>
-					<div class="to_ctrl">
-					<span class="row"><label for="tox_txt">X:</label> <input id="tox_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
-					<span class="row"><label for="toy_txt">Y:</label> <input id="toy_txt" type="number" size="4" value='0' class="numberInput" /> px</span>	
-					</div>
+					<span class="row"><strong>Element background info:</strong></span>
+					<span class="row"><label for="bgx_txt">X:</label> <input id="bgx_txt" type="number" size="4" value='0' class="numberInput" /><label for="bgy_txt"> Y:</label> <input id="bgy_txt" type="number" size="4" value='0' class="numberInput" /></span>
+					<span class="row"><label for="bgw_txt">W:</label> <input id="bgw_txt" type="number" size="4" value='0' min="0" class="numberInput" /><label for="bgh_txt"> H:</label> <input id="bgh_txt" type="number" size="4" value='0' min="0" class="numberInput" /></span>
+					<span class="row"><a href="#" id="trancissioner_btn" class="_btn">Launch tranCiSSioner</a></span>
+					<!--
+					<span class="row"><strong>Transition info:</strong></span>
+					<span class="row">Scene class: <input id="tname_txt" type="text"></span>
+					<span class="row">Duration: <input id="duration_txt" type="text" value="0" class="numberInput" /></span>
+					<span class="row">
+					<select id="ease_sl">
+					<option value="ease">ease</option>
+					<option value="ease-out">ease-out</option>
+					<option value="ease-in">ease-in</option>
+					<option value="ease-in-out">ease-in-out</option>
+					<option value="linear">linear</option>
+					<option value="cubic-bezier(.65, 1.95, .03, .32)">bounce</option>
+					<option value="cubic-bezier(0.47, 2.02, 0.31, -0.36)">elastic</option>
+					<option value="cubic-bezier(.25,2,.75,.5)">spring</option>
+					<option value="cubic-bezier(.175, .885,.32,1.275)">swing</option>
+					<option value="cubic-bezier(.755,.05,.855,.06)">snap</option>
+					<option value="cubic-bezier(.2,1,.9,-0.5)">hesitate</option>
+					<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
+					<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
+					<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+					<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+					<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+					<option value="cubic-bezier(0.4,0,0.2,1)">fast out - slow in</option>
+					<optgroup label='Penner easings:'>
+						<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
+						<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
+						<option value="cubic-bezier(.645,.045,.355,1)">easeInOutCubic</option>
+						<option value="cubic-bezier(.6,.04,.98,.335)">easeInCirc</option>
+						<option value="cubic-bezier(.075,.82,.165,1)">easeOutCirc</option>
+						<option value="cubic-bezier(.785,.135,.15,.86)">easeInOutCirc</option>
+						<option value="cubic-bezier(.95,.05,.795,.035)">easeInExpo</option>
+						<option value="cubic-bezier(.19,1,.22,1)">easeOutExpo</option>
+						<option value="cubic-bezier(1,0,0,1)">easeInOutExpo</option>
+						<option value="cubic-bezier(.55,.085,.68,.53)">easeInQuad</option>
+						<option value="cubic-bezier(.25,.46,.45,.94)">easeOutQuad</option>
+						<option value="cubic-bezier(.455,.03,.515,.955)">easeInOutQuad</option>
+						<option value="cubic-bezier(.895,.03,.685,.22)">easeInQuart</option>
+						<option value="cubic-bezier(.165,.84,.44,1)">easeOutQuart</option>
+						<option value="cubic-bezier(.77,0,.175,1)">easeInOutQuart</option>
+						<option value="cubic-bezier(.755,.05,.855,.06)">easeInQuint</option>
+						<option value="cubic-bezier(.23,1,.32,1)">easeOutQuint</option>
+						<option value="cubic-bezier(.86,0,.07,1)">easeInOutQuint</option>
+						<option value="cubic-bezier(.47,0,.745,.715)">easeInSine</option>
+						<option value="cubic-bezier(.39,.575,.565,1)">easeOutSine</option>
+						<option value="cubic-bezier(.445,.05,.55,.95)">easeInOutSine</option>
+						<option value="cubic-bezier(.6,-.28,.735,.045)">easeInBack</option>
+						<option value="cubic-bezier(.175, .885,.32,1.275)">easeOutBack</option>
+						<option value="cubic-bezier(.68,-.55,.265,1.55)">easeInOutBack</option>
+					</optgroup>
+					</select> 
+					</span>
+					<span class="row">Delay: <input id="delay_txt" type="text" value="0" class="numberInput" /></span>
+					-->
 				</div>
 				<div class="right">
 					<h2>Transform:</h2>
-					<span class="row"><label for="rot_rng" class="lbl">Rotation:</label> <input id="rot_rng" type="range" value='0' min='-180' max='180' /></span>
 					<span class="row"><label for="sc_rng" class="lbl">Scale:</label> <input id="sc_rng" type="range" value='100' min='0' max='200' /></span>
+					<span class="row"><label for="rot_rng" class="lbl">Rotation:</label> <input id="rot_rng" type="range" value='0' min='-180' max='180' /></span>
 					<span class="row"><label for="sk_rng" class="lbl">Skew:</label> <input id="sk_rng" type="range" value='0' min='-60' max='60' /></span>
 					<span class="row"><label for="rot_txt">Rotation: </label><input type="number" size="4" value='0' class="numberInput" id="rot_txt"> deg</span>
 					<span class="row"><label for="scx_txt">Scale X:</label> <input id="scx_txt" type="number" size="4" value='1' class="numberInput" /><label for="scy_txt"> Scale Y:</label> <input id="scy_txt" type="number" size="4" value='1' class="numberInput" /></span>
 					<span class="row"><label for="x_txt">Translate X:</label> <input id="x_txt" type="number" size="4" value='0' class="numberInput" />px</span>
 					<span class="row"><label for="y_txt">Translate Y:</label> <input id="y_txt" type="number" size="4" value='0' class="numberInput" />px</span>
+					<div class="block-row">
+						<h2>Transform Origin</h2>
+						<div class="to_md">
+							<div class="to_marker"></div>
+						</div>
+						<div class="to_ctrl">
+						<span class="row"><label for="tox_txt">X:</label> <input id="tox_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
+						<span class="row"><label for="toy_txt">Y:</label> <input id="toy_txt" type="number" size="4" value='0' class="numberInput" /> px</span>	
+						</div>
+					</div>
 					<span class="row"><a href="#" id="reset_btn" class="_btn">RESET</a></span>
 				</div>
 			</div>
 		<p>Get your code (html/css):</p>
+		<p><input id="onlycss_ck" type="checkbox" checked />Only CSS</p>
 		<div class="row">
 			<textarea name="htmlOutput" id="htmlOutput_txt" class="output" cols="15" rows="10"></textarea>
 		</div>
@@ -424,15 +797,15 @@ $(function(){
 	//http://blog.teamtreehouse.com/reading-files-using-the-html5-filereader-api
 	//http://keithclark.co.uk/articles/calculating-element-vertex-data-from-css-transforms/
 	var css = {
-		container : {width:550,height:400},
+		container : {width:550,height:400,bgColor:'#FFF',borderColor:'#666'},
 		background : {file:null},
 		layers : [],
 		images : {},
+		imgSizes : {},
 		layerTransforms : {},
 		currentLayer : null
 	}
 	var $stage = $('#stage'),
-		$size_btn = $('#size_btn'),
 		$size_sl = $('#size_sl'),
 		$width_txt = $('#width_txt'),
 		$height_txt = $('#height_txt'),
@@ -467,13 +840,19 @@ $(function(){
 						//for events this is the layer you want to target, it also holds the className = layer and the selected border. This layer is the one to use to obtain left and top values
 						draggableLayer.id = name;
 						draggableLayer.className = 'layer';
+						draggableLayer.style.left = '0px';
+						draggableLayer.style.top = '0px';
 						//this layer holds opacity, transform-origin and transformations
 						opacityLayer.id = name + O_LAYER;
 						//this layer holds image-background, image-position, width, height
 						imageLayer.id = name + I_LAYER;
 						imageLayer.style.backgroundImage = 'url(' + img.src + ')';
+						imageLayer.style.backgroundRepeat = 'no-repeat';
+						imageLayer.style.backgroundPosition = '0px 0px';
+						imageLayer.style.backgroundSize = img.width + 'px ' + img.height + 'px';
 						imageLayer.style.width = img.width + 'px';
 						imageLayer.style.height = img.height + 'px';
+						css.imgSizes[name] = {width:img.width,height:img.height,scale:1};
 						delete img;
 						//Let's assemble
 						opacityLayer.appendChild(imageLayer);
@@ -515,6 +894,9 @@ $(function(){
 		}
 		return $id(id);
 	}
+	function fixDecimal(val){
+		return Math.round(val*1000)/1000;
+	}
 	function openTools(){
 		$('.controls').slideDown();
 	}
@@ -524,6 +906,12 @@ $(function(){
 		$width_txt.val(css.container.width);
 		$height_txt.val(css.container.height);
 		$stage.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
+	}
+	function changeColors(bg,col){
+		css.container.bgColor = bg;
+		css.container.borderColor = col;
+		$stage.css('background-color', bg).css('border-color',col);
+		$('.to_md').css('background-color', bg);
 	}
 	function setLayerBorder($layer, op){
 		$layer.css('border', '1px dashed rgba(255, 0, 255, ' + (1 - op) + ')');
@@ -551,6 +939,14 @@ $(function(){
 		var op = parseFloat($iLayer.css('opacity'));
 		$('#opacity_rng').val(Math.round(op * 100) + '');
 		setLayerBorder($oLayer,op);
+		$('#w_txt').val($iLayer.css('width').replace('px',''));
+		$('#h_txt').val($iLayer.css('height').replace('px',''));
+		var bgsize = $iLayer.css('background-size').split(' ');
+		$('#bgw_txt').val(bgsize[0].replace('px',''));
+		$('#bgh_txt').val(bgsize[1].replace('px',''));
+		var bgpos = $iLayer.css('background-position').split(' ');
+		$('#bgx_txt').val(bgpos[0].replace('px',''));
+		$('#bgy_txt').val(bgpos[1].replace('px',''));
 		//Transform Origin thumbnail
 		var w = parseFloat($iLayer.css('width')), h = parseFloat($iLayer.css('height'));
 		var b = Math.max(w,h), ratio = 1, bgSize = {width:100,height:100};
@@ -578,8 +974,8 @@ $(function(){
 			if(layerTransform.scale.x == layerTransform.scale.y){
 				$('#sc_rng').val((layerTransform.scale.x * 100));
 			}
-			$('#scx_txt').val(parseFloat(layerTransform.scale.x.toFixed(2)));
-			$('#scy_txt').val(parseFloat(layerTransform.scale.y.toFixed(2)));
+			$('#scx_txt').val(parseFloat(layerTransform.scale.x));
+			$('#scy_txt').val(parseFloat(layerTransform.scale.y));
 		}
 		if(layerTransform.rotate){
 			$('#rot_rng').val(layerTransform.rotate);
@@ -615,6 +1011,48 @@ $(function(){
 			var $this = $(evt.target);
 			$('#' + css.currentLayer.attr('id')).css('top', $this.val() + 'px');
 		});
+		$('#w_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			$iLayer.css('width', $this.val() + 'px');
+			console.log($iLayer.css('width'));
+			updateHUD(css.currentLayer);
+		});
+		$('#h_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			$iLayer.css('height', $this.val() + 'px');
+			console.log($iLayer.css('height'));
+			updateHUD(css.currentLayer);
+		});
+		$('#bgw_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var sz = $iLayer.css('background-size').split(' ');
+			$iLayer.css('background-size', $this.val() + 'px ' + sz[1]);
+			updateHUD(css.currentLayer);
+		});
+		$('#bgh_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var sz = $iLayer.css('background-size').split(' ');
+			$iLayer.css('background-size', sz[0] + ' ' + $this.val() + 'px');
+			updateHUD(css.currentLayer);
+		});
+		$('#bgx_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var ps = $iLayer.css('background-position').split(' ');
+			$iLayer.css('background-position', $this.val() + 'px ' + ps[1]);
+			updateHUD(css.currentLayer);
+		});
+		$('#bgy_txt').change(function(evt){
+			var $this = $(evt.target),
+				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			var ps = $iLayer.css('background-position').split(' ');
+			$iLayer.css('background-position', ps[0] + ' ' + $this.val() + 'px');
+			updateHUD(css.currentLayer);
+		});
 		$('#tox_txt').change(function(evt){
 			var $this = $(evt.target),
 				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
@@ -631,7 +1069,7 @@ $(function(){
 		});
 		$('#opacity_rng').change(function(evt){
 			var $this = $(evt.target);
-			var op = parseFloat($this.val()) / 100;
+			var op = (parseFloat($this.val()) / 100);
 			css.currentLayer.find('#' + css.currentLayer.attr('id') + I_LAYER).css('opacity',op);
 			updateHUD(css.currentLayer);
 		})
@@ -733,6 +1171,45 @@ $(function(){
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
 			updateHUD(css.currentLayer);
 		});
+		$('#scale_txt').change(function(evt){
+			var $this = $(evt.target);
+			var ratio = parseFloat($this.val())/100;
+			var name = css.currentLayer.attr('id');
+			css.imgSizes[name].scale = ratio;
+			var w = fixDecimal(css.imgSizes[name].width * css.imgSizes[name].scale) + 'px';
+			var h = fixDecimal(css.imgSizes[name].height * css.imgSizes[name].scale) + 'px';
+			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+			$iLayer.css('width', w);
+			$iLayer.css('height',h);
+			$iLayer.css('background-size', w + ' ' + h);
+			updateHUD(css.currentLayer);
+		});
+		$('#tname_txt, #duration_txt, #delay_txt, #ease_sl').change(function(evt){
+			updateHUD(css.currentLayer);
+		});
+		$('#align_sl').change(function(evt){
+			var val = $(evt.target).val();
+			var name = css.currentLayer.attr('id');
+			if(val === 'top'){
+				css.currentLayer.css('top','0px');
+			}
+			if(val === 'bottom'){
+				css.currentLayer.css('top', (css.container.height - css.imgSizes[name].height) + 'px');
+			}
+			if(val === 'left'){
+				css.currentLayer.css('left','0px');
+			}
+			if(val === 'right'){
+				css.currentLayer.css('left', (css.container.width - css.imgSizes[name].width) + 'px');
+			}
+			if(val === 'center'){
+				css.currentLayer.css('left', Math.round((css.container.width - css.imgSizes[name].width)/2) + 'px');
+			}
+			if(val === 'middle'){
+				css.currentLayer.css('top', Math.round((css.container.height - css.imgSizes[name].height)/2) + 'px');
+			}
+			updateHUD(css.currentLayer);
+		});
 		$(document).keyup(function(evt){
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
@@ -741,6 +1218,8 @@ $(function(){
 				css.currentLayer.focus();
 				var top = parseFloat(css.currentLayer.css('top'));
 				var left = parseFloat(css.currentLayer.css('left'));
+				top = isNaN(top)?0:top;
+				left = isNaN(left)?0:left;
 				var step = (evt.shiftKey) ? 10 : 1;
 				var name = css.currentLayer.attr('id');
 				var layerTransform = css.layerTransforms[name];
@@ -783,16 +1262,16 @@ $(function(){
 				}else{
 					switch(evt.which){
 						case 38:
-							$iLayer.css('top', (top + (step * -1)) + 'px' );
+							css.currentLayer.css('top', (top + (step * -1)) + 'px' );
 						break;
 						case 40:
-							$iLayer.css('top', (top + step) + 'px' );
+							css.currentLayer.css('top', (top + step) + 'px' );
 						break;
 						case 37:
-							$iLayer.css('left', (left + (step * -1)) + 'px' );
+							css.currentLayer.css('left', (left + (step * -1)) + 'px' );
 						break;
 						case 39:
-							$iLayer.css('left', (left + step) + 'px' );
+							css.currentLayer.css('left', (left + step) + 'px' );
 						break;
 					}					
 				}
@@ -876,82 +1355,108 @@ $(function(){
 		return s;
 	}
 	function createHTML(){
+		var onlycss = $('#onlycss_ck').prop('checked');
 		var s = '',
 			_n = '\n',
 			_t = '\t';
-		s += '<!DOCTYPE html>' + _n;
-		s += '<html lang="en">' + _n;
-		s += '<head>' + _n;
-		s += '<meta charset="UTF-8">' + _n;
-		s += '<title>Document</title>' + _n;
-		s += '<style type="text/css">' + _n;
-		s += createCSS();
-		s += '</style>' + _n;
-		s += '</head>' + _n;
-		s += '<body>' + _n;
-		s += '<div class="container">' + _n;
-		for(var i = 0; i < css.layers.length; i++){
-			s += _t + '<div class="' + $(css.layers[i]).attr('id') + '"></div>' + _n;
+		if(!onlycss){
+			s += '<!DOCTYPE html>' + _n;
+			s += '<html lang="en">' + _n;
+			s += '<head>' + _n;
+			s += '<meta charset="UTF-8">' + _n;
+			s += '<title>Document</title>' + _n;
+			s += '<style type="text/css">' + _n;	
 		}
-		s += '</div>' + _n;
-		s += '</body>' + _n;
-		s += '</html>' + _n;
+
+		s += createCSS();
+
+		if(!onlycss){
+			s += '</style>' + _n;
+			s += '</head>' + _n;
+			s += '<body>' + _n;
+			s += '<div class="banner">' + _n;
+			for(var i = 0; i < css.layers.length; i++){
+				s += _t + '<div class="' + $(css.layers[i]).attr('id') + '"></div>' + _n;
+			}
+			s += '</div>' + _n;
+			s += '</body>' + _n;
+			s += '</html>' + _n;			
+		}
+
 		return s;
 	}
 	function getScale(transform){
 		var matrixArr = transform.replace('matrix(', '').replace(')', '').split(',');
 		return {x: parseFloat(matrixArr[0]), y: parseFloat(matrixArr[3])};
 	}
-	function createCSS(){
+	function getElementClass($layer, tCSS){
+		//tCSS is for use in tranCiSSioner
 		var s = '',
 			_n = '\n',
 			_t = '\t';
-		s += '.container {' + _n;
-		s += _t + 'width: ' + css.container.width + 'px;' + _n;
-		s += _t + 'height: ' + css.container.height + 'px;' + _n;
-		if(css.background.file){
-			s += _t + 'background: url(' + css.background.file.name + ') no-repeat;' + _n;
-		}
-		s += _t + 'border: 1px solid gray;' + _n;
-		s += _t + 'overflow: hidden;' + _n;
-		s += _t + 'display: block;' + _n;
-		s += _t + 'position: relative;' + _n;
-		s += _t + 'transform-style: preserve-3d;' + _n;
-		s += _t + '-webkit-transform-style: preserve-3d;' + _n;
-		s += '}' + _n;
-		for(var i = 0; i < css.layers.length; i++){
-			var $layer = $(css.layers[i]);
 			var name = $layer.attr('id');
 			var $oLayer = $('#' + name + O_LAYER);
 			var $iLayer = $('#' + name + I_LAYER);
 			var transform = $iLayer.css('transform') || $iLayer.css('-webkit-transform');
 			var to = $iLayer.css('transform-origin') || $iLayer.css('-webkit-transform-origin');
+			/*var scene = $('#tname_txt').val();
+			if(scene !== ''){
+				scene = '.' + scene;
+			}
+			s += scene + '.' + name + '{' + _n;
+			*/
 			s += '.' + name + '{' + _n;
 			s += _t + 'display: block;' + _n;
 			s += _t + 'position: absolute;' + _n;
-			s += _t + 'opacity: ' + $iLayer.css('opacity') + ';' + _n;
-			s += _t + 'left: ' + $layer.css('left') + ';' + _n;
-			s += _t + 'top: ' + $layer.css('top') + ';' + _n;
+			s += _t + 'opacity: ' + (tCSS?'@OPACITY@':fixDecimal(parseFloat($iLayer.css('opacity')))) + ';' + _n;
+			s += _t + 'left: ' + (tCSS?'@LEFT@':$layer.css('left')) + ';' + _n;
+			s += _t + 'top: ' + (tCSS?'@TOP@':$layer.css('top')) + ';' + _n;
 			s += _t + 'width: ' + $iLayer.css('width') + ';' + _n;
 			s += _t + 'height: ' + $iLayer.css('height') + ';' + _n;
 			s += _t + 'background-image: url('+ css.images[name] + ');' + _n;
 			s += _t + 'background-repeat: no-repeat;' + _n;
+			s += _t + 'background-position: ' + $iLayer.css('background-position') + ';' + _n;
+			s += _t + 'background-size: ' + $iLayer.css('background-size')+ ';' + _n;
 			if(transform != 'none'){
-				console.log(getScale(transform));
-				s += _t + '/* without transform' + _n;
-				var tx = (Math.round(parseInt($iLayer.css('width'))  * getScale(transform).x));
-				var ty = (Math.round(parseInt($iLayer.css('height')) * getScale(transform).y));
-				s += _t + 'background-size: ' + tx + 'px ' + ty + 'px;' +_n;
-				s += _t + 'width: ' + tx + 'px;' + _n;
-				s += _t + 'height: ' + ty + 'px;' + _n;
-				s += _t + '*/' + _n;
 				s += _t + 'transform: ' + transform + ';' + _n;
 				s += _t + '-webkit-transform: ' + transform + ';' + _n;
 			}
 			s += _t + 'transform-origin: ' + to + ';' + _n;
 			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
-			s += '}' + _n;
-		}	
+			/*
+			if($('#duration_txt').val() != '0' && $('#delay_txt').val() != '0'){
+				var trans = 'all ' + $('#duration_txt').val() + ' ' + $('#ease_sl').val() + ' ' + (($('#delay_txt').val() != '0')?$('#delay_txt').val() + 's':'');
+				s += _t + 'transition: ' + trans + ';' + _n;
+				s += _t + '-webkit-transition: ' + trans + ';' + _n;
+			}
+			*/
+			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
+			s += '}' + _n;		
+		return s;
+	}
+	function createCSS(){
+		var s = '',
+			_n = '\n',
+			_t = '\t';
+		
+		for(var i = 0; i < css.layers.length; i++){
+			s += getElementClass($(css.layers[i]));
+		}
+		s += '.banner {' + _n;
+		s += _t + 'display: block;' + _n;
+		s += _t + 'position: absolute;' + _n;
+		s += _t + 'overflow: hidden;' + _n;
+		s += _t + 'width: ' + (css.container.width - 2) + 'px;' + _n;
+		s += _t + 'height: ' + (css.container.height -2) + 'px;' + _n;
+		s += _t + 'background-color: ' + css.container.bgColor + ';' + _n;
+		if(css.background.file){
+			s += _t + 'background-image: url(' + css.background.file.name + ');' + _n;
+			s += _t + 'background-repeat: no-repeat;' + _n;
+		}
+		s += _t + 'border: 1px solid '+css.container.borderColor+';' + _n;
+		s += _t + 'transform-style: preserve-3d;' + _n;
+		s += _t + '-webkit-transform-style: preserve-3d;' + _n;
+		s += '}' + _n;	
 		return s;	
 	}
 	//EVENTS
@@ -975,11 +1480,26 @@ $(function(){
 		var raw = $(evt.target).val().split('x');
 		changeSize(raw[0],raw[1]);
 	});
-	$size_btn.click(function(evt){
+	$width_txt.change(function(evt){
 		evt.stopPropagation();
 		evt.preventDefault();
 		changeSize($width_txt.val(),$height_txt.val());
 		return false;
+	});
+	$height_txt.change(function(evt){
+		evt.stopPropagation();
+		evt.preventDefault();
+		changeSize($width_txt.val(),$height_txt.val());
+		return false;
+	});
+	$('#bgColor_txt, #borderColor_txt').change(function(evt){
+		evt.stopPropagation();
+		evt.preventDefault();
+		changeColors($('#bgColor_txt').val(), $('#borderColor_txt').val());
+		return false;
+	});
+	$('#overflow_ck').change(function(evt){
+		$stage.toggleClass('hideOverflow');
 	});
 	function onDragStart(evt){
 		var layer = getLayer(evt.target.id);
@@ -1003,6 +1523,140 @@ $(function(){
 	}
 	$id('stage').addEventListener('dragover', handleDragOver, false);
   	$id('stage').addEventListener('drop', handleFileSelect, false);
+  	//tranCiSSioner
+  	var currentTranCiSSioner = {target:null,name:'',x:0,y:0,css:''};
+  	$('#trancissioner_btn').click(function(evt){
+  		currentTranCiSSioner = {
+  			target:css.currentLayer,
+  			name:css.currentLayer.attr('id'),
+  			x:parseFloat(css.currentLayer.css('left')),
+  			y:parseFloat(css.currentLayer.css('top')),
+  			css:getElementClass(css.currentLayer,true)
+  		};
+  		$('#scene_element_txt').val(currentTranCiSSioner.name);
+  		$('#left_scene_txt').val(currentTranCiSSioner.x);
+  		$('#top_scene_txt').val(currentTranCiSSioner.y);
+  		$('.overlay').show();
+  		//console.log(currentTranCiSSioner);
+  	});
+  	$('.close').click(function(evt){
+  		$('.overlay').hide();
+  	});
+  	function sideMap(side, offset){
+  		var map = {
+			'tl' : {x:-offset, y:-offset},
+			'top': {x:0, y:-offset},
+			'tr' : {x:offset, y:-offset},
+			'left': {x:-offset, y:0},
+			'none': {x:0, y:0},
+			'right': {x:offset, y:0},
+			'bl': {x:-offset, y:offset},
+			'bottom': {x:0, y:offset},
+			'br': {x:0, y:offset}		
+  		};
+  		return map[side];
+  	}
+  	$('.create_btn').click(function(evt){
+  		/* tranCiSSioner MAGIC */
+  		var s = '',
+			_n = '\n',
+			_t = '\t';
+		/* RESTING POSITION */
+		var offsetIn = parseFloat($('#offset_in_txt').val());
+		var sideIn = $("input:radio[name=scene_in_rb]:checked").val();
+		var sideOut = $("input:radio[name=scene_out_rb]:checked").val();
+		var willChange = {'opacity':true, 'left': false, 'top': false};
+		var sm = sideMap(sideIn, offsetIn);
+		var sceneIn = $('#scene_in_txt').val();
+		var x1 = 0, y1 = 0, o1 = 0;
+		x1 = (currentTranCiSSioner.x + sm.x) + 'px';
+		y1 = (currentTranCiSSioner.y + sm.y) + 'px';
+		o1 = parseFloat($('#opacity_in_txt').val()) + '';
+		var tempIn = currentTranCiSSioner.css;
+		tempIn = tempIn.replace('@OPACITY@', o1);
+		tempIn = tempIn.replace('@LEFT@', x1);
+		tempIn = tempIn.replace('@TOP@', y1);
+		//will-change
+		var willChangeArr = ['opacity'];
+		if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br' || sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
+			willChangeArr.push('left','top');
+		}
+		if(sideIn == 'top' || sideIn == 'bottom' || sideOut == 'top' || sideOut == 'bottom'){
+			willChangeArr.push('top');
+		}
+		if(sideIn == 'left' || sideIn == 'right' || sideOut == 'left' || sideOut == 'right'){
+			willChangeArr.push('left');
+		}
+		tempIn = tempIn.replace('@WILL_CHANGE@', willChangeArr.join(', '));
+		s += tempIn;
+		/* SCENE IN */
+		s += '/* scene '+ sceneIn + ' ' + currentTranCiSSioner.name + ' APPEARS */' + _n;
+		willChange = {'opacity':true, 'left': false, 'top': false};
+		if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br'){
+			willChange.left = true;
+			willChange.top = true;
+		}else if(sideIn == 'top' || sideIn == 'bottom'){
+			willChange.top = true;
+		}else if(sideIn == 'left' || sideIn == 'right'){
+			willChange.left = true;
+		}
+		s += '.scene' + sceneIn  + ' .'+ currentTranCiSSioner.name + '{' + _n;
+		var transIn = [];
+		if(willChange.opacity){
+			s += _t + 'opacity: 1;' + _n;
+			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val()+ 's') ;
+		}
+		if(willChange.left){
+			s += _t + 'left: ' + $('#left_scene_txt').val() + 'px;' + _n;
+			transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val() + 's');
+		}
+		if(willChange.top){
+			s += _t + 'top: ' + $('#top_scene_txt').val() + 'px;' + _n;
+			transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val() + 's');
+		}
+		s += _t + 'transition: ' + transIn.join(', ') + ';' + _n;
+		s += _t + '-webkit-transition: ' + transIn.join(', ') + ';' + _n;
+		s += '}' + _n; 
+		/* SCENE OUT */
+		var offsetOut = parseFloat($('#offset_out_txt').val());
+		sm = sideMap(sideOut, offsetOut);
+		var sceneOut = $('#scene_out_txt').val();
+		var x2 = 0, y2 = 0, o2 = 0;
+		x2 = (currentTranCiSSioner.x + sm.x) + 'px';
+		y2 = (currentTranCiSSioner.y + sm.y) + 'px';
+		o2 = parseFloat($('#opacity_out_txt').val()) + '';
+		s += '/* scene '+ sceneOut + ' ' + currentTranCiSSioner.name + ' DISAPPEARS */' + _n;
+		s += '.scene' + sceneOut + ' .'+ currentTranCiSSioner.name +'{' + _n;
+		willChange = {'opacity':true, 'left': false, 'top': false};
+		if(sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
+			willChange.left = true;
+			willChange.top = true;
+		}else if(sideOut == 'top' || sideOut == 'bottom'){
+			willChange.top = true;
+		}else if(sideOut == 'left' || sideOut == 'right'){
+			willChange.left = true;
+		}
+		var transOut = [];
+		if(willChange.opacity){
+			s += _t + 'opacity: '+ o2 + ';' + _n;
+			transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
+		}
+		if(willChange.left){
+			s += _t + 'left: ' + x2 + ';'  + _n;
+			transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
+		}
+		if(willChange.top){
+			s += _t + 'top: ' + y2 + ';' + _n;
+			transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
+		}
+		s += _t + 'transition: ' + transOut.join(', ') + ';' + _n;
+		s += _t + '-webkit-transition: ' + transOut.join(', ') + ';' + _n;
+		s += '}' + _n; 
+		//fill
+		$('#transition_css_txt').val(s);
+		$('#transition_css_txt').select();
+		return s;
+  	});
 	//init
 	onHUDEvents();
 });
