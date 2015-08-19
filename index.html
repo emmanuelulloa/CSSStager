@@ -373,6 +373,7 @@
 			width: 100%;
 			height: 100%;
 			z-index: 999;
+			overflow: auto;
 		}
 		.overlay .close{
 			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQklEQVQYV5WQQQoAQAgC9f+PdulQVHRwuxQ5oEVJAgCSjL6r9BwueGgBXPDelV0Xun1GGrk23HP/g5a1dYz9HvfhD17FP/tzvfJcAAAAAElFTkSuQmCC);
@@ -485,7 +486,8 @@
 			border-radius: 15px;
 			padding: 1% 1% 2% 1%;
 			width: 70%;
-			height: 85%;
+			min-height: 85%;
+			height: auto;
 			margin: 2% auto;
 			display: none;
 			overflow: auto;
@@ -776,8 +778,15 @@
 			<div class="col2">
 				<span class="row">Vertical cut positions: <input id="ss_cuts_txt" value="" type="text" /></span>
 				<span class="row"><input type="checkbox" name="" id="ss_layered_ck"><label for="ss_layered_ck">Layered (elements will have the same 'y' position)</label></span>
+				<hr />
+				<span class="row"><input type="checkbox" name="" id="ss_transition_ck" checked ><label for="ss_transition_ck">Use opacity transitions:</label></span>
+				<span class="row">Scene IN <input type="number" id="ss_scene_in_txt" value="1" class="numberInput">| Scene OUT <input type="number" id="ss_scene_out_txt" value="2" class="numberInput"></span>
+				<span class="row">Staggered delay</span>
+				<span class="row">IN: <input type="number" id="ss_delay_in" step="0.1" min="0" value="0.5" class="numberInput"/>s | OUT:<input type="number" id="ss_delay_out" step="0.1" min="0" value="0.3" class="numberInput"/>s</span>
 				<span class="row"><a href="#" id="spriteSplicer_create_btn" class="create_btn">Create CSS</a></span>
-				<span class="row"><textarea id="ss_code_txt" cols="50" rows="20"></textarea></span>
+				<span class="row"><textarea id="ss_code_txt" cols="50" rows="15"></textarea></span>
+				<span class="row">Apply slice to current element:<input type="number" id="ss_slices" min="1" step="1" max="1" value="1" /> <a href="#" id="ss_apply" class="_btn">&lt; apply</a></span>
+				<hr />
 				<span class="row"><a href="#" id="ss_reset" class="_btn">reset</a></span>
 			</div>
 		</div>
@@ -1759,15 +1768,15 @@ $(function(){
 var $guide = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
 var currentSpriteSlice = {target:null,name:'', x:0, y:0, width:0, height:0, css:''};
 $('#spriteslicer_btn').click(function(evt){
-	$cuts.val('');
-	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER)
+	//$cuts.val('');
+	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 	currentSpriteSlice = {
 		target:css.currentLayer,
   		name:css.currentLayer.attr('id'),
   		x:parseFloat(css.currentLayer.css('left')),
   		y:parseFloat(css.currentLayer.css('top')),
-  		width:parseFloat(css.currentLayer.css('width')),
-  		height:parseFloat(css.currentLayer.css('height')),
+  		width:parseFloat($iLayer.css('width')),
+  		height:parseFloat($iLayer.css('height')),
   		image: $iLayer.css('background-image'),
   		bgSize: $iLayer.css('background-size')
 	};
@@ -1796,8 +1805,16 @@ $ss_container.on('click', function(evt){
 	var cuts = $cuts.val() + posY + ',';
 	$cuts.val(cuts);
 });
+var currentSlices;
+var $applyButton = $('#ss_apply');
+var $slices = $('#ss_slices');
 $('#spriteSplicer_create_btn').click(function(evt){
 	var layered = $('#ss_layered_ck').prop('checked');
+	var transition = $('#ss_transition_ck').prop('checked');
+	var sceneIn = $('#ss_scene_in_txt').val();
+	var sceneOut = $('#ss_scene_out_txt').val();
+	var staggerIn = parseFloat($('#ss_delay_in').val());
+	var staggerOut = parseFloat($('#ss_delay_out').val());
 	var cuts_arr = $cuts.val().split(',');
 	cuts_arr[cuts_arr.length - 1] = currentSpriteSlice.height;
 	var s = '',
@@ -1807,25 +1824,65 @@ $('#spriteSplicer_create_btn').click(function(evt){
 	var height = 0;
 	var offset = 0;
 	var last = cuts_arr.length;
+	currentSlices = []
 	for(var i=0; i < cuts_arr.length; i++){
+		var slice = {top:0,height:0,backgroundPositionY:0};
 		var val = parseInt(cuts_arr[i]);
+		var name = currentSpriteSlice.name + ( i + 1 );
 		height = (i != 0)?(val - parseInt(cuts_arr[i-1])): val;
-		s += '.' + currentSpriteSlice.name + ( i + 1 ) + '{' + _n;
+		s += '/* LAYER: ' + name + ' PROPERTIES */' + _n;
+		s += '.' + name + '{' + _n;
 		s += _t + 'display: block;' + _n;
 		s += _t + 'position: absolute;' + _n;
+		if(transition){
+			s += _t + 'opacity: 0;' + _n;
+		}else{
+			s += _t + 'opacity: 1;' + _n;
+		}
 		s += _t + 'left: ' + currentSpriteSlice.x + 'px;' + _n;
+		slice.top = pos;
 		s += _t + 'top: ' + pos + 'px;' + _n;
 		pos += (layered)?0:height;
 		s += _t + 'width: ' + currentSpriteSlice.width + 'px;' + _n;
+		slice.height = height;
 		s += _t + 'height: ' + height + 'px;' + _n;
 		s += _t + 'background-image: url('+ css.images[currentSpriteSlice.name] + ');' + _n;
 		s += _t + 'background-repeat: no-repeat;' + _n;
+		slice.backgroundPositionY = offset * -1;
 		s += _t + 'background-position: 0px ' + (offset * -1) + 'px;' + _n;
 		offset = val;
 		s += _t + 'background-size: ' + currentSpriteSlice.bgSize + ';' + _n;
 		s += '}' + _n;
+		if(transition){
+			s += '/* scene ' + sceneIn + ' ' + name + ' APPEARS */' + _n;
+			s += '.scene' + sceneIn + ' .' + name + '{' + _n;
+			s += _t + 'opacity: 1;' + _n;
+			var trans = 'transition: opacity 0.5s ease-out ' + ((i + 1) * staggerIn) + 's;' + _n;
+			s += _t + trans;
+			s += _t + '-webkit-' + trans;
+			s += '}' + _n;
+			s += '/* scene ' + sceneOut + ' ' + name + ' DISAPPEARS */' + _n;
+			s += '.scene' + sceneOut + ' .' + currentSpriteSlice.name + ( i + 1 ) + '{' + _n;
+			s += _t + 'opacity: 0;' + _n;
+			trans = 'transition: opacity 0.3s ease-in ' + (Math.round(((i + 1) * staggerOut)*100)/100) + 's;' + _n;
+			s += _t + trans;
+			s += _t + '-webkit-' + trans;
+			s += '}' + _n;
+		}
+		currentSlices.push(slice);
 	}
+	$slices.attr('max', currentSlices.length);
 	$('#ss_code_txt').val(s).select();
+});
+$applyButton.click(function(evt){
+	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+	var slice = currentSlices[parseInt($slices.val()) - 1];
+	$iLayer.css('background-position', '0px ' + slice.backgroundPositionY + 'px');
+	$iLayer.css('height', slice.height + 'px');
+	$('#' + css.currentLayer.attr('id')).css('top', slice.top + 'px');
+	updateHUD(css.currentLayer);
+	$('.overlay').hide();
+  	$('.spriteSlicer_tools').hide();
 });
 $('#ss_reset').click(function(evt){
 	$cuts.val('');
