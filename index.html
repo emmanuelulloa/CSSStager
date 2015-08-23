@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>CSSStager</title>
+	<title>ClaSSanimator :: HTML5 Banners made easy.</title>
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Chango' rel='stylesheet' type='text/css'>
+	<!-- CDN FOR LIVE SITE
 	<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	-->
+	<script src="js/jquery-1.11.3.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
 	<style type="text/css">
 		/*Reset*/
 		html, body, div, span, ul, li, p, h1, h2, h3{
@@ -65,24 +69,22 @@
 			display: block;
 			margin-bottom: 10px;
 		}
-		._btn {
+		.button {
 			background-color: gainsboro;
 			color:grey;
-			border-radius: 5px;
+			border-radius: 3px;
 			text-decoration: none;
-			padding-left: 3px;
-			padding-bottom: 1px;
-			padding-top: 1px;
-			padding-right: 3px;
+			padding: 1px 3px;
+			margin: 5px;
 			box-shadow: 0px 0px 3px #999;
 			transition: all 0.3s ease;
 			-webkit-transition: all 0.3s ease;
+			position: relative;
 			display: inline-block;
-			margin-bottom: 3px;
 			min-width: 120px;
 			text-align: center;
 		}
-		._btn:hover, ._btn:focus{
+		.button:hover, .button:focus{
 			box-shadow: 0px 0px 3px #FFF;
 			background-color: crimson;
 			color:white;
@@ -132,61 +134,15 @@
 	-webkit-animation-fill-mode: both;
 	-webkit-animation-play-state: running;
 }
-.titleChar:nth-child(1) {
-	animation-delay: 0ms;
-	-webkit-animation-delay: 0ms;
-}
-.titleChar:nth-child(2) {
-	animation-delay: 100ms;
-	-webkit-animation-delay: 100ms;
-}
-.titleChar:nth-child(3) {
-	animation-delay: 200ms;
-	-webkit-animation-delay: 200ms;
-}
-.titleChar:nth-child(4) {
-	color:crimson;
-	animation-delay: 300ms;
-	-webkit-animation-delay: 300ms;
-}
-.titleChar:nth-child(5) {
-	color:crimson;
-	animation-delay: 400ms;
-	-webkit-animation-delay: 400ms;
-}
-.titleChar:nth-child(6) {
-	color:crimson;
-	animation-delay: 500ms;
-	-webkit-animation-delay: 500ms;
-}
-.titleChar:nth-child(7) {
-	color:crimson;
-	animation-delay: 600ms;
-	-webkit-animation-delay: 600ms;
-}
-.titleChar:nth-child(8) {
-	color:crimson;
-	animation-delay: 700ms;
-	-webkit-animation-delay: 700ms;
-}
-.titleChar:nth-child(9) {
-	color:crimson;
-	animation-delay: 800ms;
-	-webkit-animation-delay: 800ms;
-}
-.titleChar:nth-child(10) {
-	animation-delay: 900ms;
-	-webkit-animation-delay: 900ms;
-}
-.titleChar:nth-child(11) {
-	animation-delay: 1000ms;
-	-webkit-animation-delay: 1000ms;
+.titleChar.colorized {
+	color: crimson;
 }
 .layer {
 	display: block;
 	cursor: pointer;
 	position: absolute;
 	opacity: 1;
+	border: 1px solid transparent;
 }
 .selected{
 	border:1px solid #00a8ff;
@@ -299,6 +255,13 @@
 			white-space: pre;
   			word-wrap: normal;
 			overflow: auto;
+			outline: none;
+		}
+		.output::selection{
+			color: skyblue;
+			background-color: #393939;
+			margin: 0;
+			padding: 0;
 		}
 		.controls {
 			border-radius: 10px;
@@ -326,7 +289,7 @@
 		}
 		.elements-properties{
 			display: none;
-			height: 375px;
+			height: 390px;
 		}
 		.hideOverflow {
 			overflow: hidden;
@@ -408,7 +371,7 @@
 			text-align: center;
 			border: 1px dashed #CCC;
 		}
-		.overlay .create_btn{
+		.overlay .app-button{
 			color: white;
 			background-color: #666;
 			border-radius: 5px;
@@ -434,7 +397,7 @@
 			border-radius: 15px;
 			padding: 1%;
 			width: 70%;
-			height: 85%;
+			height: 80%;
 			margin: 2% auto;
 			display: none;
 		}
@@ -473,10 +436,10 @@
 			width: 150px;
 			text-align: center;
 		}
-		.tranCiSSioner_tools .create_btn{
+		.tranCiSSioner_tools .app-button{
 			background-color: dodgerblue;
 		}
-		.tranCiSSioner_tools .create_btn:hover{
+		.tranCiSSioner_tools .app-button:hover{
 			background-color: skyblue;
 		}
 		/* spriteSlicer */
@@ -485,7 +448,7 @@
 			background-color: #FFF;
 			border-radius: 15px;
 			padding: 1% 1% 2% 1%;
-			width: 70%;
+			width: 90%;
 			min-height: 85%;
 			height: auto;
 			margin: 2% auto;
@@ -513,10 +476,10 @@
 			float: left;
 			display: inline-block;
 		}
-		.spriteSlicer_tools .create_btn{
+		.spriteSlicer_tools .app-button{
 			background-color: mediumseagreen;
 		}
-		.spriteSlicer_tools .create_btn:hover{
+		.spriteSlicer_tools .app-button:hover{
 			background-color: seagreen;
 		}
 		#ss_code_txt {
@@ -569,6 +532,26 @@
 			background-color: rgba(0,0,0,0.3);
 			font-family: courier, mono;
 		}
+		/* misc */
+		.ui-button, .ui-button:visited {
+			outline: none;
+			border: none;
+			display: inline-block;
+			text-align: center;
+			background-color: dodgerblue;
+			font-weight: bold;
+			font-size: 16px;
+			color: white;
+			border-radius: 50%;
+			width: 16px;
+			height: 16px;
+			text-decoration: none;
+			margin: 0;
+			padding: 1px;
+		}
+		.ui-button:hover, .ui-button:focus, .ui-button:active {
+			background-color: skyblue;
+		}
 	</style>
 </head>
 <body>
@@ -578,7 +561,7 @@
 			<h1>tran<span class="blueText">C</span>i<span class="blueText">SS</span>ioner</h1>
 			<div id="tranCiSSioner_close" class="close"></div>
 			<div class="col1">
-				<span class="row"><label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'></span>
+				<span class="row"><label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'> <a href="#" id="ss_next_scene" class="ui-button">+</a> </span>
 				<hr />
 				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_in_txt" value="0" class='numberInput'></span>
 				<div class="position_scene">
@@ -604,7 +587,7 @@
 				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_in_txt" type="number" value="10" class='numberInput' />px</span>
 				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span>
 				<hr />
-				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
 					<select id="ease_in_sl">
 						<option value="ease">ease</option>
@@ -652,7 +635,7 @@
 						</optgroup>
 					</select>
 				</span>
-				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
 			</div>
 			<div class="col2">
 				<!-- ELEMENT PROPERTIES & ANIMATIONS -->
@@ -677,7 +660,7 @@
 				</span-->
 			</div>
 			<div class="col3">
-				<span class="row"><label for="" class="lbl">Scene <strong>OUT</strong>:</label> <input id="scene_out_txt" type="number" min="1" step="1" value="2" class='numberInput'></span>
+				<span class="row"><label for="" class="lbl">Scene <strong>OUT</strong>:</label> <input id="scene_out_txt" type="number" min="0" step="1" value="2" class='numberInput'></span>
 				<hr />
 				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_out_txt" value="0" class='numberInput'></span>
 				<div class="position_scene">
@@ -703,7 +686,7 @@
 				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_out_txt" type="number" value="10" class='numberInput' />px</span>
 				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span>
 				<hr />
-				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
 					<select id="ease_out_sl">
 						<option value="ease">ease</option>
@@ -751,11 +734,11 @@
 						</optgroup>
 					</select>
 				</span>
-				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" step="0.1" class='numberInput'>s</span>
 			</div>
 			<div class="bottom">
-				<a href="#" id="tranCiSSioner_create_btn" class="create_btn">Create CSS</a>
-				<textarea name="" id="transition_css_txt" cols="30" rows="10"></textarea>
+				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
+				<textarea id="transition_css_txt" class="output" cols="30" rows="10"></textarea>
 			<ul>
 				<li><a href="https://www.google.com/design/spec/animation/authentic-motion.html#authentic-motion-mass-weight" target="_blank">Animation guidelines by Google</a></li>
 				<li><a href="https://developers.google.com/web/fundamentals/look-and-feel/animations/?hl=en" target="_blank">Web Fundamentals: Animations by Google</a></li>
@@ -771,7 +754,7 @@
 				<div class="ss_container">
 					<div class="ss_image"></div>
 					<div class="ss_guide">
-						y:0px
+						x:0px y:0px
 					</div>
 				</div>
 			</div>
@@ -783,21 +766,22 @@
 				<span class="row">Scene IN <input type="number" id="ss_scene_in_txt" value="1" class="numberInput">| Scene OUT <input type="number" id="ss_scene_out_txt" value="2" class="numberInput"></span>
 				<span class="row">Staggered delay</span>
 				<span class="row">IN: <input type="number" id="ss_delay_in" step="0.1" min="0" value="0.5" class="numberInput"/>s | OUT:<input type="number" id="ss_delay_out" step="0.1" min="0" value="0.3" class="numberInput"/>s</span>
-				<span class="row"><a href="#" id="spriteSplicer_create_btn" class="create_btn">Create CSS</a></span>
-				<span class="row"><textarea id="ss_code_txt" cols="50" rows="15"></textarea></span>
-				<span class="row">Apply slice to current element:<input type="number" id="ss_slices" min="1" step="1" max="1" value="1" /> <a href="#" id="ss_apply" class="_btn">&lt; apply</a></span>
+				<span class="row"><a href="#" id="spriteSplicer_app-button" class="app-button">Create CSS</a></span>
+				<span class="row"><textarea id="ss_code_txt" class="output" cols="50" rows="15"></textarea></span>
+				<span class="row">Apply slice to current element:<input type="number" id="ss_slices" min="1" step="1" max="1" value="1" /> <a href="#" id="ss_apply" class="button">&lt; apply</a></span>
 				<hr />
-				<span class="row"><a href="#" id="ss_reset" class="_btn">reset</a></span>
+				<span class="row"><a href="#" id="ss_reset" class="button">reset</a></span>
 			</div>
 		</div>
 	</div>
 	<div class="shell">
 		<div class="tools">
-			<h1 class="logo"><span class="titleChar">C</span><span class="titleChar">S</span><span class="titleChar">S</span><span class="titleChar">S</span><span class="titleChar">t</span><span class="titleChar">a</span><span class="titleChar">g</span><span class="titleChar">e</span><span class="titleChar">r</span></h1>
-			<p class='tagline'>Set DOM elements as you need them before starting your animations.</p>
+			<h1 class="logo"> 
+			<span class="titleChar colorized">C</span><span class="titleChar">l</span><span class="titleChar">a</span><span class="titleChar colorized">S</span><span class="titleChar colorized">S</span><span class="titleChar">a</span><span class="titleChar">n</span><span class="titleChar">i</span><span class="titleChar">m</span><span class="titleChar">a</span><span class="titleChar">t</span><span class="titleChar">o</span><span class="titleChar">r</span></h1>
+			<p class='tagline'>HTML5 Banner animations made easy.</p>
 			<div class="controls document-properties">
 				<h2>Document Properties</h2>
-				<span class="row">Background/Guide Image: <input type='file' accept='image/*' id='guide_fl' class='_btn dropTarget' /></span>
+				<span class="row">Background/Guide Image: <input type='file' accept='image/*' id='guide_fl' class='button dropTarget' /></span>
 				<span class="row">Banner size:
 					<select name="size_sl" id="size_sl">
 						<optgroup label='Select size:'>
@@ -836,6 +820,7 @@
 					<span class="row"><label for="left_txt">X:</label> <input id="left_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_txt"> Y:</label> <input id="top_txt" type="number" size="4" value='0' class="numberInput" /></span>
 					<span class="row">Element alignment: 
 						<select name="align_sl" id="align_sl">
+							<option value="" selected >Select</option>
 							<option value="top">top</option>
 							<option value="bottom">bottom</option>
 							<option value="left">left</option>
@@ -850,8 +835,8 @@
 					<span class="row"><strong>Element background info:</strong></span>
 					<span class="row"><label for="bgx_txt">X:</label> <input id="bgx_txt" type="number" size="4" value='0' class="numberInput" /><label for="bgy_txt"> Y:</label> <input id="bgy_txt" type="number" size="4" value='0' class="numberInput" /></span>
 					<span class="row"><label for="bgw_txt">W:</label> <input id="bgw_txt" type="number" size="4" value='0' min="0" class="numberInput" /><label for="bgh_txt"> H:</label> <input id="bgh_txt" type="number" size="4" value='0' min="0" class="numberInput" /></span>
-					<span class="row"><a href="#" id="trancissioner_btn" class="_btn">Launch tranCiSSioner</a></span>
-					<span class="row"><a href="#" id="spriteslicer_btn" class="_btn">Launch SpriteSlicer</a></span>
+					<span class="row"><a href="#" id="trancissionerbutton" class="button">Launch tranCiSSioner</a></span>
+					<span class="row"><a href="#" id="spriteslicerbutton" class="button">Launch SpriteSlicer</a></span>
 				</div>
 				<div class="right">
 					<h2>Transform:</h2>
@@ -862,6 +847,7 @@
 					<span class="row"><label for="scx_txt">Scale X:</label> <input id="scx_txt" type="number" size="4" value='1' class="numberInput" /><label for="scy_txt"> Scale Y:</label> <input id="scy_txt" type="number" size="4" value='1' class="numberInput" /></span>
 					<span class="row"><label for="x_txt">Translate X:</label> <input id="x_txt" type="number" size="4" value='0' class="numberInput" />px</span>
 					<span class="row"><label for="y_txt">Translate Y:</label> <input id="y_txt" type="number" size="4" value='0' class="numberInput" />px</span>
+					<span class="row"><a href="#" id="switchLT2T" class="button">Switch left/top to translate</a></span>
 					<div class="block-row">
 						<h2>Transform Origin</h2>
 						<div class="to_md">
@@ -872,17 +858,16 @@
 						<span class="row"><label for="toy_txt">Y:</label> <input id="toy_txt" type="number" size="4" value='0' class="numberInput" /> px</span>	
 						</div>
 					</div>
-					<span class="row"><a href="#" id="reset_btn" class="_btn">RESET</a></span>
+					<span class="row"><a href="#" id="resetbutton" class="button">RESET</a></span>
 				</div>
 			</div>
-		<p>Get your code (html/css):</p>
-		<p><input id="onlycss_ck" type="checkbox" checked />Only CSS</p>
+		<div class="row">Get your code (html/css):<input id="onlycss_ck" type="checkbox" checked />Only CSS<a href="#" id="create_btn" class="button">Create CSS</a></div>
 		<div class="row">
 			<textarea name="htmlOutput" id="htmlOutput_txt" class="output" cols="15" rows="10"></textarea>
 		</div>
 		<p class="footer">&copy;2015 Emmanuel Ulloa</p>
 		</div>
-		<div class="stage-container">
+		<div id="stage-container" class="stage-container">
 			<div id="stage" class="stage"></div>
 		</div>
 	</div>
@@ -1301,6 +1286,22 @@ $(function(){
 			}
 			updateHUD(css.currentLayer);
 		});
+		$('#switchLT2T').click(function(evt){
+			var $x = $('#left_txt'), $y = $('#top_txt'), $tx = $('#x_txt'), $ty = $('#y_txt');
+			$tx.val($x.val());
+			$ty.val($y.val());
+			$x.val('0');
+			$y.val('0');
+			css.currentLayer.css('top', '0px');
+			css.currentLayer.css('left', '0px');
+			setTranslate({x:parseFloat($tx.val()),y:parseFloat($ty.val())});
+			evt.preventDefault();
+		});
+		$('#create_btn').click(function(evt){
+			$('#htmlOutput_txt').val(createHTML());
+			$('#htmlOutput_txt').select();
+			evt.preventDefault();
+		});
 		$(document).keyup(function(evt){
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
@@ -1370,7 +1371,7 @@ $(function(){
 			}
 			return false;
 		});/**/
-		$('#reset_btn').click(function(evt){
+		$('#resetbutton').click(function(evt){
 			var name = css.currentLayer.attr('id');
 			var layerTransform = css.layerTransforms[name];
 			var $iLayer = $('#' + name + I_LAYER);
@@ -1385,6 +1386,20 @@ $(function(){
 		$('#htmlOutput').click(function(evt){
 			$(this).select();
 		})
+	}
+	function setTranslate(val){
+		var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+		var layerTransform = css.layerTransforms[css.currentLayer.attr('id')];
+		if(!layerTransform.translate){
+			layerTransform.translate = {x:0,y:0};
+		}
+		layerTransform.translate.x = val.x;
+		layerTransform.translate.y = val.y;
+		var ct = createTransform(layerTransform);
+		console.log(ct);
+		$iLayer.css('transform', ct);
+		$iLayer.css('-webkit-transform', ct);
+		updateHUD(css.currentLayer);
 	}
   	function createTransform(o){
 		var s = '';
@@ -1504,9 +1519,11 @@ $(function(){
 			if(transform != 'none'){
 				s += _t + 'transform: ' + transform + ';' + _n;
 				s += _t + '-webkit-transform: ' + transform + ';' + _n;
+				s += _t + '-ms-transform: ' + transform + ';' + _n;
 			}
 			s += _t + 'transform-origin: ' + to + ';' + _n;
 			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
+			s += _t + '-ms-transform-origin: ' + to + ';' + _n;
 			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
 			s += '}' + _n;		
 		return s;
@@ -1519,6 +1536,15 @@ $(function(){
 		for(var i = 0; i < css.layers.length; i++){
 			s += getElementClass($(css.layers[i]));
 		}
+		s += 'html, body {' + _n;
+		s += _t + 'margin: 0;' + _n;
+		s += _t + 'padding: 0;' + _n;
+		s += '}' + _n;
+		s += 'a {' + _n;
+		s += _t + 'text-decoration: none;' + _n;
+		s += _t + 'color: #000;' + _n;
+		s += _t + 'border: none;' + _n;
+		s += '}' + _n;
 		s += '.banner {' + _n;
 		s += _t + 'display: block;' + _n;
 		s += _t + 'position: absolute;' + _n;
@@ -1530,9 +1556,11 @@ $(function(){
 			s += _t + 'background-image: url(' + css.background.file.name + ');' + _n;
 			s += _t + 'background-repeat: no-repeat;' + _n;
 		}
-		s += _t + 'border: 1px solid '+css.container.borderColor+';' + _n;
+		s += _t + 'border: 1px solid ' + css.container.borderColor + ';' + _n;
+		s += _t + 'cursor: pointer;' + _n;
 		s += _t + 'transform-style: preserve-3d;' + _n;
 		s += _t + '-webkit-transform-style: preserve-3d;' + _n;
+		s += _t + '-ms-transform-style: preserve-3d;' + _n;
 		s += '}' + _n;	
 		return s;	
 	}
@@ -1600,9 +1628,11 @@ $(function(){
 	}
 	$id('stage').addEventListener('dragover', handleDragOver, false);
   	$id('stage').addEventListener('drop', handleFileSelect, false);
+  	$id('stage-container').addEventListener('dragover', handleDragOver, false);
+  	$id('stage-container').addEventListener('drop', handleFileSelect, false);
   	//tranCiSSioner
   	var currentTranCiSSioner = {target:null,name:'',x:0,y:0,css:''};
-  	$('#trancissioner_btn').click(function(evt){
+  	$('#trancissionerbutton').click(function(evt){
   		currentTranCiSSioner = {
   			target:css.currentLayer,
   			name:css.currentLayer.attr('id'),
@@ -1639,7 +1669,13 @@ $(function(){
   		currentTranCiSSioner.css = currentTranCiSSioner.css.replace('.' + currentTranCiSSioner.name, '.' + nn);
   		currentTranCiSSioner.name = nn;
   	});
-  	$('#tranCiSSioner_create_btn').click(function(evt){
+  	$('#ss_next_scene').click(function(evt){
+  		var $sceneIn = $('#scene_in_txt'), $sceneOut = $('#scene_out_txt'), next = parseInt($sceneIn.val());
+  		$sceneIn.val(next + 1);
+  		$sceneOut.val(next + 2);
+  		evt.preventDefault();
+  	});
+  	$('#tranCiSSioner_app-button').click(function(evt){
   		/* tranCiSSioner MAGIC */
   		var s = '',
 			_n = '\n',
@@ -1696,78 +1732,84 @@ $(function(){
 		var transIn = [];
 		if(willChange.opacity){
 			s += _t + 'opacity: 1;' + _n;
-			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val()+ 's') ;
+			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's')) ;
 		}
 		if(willChange.left){
 			s += _t + 'left: ' + $('#left_scene_txt').val() + 'px;' + _n;
-			transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val() + 's');
+			transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
 		}
 		if(willChange.top){
 			s += _t + 'top: ' + $('#top_scene_txt').val() + 'px;' + _n;
-			transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val() + 's');
+			transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
 		}
 		if(willChange.transform){
 			s += _t + 'transform: ' + transformIn + ';' + _n;
 			s += _t + '-webkit-transform: ' + transformIn + ';' + _n;
-			transIn.push ('transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val() + 's');
-			transIn.push ('-webkit-transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_in_txt').val() + 's');
+			s += _t + '-ms-transform: ' + transformIn + ';' + _n;
+			transIn.push ('transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+			transIn.push ('-webkit-transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+			transIn.push ('-ms-transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
 		}
 		s += _t + 'transition: ' + transIn.join(', ') + ';' + _n;
 		s += _t + '-webkit-transition: ' + transIn.join(', ') + ';' + _n;
 		s += '}' + _n; 
 		/* SCENE OUT */
-		var offsetOut = parseFloat($('#offset_out_txt').val());
-		sm = sideMap(sideOut, offsetOut);
 		var sceneOut = $('#scene_out_txt').val();
-		var x2 = 0, y2 = 0, o2 = 0;
-		x2 = (currentTranCiSSioner.x + sm.x) + 'px';
-		y2 = (currentTranCiSSioner.y + sm.y) + 'px';
-		o2 = parseFloat($('#opacity_out_txt').val()) + '';
-		s += '/* scene '+ sceneOut + ' ' + currentTranCiSSioner.name + ' DISAPPEARS */' + _n;
-		s += '.scene' + sceneOut + ' .'+ currentTranCiSSioner.name +'{' + _n;
-		willChange = {'opacity':true, 'left': false, 'top': false};
-		if(sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
-			willChange.left = true;
-			willChange.top = true;
-		}else if(sideOut == 'top' || sideOut == 'bottom'){
-			willChange.top = true;
-		}else if(sideOut == 'left' || sideOut == 'right'){
-			willChange.left = true;
+		if(sceneOut != '0'){
+			var offsetOut = parseFloat($('#offset_out_txt').val());
+			sm = sideMap(sideOut, offsetOut);
+			var x2 = 0, y2 = 0, o2 = 0;
+			x2 = (currentTranCiSSioner.x + sm.x) + 'px';
+			y2 = (currentTranCiSSioner.y + sm.y) + 'px';
+			o2 = parseFloat($('#opacity_out_txt').val()) + '';
+			s += '/* scene '+ sceneOut + ' ' + currentTranCiSSioner.name + ' DISAPPEARS */' + _n;
+			s += '.scene' + sceneOut + ' .'+ currentTranCiSSioner.name +'{' + _n;
+			willChange = {'opacity':true, 'left': false, 'top': false};
+			if(sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
+				willChange.left = true;
+				willChange.top = true;
+			}else if(sideOut == 'top' || sideOut == 'bottom'){
+				willChange.top = true;
+			}else if(sideOut == 'left' || sideOut == 'right'){
+				willChange.left = true;
+			}
+			if(transformOut != ''){
+				willChange.transform = true;
+			}
+			var transOut = [];
+			if(willChange.opacity){
+				s += _t + 'opacity: '+ o2 + ';' + _n;
+				transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+			}
+			if(willChange.left){
+				s += _t + 'left: ' + x2 + ';'  + _n;
+				transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+			}
+			if(willChange.top){
+				s += _t + 'top: ' + y2 + ';' + _n;
+				transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+			}
+			if(willChange.transform){
+				s += _t + 'transform: ' + transformOut + ';' + _n;
+				s += _t + '-webkit-transform: ' + transformOut + ';' + _n;
+				s += _t + '-ms-transform: ' + transformOut + ';' + _n;
+				transOut.push ('transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				transOut.push ('-webkit-transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				transOut.push ('-ms-transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+			}
+			s += _t + 'transition: ' + transOut.join(', ') + ';' + _n;
+			s += _t + '-webkit-transition: ' + transOut.join(', ') + ';' + _n;
+			s += '}' + _n;			
 		}
-		if(transformOut != ''){
-			willChange.transform = true;
-		}
-		var transOut = [];
-		if(willChange.opacity){
-			s += _t + 'opacity: '+ o2 + ';' + _n;
-			transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
-		}
-		if(willChange.left){
-			s += _t + 'left: ' + x2 + ';'  + _n;
-			transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
-		}
-		if(willChange.top){
-			s += _t + 'top: ' + y2 + ';' + _n;
-			transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
-		}
-		if(willChange.transform){
-			s += _t + 'transform: ' + transformOut + ';' + _n;
-			s += _t + '-webkit-transform: ' + transformOut + ';' + _n;
-			transOut.push ('transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
-			transOut.push ('-webkit-transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ' ' + $('#delay_out_txt').val() + 's');
-		}
-		s += _t + 'transition: ' + transOut.join(', ') + ';' + _n;
-		s += _t + '-webkit-transition: ' + transOut.join(', ') + ';' + _n;
-		s += '}' + _n; 
 		//fill
 		$('#transition_css_txt').val(s);
 		$('#transition_css_txt').select();
 		return s;
   	});
 //Sprite Slicer
-var $guide = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
+var $guideY = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
 var currentSpriteSlice = {target:null,name:'', x:0, y:0, width:0, height:0, css:''};
-$('#spriteslicer_btn').click(function(evt){
+$('#spriteslicerbutton').click(function(evt){
 	//$cuts.val('');
 	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 	currentSpriteSlice = {
@@ -1797,8 +1839,9 @@ $('#spriteSlicer_close').click(function(evt){
 //follow mouse
 $ss_container.on('mousemove', function(evt){
 	var posY = Math.round(evt.pageY - $ss_container.offset().top);
-	$guide.text('y: ' + posY + 'px')
-	$guide.css('top', posY + 'px');
+	var posX = Math.round(evt.pageX - $ss_container.offset().left);
+	$guideY.text('x: ' + posX +' - y: ' + posY + 'px')
+	$guideY.css('top', posY + 'px');
 });
 $ss_container.on('click', function(evt){
 	var posY = Math.round(evt.pageY - $ss_container.offset().top);
@@ -1808,7 +1851,7 @@ $ss_container.on('click', function(evt){
 var currentSlices;
 var $applyButton = $('#ss_apply');
 var $slices = $('#ss_slices');
-$('#spriteSplicer_create_btn').click(function(evt){
+$('#spriteSplicer_app-button').click(function(evt){
 	var layered = $('#ss_layered_ck').prop('checked');
 	var transition = $('#ss_transition_ck').prop('checked');
 	var sceneIn = $('#ss_scene_in_txt').val();
