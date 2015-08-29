@@ -160,11 +160,23 @@
 	width: 100%;
 	margin-bottom: 5px;
 }
-.dropTarget {
+.dropTarget{
 	display: block;
-	width: auto;
+	float: left;
+	clear: both;
+	width: 90%;
+	min-width: 200px;
 	height: 20px;
-	margin: 5px 0 5px;
+	margin: 2%;
+	padding: 3%;
+	border: 1px solid #CCC;
+	border-radius: 10px;
+	background-color: #DEDEDE;
+	transition: background-color 0.3s ease-out;
+	-webkit-transition: background-color 0.3s ease-out;
+}
+.dropTarget:hover {
+	background-color: crimson;
 }
 .to_md {
 	display: inline-block;
@@ -243,6 +255,27 @@
 	margin-top: 10%;
 	margin-bottom: 10%;
 }
+.ui-info{
+	background-color: black;
+	color: #333;
+	border-radius: 10px;
+	font-size: 115%;
+	height: 20px;
+	font-weight: bold;
+	margin: 3px 0;
+	padding: 2px;
+	text-align: center;
+	border: 1px solid #ddd;
+	box-shadow: 0px 0px 3px #999;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f1f1f1+50,e1e1e1+51,f6f6f6+100;White+Gloss+%231 */
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f1f1f1), color-stop(51%,#e1e1e1), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* W3C */
+}
 		.output{
 			font-family: "Courier New", Courier, monospace;
 			width: 97%;
@@ -285,7 +318,7 @@
 		}
 		.document-properties{
 			display: block;
-			height: 180px;
+			min-height: 180px;
 		}
 		.elements-properties{
 			display: none;
@@ -557,6 +590,12 @@
 <body>
 	<div class="app">
 	<div class="overlay">
+		<!-- css vcam 
+		http://archive.oreilly.com/pub/a/javascript/2004/08/17/flashhacks.html?page=1
+		http://bitey.com/smf/index.php?topic=705.0
+		http://flixel.org/docs/org/flixel/FlxCamera.html
+		http://www.flashkit.com/movies/Components/Flash_V--_redesig-10378/index.php
+		-->
 		<div class="tranCiSSioner_tools">
 			<h1>tran<span class="blueText">C</span>i<span class="blueText">SS</span>ioner</h1>
 			<div id="tranCiSSioner_close" class="close"></div>
@@ -781,7 +820,8 @@
 			<p class='tagline'>HTML5 Banner animations made easy.</p>
 			<div class="controls document-properties">
 				<h2>Document Properties</h2>
-				<span class="row">Background/Guide Image: <input type='file' accept='image/*' id='guide_fl' class='button dropTarget' /></span>
+				<span class="row">Background/Guide Image: </span>
+				<span class="row"><input type='file' accept='image/*' id='guide_fl' class='dropTarget' /></span>
 				<span class="row">Banner size:
 					<select name="size_sl" id="size_sl">
 						<optgroup label='Select size:'>
@@ -813,6 +853,9 @@
 				<span class="row">Background Color: <input id="bgColor_txt" type="text" value="#FFF" class='numberInput' /> Border Color: <input id="borderColor_txt" type="text" value="#666" class='numberInput' /></span>
 				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label></span>
 			</div>
+			<div class="ui-info">
+				x: 0px - y: 0px
+			</div>
 			<div class="controls elements-properties">
 				<div class="left">
 					<h2 id="element_lbl">Element: ?</h2>
@@ -835,8 +878,8 @@
 					<span class="row"><strong>Element background info:</strong></span>
 					<span class="row"><label for="bgx_txt">X:</label> <input id="bgx_txt" type="number" size="4" value='0' class="numberInput" /><label for="bgy_txt"> Y:</label> <input id="bgy_txt" type="number" size="4" value='0' class="numberInput" /></span>
 					<span class="row"><label for="bgw_txt">W:</label> <input id="bgw_txt" type="number" size="4" value='0' min="0" class="numberInput" /><label for="bgh_txt"> H:</label> <input id="bgh_txt" type="number" size="4" value='0' min="0" class="numberInput" /></span>
-					<span class="row"><a href="#" id="trancissionerbutton" class="button">Launch tranCiSSioner</a></span>
-					<span class="row"><a href="#" id="spriteslicerbutton" class="button">Launch SpriteSlicer</a></span>
+					<span class="row"><a href="#" id="trancissionerbutton" class="button">tranCiSSioner</a></span>
+					<span class="row"><a href="#" id="spriteslicerbutton" class="button">SpriteSlicer</a></span>
 				</div>
 				<div class="right">
 					<h2>Transform:</h2>
@@ -887,6 +930,7 @@ $(function(){
 		currentLayer : null
 	}
 	var $stage = $('#stage'),
+		$uiInfo = $('.ui-info'),
 		$size_sl = $('#size_sl'),
 		$width_txt = $('#width_txt'),
 		$height_txt = $('#height_txt'),
@@ -1005,6 +1049,7 @@ $(function(){
 	function selectLayer(el){
 		deselect();
 		css.currentLayer = $(el);
+		css.currentLayer.focus();
 		css.currentLayer.addClass('selected');
 		css.currentLayer.css('z-index',getNextHighestDepth());
 		updateHUD(css.currentLayer);
@@ -1068,6 +1113,11 @@ $(function(){
 		$('#htmlOutput_txt').val(createHTML());
 	}
 	function onHUDEvents(){
+		$stage.on('mousemove', function(evt){
+			var posX = Math.round(evt.pageX - $stage.offset().left);
+			var posY = Math.round(evt.pageY - $stage.offset().top);
+			$uiInfo.text('x: ' + posX + ' - y: ' + posY);
+		});
 		$('.to_md').click(function(evt){
 			if(evt.target === this){
 				evt = evt || window.event;
@@ -1873,6 +1923,7 @@ $('#spriteSplicer_app-button').click(function(evt){
 		var val = parseInt(cuts_arr[i]);
 		var name = currentSpriteSlice.name + ( i + 1 );
 		height = (i != 0)?(val - parseInt(cuts_arr[i-1])): val;
+		s += '/* SPRITES: ' + $cuts.val() + ' */' + _n;
 		s += '/* LAYER: ' + name + ' PROPERTIES */' + _n;
 		s += '.' + name + '{' + _n;
 		s += _t + 'display: block;' + _n;
