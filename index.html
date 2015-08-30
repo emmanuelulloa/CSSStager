@@ -257,14 +257,13 @@
 }
 .ui-info{
 	background-color: black;
-	color: #333;
 	border-radius: 10px;
-	font-size: 115%;
+	font-size: 95%;
 	height: 20px;
 	font-weight: bold;
 	margin: 3px 0;
-	padding: 2px;
-	text-align: center;
+	padding: 5px;
+	text-align: left;
 	border: 1px solid #ddd;
 	box-shadow: 0px 0px 3px #999;
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f1f1f1+50,e1e1e1+51,f6f6f6+100;White+Gloss+%231 */
@@ -778,10 +777,10 @@
 			<div class="bottom">
 				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
 				<textarea id="transition_css_txt" class="output" cols="30" rows="10"></textarea>
-			<ul>
+			<!--ul>
 				<li><a href="https://www.google.com/design/spec/animation/authentic-motion.html#authentic-motion-mass-weight" target="_blank">Animation guidelines by Google</a></li>
 				<li><a href="https://developers.google.com/web/fundamentals/look-and-feel/animations/?hl=en" target="_blank">Web Fundamentals: Animations by Google</a></li>
-			</ul>				
+			</ul -->				
 			</div>
 
 		</div>
@@ -850,11 +849,15 @@
 				<span class="row">
 					Custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' />
 				</span>
-				<span class="row">Background Color: <input id="bgColor_txt" type="text" value="#FFF" class='numberInput' /> Border Color: <input id="borderColor_txt" type="text" value="#666" class='numberInput' /></span>
+				<span class="row">Background Color: <input id="bgColor_txt" type="color" value="#FFFFFF" class='numberInput' /> Border Color: <input id="borderColor_txt" type="color" value="#666666" class='numberInput' /></span>
 				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label></span>
 			</div>
 			<div class="ui-info">
-				x: 0px - y: 0px
+				Select element: 
+				<select id="elem_sl">
+					<option value="">Select</option>
+				</select>
+				<span class="ui-pos">x: 0px - y: 0px</span>
 			</div>
 			<div class="controls elements-properties">
 				<div class="left">
@@ -897,14 +900,24 @@
 							<div class="to_marker"></div>
 						</div>
 						<div class="to_ctrl">
-						<span class="row"><label for="tox_txt">X:</label> <input id="tox_txt" type="number" size="4" value='0' class="numberInput" /> px</span>
-						<span class="row"><label for="toy_txt">Y:</label> <input id="toy_txt" type="number" size="4" value='0' class="numberInput" /> px</span>	
+						<span class="row">
+							<select name="toPos_sl" id="toPos_sl">
+							<option value="50% 50%" selected >center</option>
+							<option value="50% 0%">top</option>
+							<option value="50% 100%">bottom</option>
+							<option value="0% 50%">left</option>
+							<option value="100% 50%">right</option>
+							</select>
+						</span>
+						<span class="row"><label for="tox_txt">X:</label> <input id="tox_txt" type="text" size="4" value='0' class="numberInput" /></span>
+						<span class="row"><label for="toy_txt">Y:</label> <input id="toy_txt" type="text" size="4" value='0' class="numberInput" /></span>	
 						</div>
 					</div>
 					<span class="row"><a href="#" id="resetbutton" class="button">RESET</a></span>
 				</div>
 			</div>
-		<div class="row">Get your code (html/css):<input id="onlycss_ck" type="checkbox" checked />Only CSS<a href="#" id="create_btn" class="button">Create CSS</a></div>
+		<div class="row">Get your code (html/css):<input id="onlycss_ck" type="checkbox" checked /><label for="onlycss_ck">Only CSS</label> | <input type="checkbox" id="toPos_ck" checked /><label for="toPos_ck">Transform Origin in %</label></div>
+		<div class="row"><a href="#" id="create_btn" class="button">Create CSS</a></div>
 		<div class="row">
 			<textarea name="htmlOutput" id="htmlOutput_txt" class="output" cols="15" rows="10"></textarea>
 		</div>
@@ -930,7 +943,7 @@ $(function(){
 		currentLayer : null
 	}
 	var $stage = $('#stage'),
-		$uiInfo = $('.ui-info'),
+		$uiPos = $('.ui-pos'),
 		$size_sl = $('#size_sl'),
 		$width_txt = $('#width_txt'),
 		$height_txt = $('#height_txt'),
@@ -1005,6 +1018,7 @@ $(function(){
 							selectLayer(getLayer(name));
 							openTools();
 						}
+						populateSelectMenu();
 					}
 				})(file);
 				reader.readAsDataURL(file);
@@ -1074,8 +1088,11 @@ $(function(){
 		$('#bgx_txt').val(bgpos[0].replace('px',''));
 		$('#bgy_txt').val(bgpos[1].replace('px',''));
 		//Transform Origin thumbnail
-		var w = parseFloat($iLayer.css('width')), h = parseFloat($iLayer.css('height'));
-		var b = Math.max(w,h), ratio = 1, bgSize = {width:100,height:100};
+		var w = parseFloat($iLayer.css('width')), 
+			h = parseFloat($iLayer.css('height')), 
+			b = Math.max(w,h), 
+			ratio = 1, 
+			bgSize = {width:100,height:100};
 		if(b == w){
 			ratio = (100/w);
 			bgSize.height = ratio * h;
@@ -1086,29 +1103,43 @@ $(function(){
 		$('.to_md').css('background-image', $iLayer.css('background-image'));
 		$('.to_md').css('background-repeat', 'no-repeat');
 		$('.to_md').css('background-size', bgSize.width + 'px ' + bgSize.height + 'px');
-		var to = $iLayer.css('transform-origin').split(' ');
+		var to = getElementProp($layer, 'transform-origin').split(' ');//$iLayer.css('transform-origin').split(' ');
+		$('#tox_txt').val(to[0]);
+		$('#toy_txt').val(to[1]);
 		var tox = parseFloat(to[0]);
 		var toy = parseFloat(to[1]);
-		$('#tox_txt').val(tox);
-		$('#toy_txt').val(toy);
-		var rx = tox/w;
-		var ry = toy/h;
-		$('.to_marker').css('left',Math.round(rx * bgSize.width) + 'px');
-		$('.to_marker').css('top',Math.round(ry * bgSize.height) + 'px');
+		var rx = tox/w, ry = toy/h;
+		$('.to_marker').css('left', Math.round(rx * bgSize.width) + 'px');
+		$('.to_marker').css('top', Math.round(ry * bgSize.height) + 'px');
 		//TRANSFORMS
+		if(layerTransform.translate){
+			$('#x_txt').val(layerTransform.translate.x);
+			$('#y_txt').val(layerTransform.translate.y);
+		}else{
+			$('#x_txt').val('0');
+			$('#y_txt').val('0');
+		}
 		if(layerTransform.scale){
 			if(layerTransform.scale.x == layerTransform.scale.y){
 				$('#sc_rng').val((layerTransform.scale.x * 100));
 			}
 			$('#scx_txt').val(parseFloat(layerTransform.scale.x));
 			$('#scy_txt').val(parseFloat(layerTransform.scale.y));
+		}else{
+			$('#scx_txt').val('1');
+			$('#scy_txt').val('1');
 		}
 		if(layerTransform.rotate){
 			$('#rot_rng').val(layerTransform.rotate);
 			$('#rot_txt').val(layerTransform.rotate);
+		}else{
+			$('#rot_rng').val('0');
+			$('#rot_txt').val('0');
 		}
 		if(layerTransform.skew){
 			$('#sk_rng').val(layerTransform.skew);
+		}else{
+			$('#sk_rng').val('0');
 		}
 		$('#htmlOutput_txt').val(createHTML());
 	}
@@ -1116,7 +1147,7 @@ $(function(){
 		$stage.on('mousemove', function(evt){
 			var posX = Math.round(evt.pageX - $stage.offset().left);
 			var posY = Math.round(evt.pageY - $stage.offset().top);
-			$uiInfo.text('x: ' + posX + ' - y: ' + posY);
+			$uiPos.text('x: ' + posX + ' - y: ' + posY);
 		});
 		$('.to_md').click(function(evt){
 			if(evt.target === this){
@@ -1309,30 +1340,40 @@ $(function(){
 			var h = fixDecimal(css.imgSizes[name].height * css.imgSizes[name].scale) + 'px';
 			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 			$iLayer.css('width', w);
-			$iLayer.css('height',h);
+			$iLayer.css('height', h);
 			$iLayer.css('background-size', w + ' ' + h);
+			updateHUD(css.currentLayer);
+		});
+		$('#toPos_sl').change(function(evt){
+			var $this = $(evt.target);
+			var img = getElementProp(css.currentLayer, 'image');
+			img.css('transform-origin', $this.val());
 			updateHUD(css.currentLayer);
 		});
 		$('#align_sl').change(function(evt){
 			var val = $(evt.target).val();
 			var name = css.currentLayer.attr('id');
+			var w = getElementProp(css.currentLayer, 'width');
+			var h = getElementProp(css.currentLayer, 'height');
+			var sw = css.container.width;
+			var sh = css.container.height;
 			if(val === 'top'){
 				css.currentLayer.css('top','0px');
 			}
 			if(val === 'bottom'){
-				css.currentLayer.css('top', (css.container.height - css.imgSizes[name].height) + 'px');
+				css.currentLayer.css('top', (sh - h) + 'px');
 			}
 			if(val === 'left'){
 				css.currentLayer.css('left','0px');
 			}
 			if(val === 'right'){
-				css.currentLayer.css('left', (css.container.width - css.imgSizes[name].width) + 'px');
+				css.currentLayer.css('left', (sw - w) + 'px');
 			}
 			if(val === 'center'){
-				css.currentLayer.css('left', Math.round((css.container.width - css.imgSizes[name].width)/2) + 'px');
+				css.currentLayer.css('left', Math.round((sw - w)/2) + 'px');
 			}
 			if(val === 'middle'){
-				css.currentLayer.css('top', Math.round((css.container.height - css.imgSizes[name].height)/2) + 'px');
+				css.currentLayer.css('top', Math.round((sh - h)/2) + 'px');
 			}
 			updateHUD(css.currentLayer);
 		});
@@ -1537,12 +1578,64 @@ $(function(){
 			s += '</body>' + _n;
 			s += '</html>' + _n;			
 		}
-
 		return s;
 	}
 	function getScale(transform){
 		var matrixArr = transform.replace('matrix(', '').replace(')', '').split(',');
 		return {x: parseFloat(matrixArr[0]), y: parseFloat(matrixArr[3])};
+	}
+	function getElementProp(id, prop){
+		var $layer = (typeof id === 'string')?$(id):id;
+		var name = $layer.attr('id');
+		var $iLayer = $('#' + name + I_LAYER);
+		var $oLayer = $('#' + name + O_LAYER);
+		if(prop == 'image'){
+			return $iLayer;
+		}
+		if(prop == 'background-position'){
+			return $iLayer.css('background-position');
+		}
+		if(prop == 'background-size'){
+			return $iLayer.css('background-size');
+		}
+		if(prop == 'width'){
+			return parseInt($layer.css('width')) - 2;
+		}
+		if(prop == 'height'){
+			return parseInt($layer.css('height')) - 2;
+		}
+		if(prop == 'left'){
+			return parseInt($layer.css('left'));
+		}
+		if(prop == 'top'){
+			return parseInt($layer.css('top'));
+		}
+		if(prop == 'imageWidth'){
+			return css.imgSizes[name].width;
+		}
+		if(prop == 'imageHeight'){
+			return css.imgSizes[name].height;
+		}
+		if(prop == 'fileName'){
+			return css.images[name];
+		}
+		if(prop == 'transform'){
+			return $iLayer.css('transform') || $iLayer.css('-webkit-transform');
+		}
+		if(prop == 'transform-origin' || prop == 'transformOrigin'){
+			return $iLayer.css('transform-origin') || $iLayer.css('-webkit-transform-origin');
+		}
+		if(prop == 'transform-origin%' || prop == 'transformOrigin%'){
+			var raw = $iLayer.css('transform-origin') || $iLayer.css('-webkit-transform-origin');
+			var to = raw.split(' ');
+			var x = Math.round((parseInt(to[0]) / (parseInt($layer.css('width'))  - 2)) * 100);
+			var y = Math.round((parseInt(to[1]) / (parseInt($layer.css('height')) - 2)) * 100);
+			return x + '% ' + y + '%';
+		}
+		if(prop == 'opacity'){
+			return fixDecimal($iLayer.css('opacity'));
+		}
+		return null;
 	}
 	function getElementClass($layer, tCSS){
 		//tCSS is for use in tranCiSSioner
@@ -1552,20 +1645,29 @@ $(function(){
 			var name = $layer.attr('id');
 			var $oLayer = $('#' + name + O_LAYER);
 			var $iLayer = $('#' + name + I_LAYER);
-			var transform = $iLayer.css('transform') || $iLayer.css('-webkit-transform');
-			var to = $iLayer.css('transform-origin') || $iLayer.css('-webkit-transform-origin');
+			var transform = getElementProp($layer, 'transform');
+			var to = getElementProp($layer, 'transform-origin');
+			if($('#toPos_ck').prop('checked')){
+				to = getElementProp($layer, 'transform-origin%');
+			}
+			var op = getElementProp($layer, 'opacity');
+			var left = getElementProp($layer, 'left') + 'px';
+			var top = getElementProp($layer, 'top') + 'px';
+			var w = getElementProp($layer, 'width') + 'px';
+			var h = getElementProp($layer, 'height') + 'px';
+			var fileName = getElementProp($layer, 'fileName');//css.images[name]
 			s += '.' + name + '{' + _n;
 			s += _t + 'display: block;' + _n;
 			s += _t + 'position: absolute;' + _n;
-			s += _t + 'opacity: ' + (tCSS?'@OPACITY@':fixDecimal(parseFloat($iLayer.css('opacity')))) + ';' + _n;
-			s += _t + 'left: ' + (tCSS?'@LEFT@':$layer.css('left')) + ';' + _n;
-			s += _t + 'top: ' + (tCSS?'@TOP@':$layer.css('top')) + ';' + _n;
-			s += _t + 'width: ' + $iLayer.css('width') + ';' + _n;
-			s += _t + 'height: ' + $iLayer.css('height') + ';' + _n;
-			s += _t + 'background-image: url('+ css.images[name] + ');' + _n;
+			s += _t + 'opacity: ' + ( tCSS ? '@OPACITY@': op ) + ';' + _n;
+			s += _t + 'left: ' + (tCSS?'@LEFT@': left ) + ';' + _n;
+			s += _t + 'top: ' + (tCSS?'@TOP@': top ) + ';' + _n;
+			s += _t + 'width: ' + w + ';' + _n;
+			s += _t + 'height: ' + h + ';' + _n;
+			s += _t + 'background-image: url("'+ fileName + '");' + _n;
 			s += _t + 'background-repeat: no-repeat;' + _n;
-			s += _t + 'background-position: ' + $iLayer.css('background-position') + ';' + _n;
-			s += _t + 'background-size: ' + $iLayer.css('background-size')+ ';' + _n;
+			s += _t + 'background-position: ' + getElementProp($layer, 'background-position') + ';' + _n;
+			s += _t + 'background-size: ' + getElementProp($layer, 'background-size')+ ';' + _n;
 			if(transform != 'none'){
 				s += _t + 'transform: ' + transform + ';' + _n;
 				s += _t + '-webkit-transform: ' + transform + ';' + _n;
@@ -1582,7 +1684,6 @@ $(function(){
 		var s = '',
 			_n = '\n',
 			_t = '\t';
-		
 		for(var i = 0; i < css.layers.length; i++){
 			s += getElementClass($(css.layers[i]));
 		}
@@ -1628,6 +1729,19 @@ $(function(){
 			}
 			reader.readAsDataURL(css.background.file);
 		}
+	});
+	function populateSelectMenu(){
+		var options = [];
+		for(var name in css.images){
+			options.push('<option value="' + name + '">' + name + '</option>');
+		}
+		options.reverse();
+		$('#elem_sl').html(options.join(''));
+	}
+	$('#elem_sl').change(function(evt){
+		var $this = $(evt.target);
+		var elem = $('#' + $this.val());
+		selectLayer(elem);
 	});
 	$size_sl.change(function(evt){
 		evt.stopPropagation();
@@ -1911,8 +2025,8 @@ $('#spriteSplicer_app-button').click(function(evt){
 	var cuts_arr = $cuts.val().split(',');
 	cuts_arr[cuts_arr.length - 1] = currentSpriteSlice.height;
 	var s = '',
-			_n = '\n',
-			_t = '\t';
+		_n = '\n',
+		_t = '\t';
 	var pos = currentSpriteSlice.y;
 	var height = 0;
 	var offset = 0;
