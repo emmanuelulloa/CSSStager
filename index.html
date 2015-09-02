@@ -584,6 +584,9 @@
 		.ui-button:hover, .ui-button:focus, .ui-button:active {
 			background-color: skyblue;
 		}
+		.bnr {
+			display: none;
+		}
 	</style>
 </head>
 <body>
@@ -602,6 +605,15 @@
 				<span class="row"><label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'> <a href="#" id="ss_next_scene" class="ui-button">+</a> </span>
 				<hr />
 				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_in_txt" value="0" class='numberInput'></span>
+				<span class="row">
+					<input type="checkbox" id="tcss_blur_in_ck" value="blur(10px)" /><label for="tcss_blur_ck">Blur </label>
+					| Fade effect: 
+					<select id="tcss_fade_in_sl">
+						<option value="" selected >Select</option>
+						<option value="brightness(0) contrast(10) grayscale(1)">Fade from black</option>
+						<option value="brightness(10) grayscale(1)">Fade from white</option>
+					</select>
+				</span>
 				<div class="position_scene">
 					<span class="row"><label for="">Entrance position:</label></span>
 					<table class="position_scene_tbl">
@@ -625,7 +637,7 @@
 				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_in_txt" type="number" value="10" class='numberInput' />px</span>
 				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span>
 				<hr />
-				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
 					<select id="ease_in_sl">
 						<option value="ease">ease</option>
@@ -673,7 +685,6 @@
 						</optgroup>
 					</select>
 				</span>
-				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
 			</div>
 			<div class="col2">
 				<!-- ELEMENT PROPERTIES & ANIMATIONS -->
@@ -698,9 +709,18 @@
 				</span-->
 			</div>
 			<div class="col3">
-				<span class="row"><label for="" class="lbl">Scene <strong>OUT</strong>:</label> <input id="scene_out_txt" type="number" min="0" step="1" value="2" class='numberInput'></span>
+				<span class="row"><label class="lbl">Scene <strong>OUT</strong>:</label> <input id="scene_out_txt" type="number" min="0" step="1" value="2" class='numberInput'></span>
 				<hr />
-				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_out_txt" value="0" class='numberInput'></span>
+				<span class="row"><label class="lbl">Opacity:</label> <input type="number" name="" id="opacity_out_txt" value="0" class='numberInput'></span>
+				<span class="row">
+					<input type="checkbox" id="tcss_blur_out_ck" value="blur(10px)" /><label for="tcss_blur_ck">Blur </label>
+					| Fade effect: 
+					<select id="tcss_fade_out_sl">
+						<option value="" selected >Select</option>
+						<option value="brightness(0) contrast(10) grayscale(1)">Fade to black</option>
+						<option value="brightness(10) grayscale(1)">Fade to white</option>
+					</select>
+				</span>
 				<div class="position_scene">
 					<span class="row"><label for="">Exit position:</label></span>
 					<table class="position_scene_tbl">
@@ -724,7 +744,7 @@
 				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_out_txt" type="number" value="10" class='numberInput' />px</span>
 				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span>
 				<hr />
-				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" step="0.1" class='numberInput'>s</span>
+				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
 					<select id="ease_out_sl">
 						<option value="ease">ease</option>
@@ -772,7 +792,6 @@
 						</optgroup>
 					</select>
 				</span>
-				<span class="row"><label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" step="0.1" class='numberInput'>s</span>
 			</div>
 			<div class="bottom">
 				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
@@ -798,12 +817,13 @@
 			</div>
 			<div class="col2">
 				<span class="row">Vertical cut positions: <input id="ss_cuts_txt" value="" type="text" /></span>
-				<span class="row"><input type="checkbox" name="" id="ss_layered_ck"><label for="ss_layered_ck">Layered (elements will have the same 'y' position)</label></span>
+				<span class="row"><input type="checkbox" id="ss_layered_ck"><label for="ss_layered_ck">Layered (elements will have the same 'y' position)</label></span>
+				<span class="row"><input type="checkbox" id="ss_scene_per_slice_ck"><label for="ss_scene_per_slice_ck">Each slice is a scene</label></span>
 				<hr />
 				<span class="row"><input type="checkbox" name="" id="ss_transition_ck" checked ><label for="ss_transition_ck">Use opacity transitions:</label></span>
 				<span class="row">Scene IN <input type="number" id="ss_scene_in_txt" value="1" class="numberInput">| Scene OUT <input type="number" id="ss_scene_out_txt" value="2" class="numberInput"></span>
-				<span class="row">Staggered delay</span>
-				<span class="row">IN: <input type="number" id="ss_delay_in" step="0.1" min="0" value="0.5" class="numberInput"/>s | OUT:<input type="number" id="ss_delay_out" step="0.1" min="0" value="0.3" class="numberInput"/>s</span>
+				<span class="row">Delay IN: <input type="number" id="ss_delay_in" step="0.1" min="0" value="0.5" class="numberInput"/>s | Delay OUT:<input type="number" id="ss_delay_out" step="0.1" min="0" value="0.3" class="numberInput"/>s</span>
+				<span class="row"><input type="checkbox" id="ss_staggered_ck" /><label for="ss_staggered_ck">Staggered delay</label></span>
 				<span class="row"><a href="#" id="spriteSplicer_app-button" class="app-button">Create CSS</a></span>
 				<span class="row"><textarea id="ss_code_txt" class="output" cols="50" rows="15"></textarea></span>
 				<span class="row">Apply slice to current element:<input type="number" id="ss_slices" min="1" step="1" max="1" value="1" /> <a href="#" id="ss_apply" class="button">&lt; apply</a></span>
@@ -921,6 +941,103 @@
 		<div class="row">
 			<textarea name="htmlOutput" id="htmlOutput_txt" class="output" cols="15" rows="10"></textarea>
 		</div>
+<textarea class="bnr">
+/*
+  _                
+ | |__  _ __  _ __ 
+ | '_ \| '_ \| '__|
+ | |_) | | | | |   
+ |_.__/|_| |_|_|   
+                   
+*/
+var bnr = (function(){
+		return {
+		_D: {
+			html5 : 'querySelector' in document && 'addEventListener' in window,
+			ie : (navigator.userAgent.toLowerCase() != -1) ? parseInt(navigator.userAgent.toLowerCase().split('msie')[1]) : 0,
+		},
+		detect : function(val){return this._D[val]},
+		ready: function(fn) {
+			if (document.readyState === 'complete') {
+				return fn();
+			}
+			document.addEventListener('DOMContentLoaded', fn, false);
+			return this;
+		},
+		$:function(S){
+			return document.getElementById(S) || document.getElementsByClassName(S) || document.getElementsByTagName(S) || document.querySelector(S) || document.querySelectorAll(S);
+		},
+		appendClass: function(el, c){
+			el.className += ' ' + c;
+		},
+		setClass: function(el, c){
+			el.className = c;
+		},
+		on: function(el,evt,f){
+			el.addEventListener(evt,f,false);
+		},
+		off: function(el,evt,f){
+			el.removeEventListener(evt,f,false);
+		},
+		_T : {
+			F: 2000,
+			L: 0,
+			T: [],
+			D: 0,
+			M: null
+		},
+		timeline: function(val,fd){
+			if (typeof val === 'string') {
+		      var map = {
+		        'loops': 	this._T.L,
+		        'duration': this._T.D,
+		        'timeline': this._T.M
+		      };
+		      return map[val];
+		    }
+		    if (typeof val === 'boolean' && val === false) {
+		      for (var i = 0; i < this._T.T.length; i++) {
+		        clearTimeout(this._T.T[i]);
+		      }
+		      return;
+		    }
+			this._T.T = [];
+			this._T.D = 0;
+			this._T.M = val;
+			this._T.L++;
+			if(fd){
+				this._T.F = fd;
+			}
+			var me = this;
+			for(var i = 0; i < val.length; i++){
+				var f = val[i][1], ff = (val[i][0] < 100) ? val[i][0] * me._T.F : (!val[i][0])? me._T.F : val[i][0];
+				this._T.T.push(setTimeout(f, me._T.D += Math.abs(ff)));
+			}
+		}
+	};
+})();
+/*
+              _                 _   _             
+   __ _ _ __ (_)_ __ ___   __ _| |_(_) ___  _ __  
+  / _` | '_ \| | '_ ` _ \ / _` | __| |/ _ \| '_ \ 
+ | (_| | | | | | | | | | | (_| | |_| | (_) | | | |
+  \__,_|_| |_|_|_| |_| |_|\__,_|\__|_|\___/|_| |_|
+                                                  
+*/
+var $banner = bnr.$('banner')[0];
+var $cta = bnr.$('cta')[0];
+var tl = [
+	[0,function(){bnr.appendClass($banner, 'scene1');}],
+	[,function(){bnr.appendClass($banner, 'scene2');}],
+	[,function(){bnr.appendClass($banner, 'scene3');}]
+];
+bnr.timeline(tl,3000);
+//CLICKTAG
+var clickTag = 'http://www.google.com';
+bnr.on($banner, 'click', function(){
+	window.open(window.clickTag);
+});		
+</textarea>
 		<p class="footer">&copy;2015 Emmanuel Ulloa</p>
 		</div>
 		<div id="stage-container" class="stage-container">
@@ -1575,6 +1692,8 @@ $(function(){
 				s += _t + '<div class="' + $(css.layers[i]).attr('id') + '"></div>' + _n;
 			}
 			s += '</div>' + _n;
+			var zcript = 'script';
+			s += '<'+zcript+'  type="text/javascript">' + _n + $('.bnr').val() + _n + '</'+zcript+'>' + _n;
 			s += '</body>' + _n;
 			s += '</html>' + _n;			
 		}
@@ -1676,6 +1795,7 @@ $(function(){
 			s += _t + 'transform-origin: ' + to + ';' + _n;
 			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
 			s += _t + '-ms-transform-origin: ' + to + ';' + _n;
+			s += (tCSS)?_t + '@FILTER@;' + _n:'';
 			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
 			s += '}' + _n;		
 		return s;
@@ -1840,6 +1960,7 @@ $(function(){
   		evt.preventDefault();
   	});
   	$('#tranCiSSioner_app-button').click(function(evt){
+  		//
   		/* tranCiSSioner MAGIC */
   		var s = '',
 			_n = '\n',
@@ -1850,6 +1971,12 @@ $(function(){
 		var sideOut = $("input:radio[name=scene_out_rb]:checked").val();
 		var transformIn = $('#matrix_in_txt').val();
 		var transformOut = $('#matrix_out_txt').val();
+		var blurIn  = $('#tcss_blur_in_ck').prop('checked') ?$('#tcss_blur_in_ck').val() :'';
+		var blurOut = $('#tcss_blur_out_ck').prop('checked')?$('#tcss_blur_out_ck').val():'';
+		var fadeIn = $('#tcss_fade_in_sl').val();
+		var fadeOut= $('#tcss_fade_out_sl').val();
+		var filterIn  = blurIn + ' ' + fadeIn;
+		var filterOut = blurOut + ' ' + fadeOut;
 		var willChange = {'opacity':true, 'left': false, 'top': false, 'transform': false};
 		var sm = sideMap(sideIn, offsetIn);
 		var sceneIn = $('#scene_in_txt').val();
@@ -1875,6 +2002,14 @@ $(function(){
 		}
 		if(transformIn != '' || transformOut != ''){
 			willChangeArr.push('transform');
+		}
+		if(filterIn != ' ' || filterOut != ' '){
+			willChangeArr.push('-webkit-filter');
+			if(filterIn != ' '){
+				tempIn = tempIn.replace('@FILTER@', '-webkit-filter: ' + filterIn);
+			}else{
+				tempIn = tempIn.replace('@FILTER@', '');
+			}
 		}
 		tempIn = tempIn.replace('@WILL_CHANGE@', willChangeArr.join(', '));
 		s += tempIn;
@@ -1910,12 +2045,14 @@ $(function(){
 			s += _t + 'transform: ' + transformIn + ';' + _n;
 			s += _t + '-webkit-transform: ' + transformIn + ';' + _n;
 			s += _t + '-ms-transform: ' + transformIn + ';' + _n;
-			transIn.push ('transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
-			transIn.push ('-webkit-transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
-			transIn.push ('-ms-transform ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+			transIn.push ('@TRANSFORM@ ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
 		}
-		s += _t + 'transition: ' + transIn.join(', ') + ';' + _n;
-		s += _t + '-webkit-transition: ' + transIn.join(', ') + ';' + _n;
+		if(filterIn != ' '){
+			s += _t + '-webkit-filter: none;' + _n;
+			transIn.push('-webkit-filter ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+		}
+		s += _t + 'transition: ' + transIn.join(', ').replace('@TRANSFORM@', 'transform') + ';' + _n;
+		s += _t + '-webkit-transition: ' + transIn.join(', ').replace('@TRANSFORM@', '-webkit-transform') + ';' + _n;
 		s += '}' + _n; 
 		/* SCENE OUT */
 		var sceneOut = $('#scene_out_txt').val();
@@ -1957,12 +2094,14 @@ $(function(){
 				s += _t + 'transform: ' + transformOut + ';' + _n;
 				s += _t + '-webkit-transform: ' + transformOut + ';' + _n;
 				s += _t + '-ms-transform: ' + transformOut + ';' + _n;
-				transOut.push ('transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
-				transOut.push ('-webkit-transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
-				transOut.push ('-ms-transform ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				transOut.push ('@TRANSFORM@ ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
 			}
-			s += _t + 'transition: ' + transOut.join(', ') + ';' + _n;
-			s += _t + '-webkit-transition: ' + transOut.join(', ') + ';' + _n;
+			if(filterOut != ' '){
+				s += _t + '-webkit-filter: ' + filterOut + ';' + _n;
+				transOut.push('-webkit-filter ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+			}
+			s += _t + 'transition: ' + transOut.join(', ').replace('@TRANSFORM@', 'transform') + ';' + _n;
+			s += _t + '-webkit-transition: ' + transOut.join(', ').replace('@TRANSFORM@', '-webkit-transform') + ';' + _n;
 			s += '}' + _n;			
 		}
 		//fill
@@ -2015,9 +2154,11 @@ $ss_container.on('click', function(evt){
 var currentSlices;
 var $applyButton = $('#ss_apply');
 var $slices = $('#ss_slices');
-$('#spriteSplicer_app-button').click(function(evt){
+function createSlices(){
 	var layered = $('#ss_layered_ck').prop('checked');
 	var transition = $('#ss_transition_ck').prop('checked');
+	var staggered = $('#ss_staggered_ck').prop('checked');
+	var sliceIsScene = $('#ss_scene_per_slice_ck').prop('checked');
 	var sceneIn = $('#ss_scene_in_txt').val();
 	var sceneOut = $('#ss_scene_out_txt').val();
 	var staggerIn = parseFloat($('#ss_delay_in').val());
@@ -2031,13 +2172,13 @@ $('#spriteSplicer_app-button').click(function(evt){
 	var height = 0;
 	var offset = 0;
 	var last = cuts_arr.length;
-	currentSlices = []
+	currentSlices = [];
+	s += '/* SPRITES: ' + $cuts.val() + ' */' + _n;
 	for(var i=0; i < cuts_arr.length; i++){
 		var slice = {top:0,height:0,backgroundPositionY:0};
 		var val = parseInt(cuts_arr[i]);
 		var name = currentSpriteSlice.name + ( i + 1 );
 		height = (i != 0)?(val - parseInt(cuts_arr[i-1])): val;
-		s += '/* SPRITES: ' + $cuts.val() + ' */' + _n;
 		s += '/* LAYER: ' + name + ' PROPERTIES */' + _n;
 		s += '.' + name + '{' + _n;
 		s += _t + 'display: block;' + _n;
@@ -2060,19 +2201,26 @@ $('#spriteSplicer_app-button').click(function(evt){
 		s += _t + 'background-position: 0px ' + (offset * -1) + 'px;' + _n;
 		offset = val;
 		s += _t + 'background-size: ' + currentSpriteSlice.bgSize + ';' + _n;
+		if(transition){
+			s += _t + 'will-change: opacity;' + _n;
+		}
 		s += '}' + _n;
 		if(transition){
-			s += '/* scene ' + sceneIn + ' ' + name + ' APPEARS */' + _n;
-			s += '.scene' + sceneIn + ' .' + name + '{' + _n;
+			var sIn = (sliceIsScene)?parseInt(sceneIn) + i:sceneIn;
+			s += '/* scene ' + sIn + ' ' + name + ' APPEARS */' + _n;
+			s += '.scene' + sIn + ' .' + name + '{' + _n;
 			s += _t + 'opacity: 1;' + _n;
-			var trans = 'transition: opacity 0.5s ease-out ' + ((i + 1) * staggerIn) + 's;' + _n;
+			var staggeredDelay = (staggered)?(Math.round(((i + 1) * staggerIn) * 100)/100):staggerIn;
+			var trans = 'transition: opacity 0.5s ease-out ' + staggeredDelay + 's;' + _n;
 			s += _t + trans;
 			s += _t + '-webkit-' + trans;
 			s += '}' + _n;
-			s += '/* scene ' + sceneOut + ' ' + name + ' DISAPPEARS */' + _n;
-			s += '.scene' + sceneOut + ' .' + currentSpriteSlice.name + ( i + 1 ) + '{' + _n;
+			var sOut = (sliceIsScene)?parseInt(sceneOut) + i:sceneOut;
+			s += '/* scene ' + sOut + ' ' + name + ' DISAPPEARS */' + _n;
+			s += '.scene' + sOut + ' .' + currentSpriteSlice.name + ( i + 1 ) + '{' + _n;
 			s += _t + 'opacity: 0;' + _n;
-			trans = 'transition: opacity 0.3s ease-in ' + (Math.round(((i + 1) * staggerOut)*100)/100) + 's;' + _n;
+			staggeredDelay = (staggered)?(Math.round(((i + 1) * staggerOut) * 100)/100):staggerOut;
+			trans = 'transition: opacity 0.3s ease-in ' + staggeredDelay + 's;' + _n;
 			s += _t + trans;
 			s += _t + '-webkit-' + trans;
 			s += '}' + _n;
@@ -2081,8 +2229,12 @@ $('#spriteSplicer_app-button').click(function(evt){
 	}
 	$slices.attr('max', currentSlices.length);
 	$('#ss_code_txt').val(s).select();
+}
+$('#spriteSplicer_app-button').click(function(evt){
+	createSlices();
 });
 $applyButton.click(function(evt){
+	createSlices();
 	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 	var slice = currentSlices[parseInt($slices.val()) - 1];
 	$iLayer.css('background-position', '0px ' + slice.backgroundPositionY + 'px');
