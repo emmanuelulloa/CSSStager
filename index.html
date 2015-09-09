@@ -246,12 +246,12 @@
 	background-color: white;
 	border: 1px solid #555;
 	display: block;
-	margin: 0 auto;
-	vertical-align: middle;
 	width: 550px;
 	height: 400px;
 	box-shadow: 0px 0px 3px #999;
 	position: inherit;
+	margin: 0 auto;
+	vertical-align: middle;
 	margin-top: 10%;
 	margin-bottom: 10%;
 }
@@ -427,11 +427,14 @@
 			position: relative;
 			background-color: #FFF;
 			border-radius: 15px;
-			padding: 1%;
-			width: 70%;
-			height: 80%;
+			padding: 2%;
+			width: 68%;
+			height: 83%;
 			margin: 2% auto;
 			display: none;
+		}
+		.tranCiSSioner_tools hr{
+			border: 1px dashed #FFF;
 		}
 		.tranCiSSioner_tools .blueText{
 			color: dodgerblue;
@@ -439,32 +442,50 @@
 		.tranCiSSioner_tools .close{
 			background-color: dodgerblue;
 		}
+		.tranCiSSioner_tools .colWrapper {
+			width: 100%;
+			height: 50%;
+			border-radius: 10px;
+		}
 		.tranCiSSioner_tools .col1{
-			width:33%;
-			padding: 0;
+			padding: 1%;
 			margin: 0;
 			float: left;
 			display: inline-block;
+			background-color: lightgreen;
+			-webkit-border-top-left-radius: 10px;
+			-webkit-border-bottom-left-radius: 10px;
+			-moz-border-radius-topleft: 10px;
+			-moz-border-radius-bottomleft: 10px;
+			border-top-left-radius: 10px;
+			border-bottom-left-radius: 10px;
 		}
 		.tranCiSSioner_tools .col2{
-			width:33%;
-			padding: 0;
+			width:31%;
+			padding: 1%;
 			margin: 0;
 			float: left;
 			display: inline-block;
+			text-align: center;
 		}
 		.tranCiSSioner_tools .col3{
-			width:33%;
-			padding: 0;
+			padding: 1%;
 			margin: 0;
-			float: left;
+			float: right;
 			display: inline-block;
+			background-color: lightpink;
+			-webkit-border-top-right-radius: 10px;
+			-webkit-border-bottom-right-radius: 10px;
+			-moz-border-radius-topright: 10px;
+			-moz-border-radius-bottomright: 10px;
+			border-top-right-radius: 10px;
+			border-bottom-right-radius: 10px;
 		}
 		.position_scene{
 			margin: 8px 0px;
 		}
 		.position_scene_tbl{
-			border: 1px solid #999;
+			border: 1px solid #FFF;
 			width: 150px;
 			text-align: center;
 		}
@@ -587,6 +608,48 @@
 		.bnr {
 			display: none;
 		}
+		/* VCAM */
+		.vcam {
+			display: none;
+		}
+		.vcam h1{
+			margin: 0;
+			padding: 0;
+		}
+		.vcam .color{
+			color: fuchsia;
+		}
+		.vcam .link{
+			margin: 0;
+			padding: 0;
+			display: inline-block;
+			text-align: center;
+			border-radius: 50%;
+			width: 20px;
+			height: 20px;
+			font-size: 10px;
+			color: #FFF;
+			font-weight: bolder;
+			text-decoration: none;
+			box-shadow: 0px 0px 3px #999;
+			background-color: fuchsia;
+		}
+		.vcam .lbl{
+			width: 50px;
+			display: inline-block;
+			text-align: center;
+			font-weight: 700;
+		}
+		.vcam_ui {
+			display: none;
+			background-color: transparent;
+			border: 1px solid fuchsia;
+			position: absolute;
+			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAECAYAAACk7+45AAAAGUlEQVQIW2P8z/C/noGBgYERzgDxwCIwBgCRUQT/kkcDwAAAAABJRU5ErkJggg==);
+			background-repeat: repeat;
+			z-index: 9999;
+			cursor:not-allowed;
+		}
 	</style>
 </head>
 <body>
@@ -601,6 +664,7 @@
 		<div class="tranCiSSioner_tools">
 			<h1>tran<span class="blueText">C</span>i<span class="blueText">SS</span>ioner</h1>
 			<div id="tranCiSSioner_close" class="close"></div>
+			<div class="colWrapper">
 			<div class="col1">
 				<span class="row"><label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'> <a href="#" id="ss_next_scene" class="ui-button">+</a> </span>
 				<hr />
@@ -793,6 +857,7 @@
 					</select>
 				</span>
 			</div>
+			</div>
 			<div class="bottom">
 				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
 				<textarea id="transition_css_txt" class="output" cols="30" rows="10"></textarea>
@@ -870,8 +935,66 @@
 					Custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' />
 				</span>
 				<span class="row">Background Color: <input id="bgColor_txt" type="color" value="#FFFFFF" class='numberInput' /> Border Color: <input id="borderColor_txt" type="color" value="#666666" class='numberInput' /></span>
-				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label></span>
+				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label> | <input type="checkbox" id="use_vcam_ck" /><label for="use_vcam_ck">Use VCAM</label></span>
 			</div>
+			<div id="vcam" class="controls vcam">
+				<span class="titleChar"><h1>V<span class="color">CAM</span></h1></span>
+				<span class="row">Name: <input type="text" value="vcam" id="vcam_name" /></span>
+				<span class="row">Scene: <input type="number" value="1" step="1" min="1" id="vcam_scene" /></span> 
+				<span class="row"><a href="#" class="link" id="pan_lt">&lt;</a><span class="lbl">PAN</span><a href="#" class="link" id="pan_gt">&gt;</a></span>
+				<span class="row"><a href="#" class="link" id="tilt_lt">&lt;</a><span class="lbl">TILT</span><a href="#" class="link" id="tilt_gt">&gt;</a></span>
+				<span class="row"><a href="#" class="link" id="zoom_lt">-</a><span class="lbl">ZOOM</span><a href="#" class="link" id="zoom_gt">+</a></span>
+				<span class="row"><a href="#" class="link" id="roll_lt">&lt;</a><span class="lbl">ROLL</span><a href="#" class="link" id="roll_gt">&gt;</a></span>
+				<span class="row">Duration:<input id="vcam_duration_in_txt" type="number" value="1" step="0.1" class='numberInput'>s | Delay:<input id="vcam_delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | Ease:
+					<select id="vcam_ease_in_sl">
+						<option value="ease">ease</option>
+						<option value="ease-out">ease-out</option>
+						<option value="ease-in">ease-in</option>
+						<option value="ease-in-out">ease-in-out</option>
+						<option value="linear" selected >linear</option>
+						<option value="cubic-bezier(.65, 1.95, .03, .32)">bounce</option>
+						<option value="cubic-bezier(0.47, 2.02, 0.31, -0.36)">elastic</option>
+						<option value="cubic-bezier(.25,2,.75,.5)">spring</option>
+						<option value="cubic-bezier(.175, .885,.32,1.275)">swing</option>
+						<option value="cubic-bezier(.755,.05,.855,.06)">snap</option>
+						<option value="cubic-bezier(.2,1,.9,-0.5)">hesitate</option>
+						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
+						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
+						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+						<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+						<option value="cubic-bezier(0.4,0,0.2,1)">fast out - slow in</option>
+						<optgroup label='Penner easings:'>
+							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
+							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
+							<option value="cubic-bezier(.645,.045,.355,1)">easeInOutCubic</option>
+							<option value="cubic-bezier(.6,.04,.98,.335)">easeInCirc</option>
+							<option value="cubic-bezier(.075,.82,.165,1)">easeOutCirc</option>
+							<option value="cubic-bezier(.785,.135,.15,.86)">easeInOutCirc</option>
+							<option value="cubic-bezier(.95,.05,.795,.035)">easeInExpo</option>
+							<option value="cubic-bezier(.19,1,.22,1)">easeOutExpo</option>
+							<option value="cubic-bezier(1,0,0,1)">easeInOutExpo</option>
+							<option value="cubic-bezier(.55,.085,.68,.53)">easeInQuad</option>
+							<option value="cubic-bezier(.25,.46,.45,.94)">easeOutQuad</option>
+							<option value="cubic-bezier(.455,.03,.515,.955)">easeInOutQuad</option>
+							<option value="cubic-bezier(.895,.03,.685,.22)">easeInQuart</option>
+							<option value="cubic-bezier(.165,.84,.44,1)">easeOutQuart</option>
+							<option value="cubic-bezier(.77,0,.175,1)">easeInOutQuart</option>
+							<option value="cubic-bezier(.755,.05,.855,.06)">easeInQuint</option>
+							<option value="cubic-bezier(.23,1,.32,1)">easeOutQuint</option>
+							<option value="cubic-bezier(.86,0,.07,1)">easeInOutQuint</option>
+							<option value="cubic-bezier(.47,0,.745,.715)">easeInSine</option>
+							<option value="cubic-bezier(.39,.575,.565,1)">easeOutSine</option>
+							<option value="cubic-bezier(.445,.05,.55,.95)">easeInOutSine</option>
+							<option value="cubic-bezier(.6,-.28,.735,.045)">easeInBack</option>
+							<option value="cubic-bezier(.175, .885,.32,1.275)">easeOutBack</option>
+							<option value="cubic-bezier(.68,-.55,.265,1.55)">easeInOutBack</option>
+						</optgroup>
+					</select>
+				</span>
+				<div class="row"><a href="#" id="vcam_create_btn" class="button">Create CAM Transition</a><a href="#" id="vcam_reset_btn" class="button">reset VCAM</a></div>
+				<textarea id="vcam_txt" class="output" cols="15" rows="10"></textarea>
+			</div>			
 			<div class="ui-info">
 				Select element: 
 				<select id="elem_sl">
@@ -879,7 +1002,7 @@
 				</select>
 				<span class="ui-pos">x: 0px - y: 0px</span>
 			</div>
-			<div class="controls elements-properties">
+			<div id="elementsProperties" class="controls elements-properties">
 				<div class="left">
 					<h2 id="element_lbl">Element: ?</h2>
 					<span class="row"><strong>Element size and position:</strong></span>
@@ -1041,7 +1164,9 @@ bnr.on($banner, 'click', function(){
 		<p class="footer">&copy;2015 Emmanuel Ulloa</p>
 		</div>
 		<div id="stage-container" class="stage-container">
-			<div id="stage" class="stage"></div>
+			<div id="stage" class="stage">
+				<div id="vcam_ui" class="vcam_ui"></div>
+			</div>
 		</div>
 	</div>
 	</div>
@@ -1060,6 +1185,7 @@ $(function(){
 		currentLayer : null
 	}
 	var $stage = $('#stage'),
+		$vcam_ui = $('#vcam_ui'),
 		$uiPos = $('.ui-pos'),
 		$size_sl = $('#size_sl'),
 		$width_txt = $('#width_txt'),
@@ -1153,8 +1279,101 @@ $(function(){
 	function fixDecimal(val){
 		return Math.round(val*1000)/1000;
 	}
+	/* VCAM start*/
+	$('#use_vcam_ck').click(function(evt){
+		var $this = $(evt.target);
+		var $vcam_controls = $('#vcam');
+		changeVCAMSize();
+		if($this.prop('checked')){
+			$vcam_controls.slideDown();
+			$vcam_ui.css('display', 'block');
+		}else{
+			$vcam_controls.slideUp();
+			$vcam_ui.css('display', 'none');
+		}
+	});
+	$('#pan_lt, #pan_gt, #tilt_lt, #tilt_gt, #zoom_lt, #zoom_gt, #roll_lt, #roll_gt').click(function(evt){
+		evt.preventDefault();
+		evt.stopPropagation();
+		var $this = $(evt.target);
+		var id = $this.prop('id');
+		var factor = (evt.shiftKey)?10:1;
+		var wkm = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('vcam_ui'))['-webkit-transform']);
+		if(id == 'pan_lt'){
+			wkm = wkm.translate(-1 * factor, 0, 0);
+		}
+		if(id == 'pan_gt'){
+			wkm = wkm.translate(1 * factor, 0, 0);
+		}
+		if(id == 'tilt_lt'){
+			wkm = wkm.translate(0, -1 * factor, 0);
+		}
+		if(id == 'tilt_gt'){
+			wkm = wkm.translate(0, 1 * factor, 0);
+		}
+		if(id == 'zoom_lt'){
+			wkm.a += 0.1;
+			wkm.d += 0.1;
+		}
+		if(id == 'zoom_gt'){
+			wkm.a += -0.1;
+			wkm.d += -0.1;
+		}
+		if(id == 'roll_lt'){
+			wkm = wkm.rotate(0, 0, -1 * factor);
+		}
+		if(id == 'roll_gt'){
+			wkm = wkm.rotate(0, 0, 1 * factor);
+		}
+		$vcam_ui.css('-webkit-transform', wkm.toString());
+		//console.log(wkm.toString());
+	});
+	$('#vcam_reset_btn').click(function(evt){
+		$vcam_ui.css('-webkit-transform', 'none');
+	});
+	$('#vcam_create_btn').click(function(evt){
+		evt.preventDefault();
+		evt.stopPropagation();
+		vcamCode();
+	});
+	function changeVCAMSize(){
+		$vcam_ui.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
+	}
+	function vcamCode(){
+		var s = '',
+			_n = '\n',
+			_t = '\t';
+		var name = $('#vcam_name').val();
+		var scene = $('#vcam_scene').val();
+		var duration = $('#vcam_duration_in_txt').val();
+		var delay = $('#vcam_delay_in_txt').val();
+		var ease = $('#vcam_ease_in_sl').val();
+		var wkmatrix = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('vcam_ui'))['-webkit-transform']);
+		//console.log(wkmatrix.toString());
+		var sc = wkmatrix.a;
+		var x = 0;
+		var y = 0;
+		wkmatrix = wkmatrix.inverse().translate(x, y);
+		//console.log(wkmatrix.toString());
+		s += '.' + name + '{' + _n;
+		s += _t + 'display: block;' + _n;
+		s += _t + 'width: ' + css.container.width + 'px;' + _n;
+		s += _t + 'height: ' + css.container.height + 'px;' + _n;
+		s += '}' + _n;
+		s += '.scene' + scene + ' .' + name +  '{' + _n;
+		s += _t + 'transform: ' + wkmatrix.toString() + ';' + _n;
+		s += _t + '-webkit-transform: ' + wkmatrix.toString() + ';' + _n;
+		s += _t + '-ms-transform: ' + wkmatrix.toString() + ';' + _n;
+		s += _t + 'transition: transform ' + duration + 's ' + ease + ((delay == '0')?'':' ' + delay + 's') + ';' + _n;
+		s += _t + '-webkit-transition: -webkit-transform ' + duration + 's ' + ease + ((delay == '0')?'':' ' + delay + 's') + ';' + _n;
+		s += '}' + _n;
+		var $vcam_txt  = $('#vcam_txt');
+		$vcam_txt.val(s);
+		$vcam_txt.select();
+	}
+	/* VCAM end*/
 	function openTools(){
-		$('.controls').slideDown();
+		$('#elementsProperties').slideDown();
 	}
 	function changeSize(w,h){
 		css.container.width = w;
@@ -1162,6 +1381,7 @@ $(function(){
 		$width_txt.val(css.container.width);
 		$height_txt.val(css.container.height);
 		$stage.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
+		changeVCAMSize();
 	}
 	function changeColors(bg,col){
 		css.container.bgColor = bg;
@@ -1688,9 +1908,11 @@ $(function(){
 			s += '</head>' + _n;
 			s += '<body>' + _n;
 			s += '<div class="banner">' + _n;
+			s += '<div class="' + $('#vcam_name').val() + '">' + _n;
 			for(var i = 0; i < css.layers.length; i++){
 				s += _t + '<div class="' + $(css.layers[i]).attr('id') + '"></div>' + _n;
 			}
+			s += '</div>' + _n;
 			s += '</div>' + _n;
 			var zcript = 'script';
 			s += '<'+zcript+'  type="text/javascript">' + _n + $('.bnr').val() + _n + '</'+zcript+'>' + _n;
@@ -1795,7 +2017,7 @@ $(function(){
 			s += _t + 'transform-origin: ' + to + ';' + _n;
 			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
 			s += _t + '-ms-transform-origin: ' + to + ';' + _n;
-			s += (tCSS)?_t + '@FILTER@;' + _n:'';
+			s += (tCSS)?_t + '@FILTER@' + _n:'';
 			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
 			s += '}' + _n;		
 		return s;
@@ -2006,10 +2228,10 @@ $(function(){
 		if(filterIn != ' ' || filterOut != ' '){
 			willChangeArr.push('-webkit-filter');
 			if(filterIn != ' '){
-				tempIn = tempIn.replace('@FILTER@', '-webkit-filter: ' + filterIn);
-			}else{
-				tempIn = tempIn.replace('@FILTER@', '');
+				tempIn = tempIn.replace('@FILTER@', '-webkit-filter: ' + filterIn + ';');
 			}
+		}else{
+			tempIn = tempIn.replace('@FILTER@', '');
 		}
 		tempIn = tempIn.replace('@WILL_CHANGE@', willChangeArr.join(', '));
 		s += tempIn;
@@ -2234,7 +2456,6 @@ $('#spriteSplicer_app-button').click(function(evt){
 	createSlices();
 });
 $applyButton.click(function(evt){
-	createSlices();
 	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 	var slice = currentSlices[parseInt($slices.val()) - 1];
 	$iLayer.css('background-position', '0px ' + slice.backgroundPositionY + 'px');
