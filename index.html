@@ -905,6 +905,14 @@
 			<p class='tagline'>HTML5 Banner animations made easy.</p>
 			<div class="controls document-properties">
 				<h2>Document Properties</h2>
+				<span class="row">Banner name: <input type="text" id="banner_txt" value="myBanner" /> | Media Platform: 
+					<select id="rm_sl">
+						<option value="dcm">DCM</option>
+						<option value="dc">DoubleClick Studio</option>
+						<option value="flashtalking">FlashTalking</option>
+						<option value="atlas">Atlas</option>
+					</select>
+				</span>
 				<span class="row">Background/Guide Image: </span>
 				<span class="row"><input type='file' accept='image/*' id='guide_fl' class='dropTarget' /></span>
 				<span class="row">Banner size:
@@ -942,10 +950,10 @@
 				<span class="titleChar"><h1>V<span class="color">CAM</span></h1></span>
 				<span class="row">Name: <input type="text" value="vcam" id="vcam_name" /></span>
 				<span class="row">Scene: <input type="number" value="1" step="1" min="1" id="vcam_scene" /><a href="#" class="button" id="vcam_capture" style="display:none;">Capture NEXT Scene</a></span> 
-				<span class="row"><a href="#" class="link" id="pan_lt">&lt;</a><span class="lbl">PAN</span><a href="#" class="link" id="pan_gt">&gt;</a></span>
-				<span class="row"><a href="#" class="link" id="tilt_lt">&lt;</a><span class="lbl">TILT</span><a href="#" class="link" id="tilt_gt">&gt;</a></span>
-				<span class="row"><a href="#" class="link" id="zoom_lt">-</a><span class="lbl">ZOOM</span><a href="#" class="link" id="zoom_gt">+</a></span>
-				<span class="row"><a href="#" class="link" id="roll_lt">&lt;</a><span class="lbl">ROLL</span><a href="#" class="link" id="roll_gt">&gt;</a></span>
+				<span class="row"><a href="#" class="link" id="pan_lt">&lt;</a><span class="lbl">PAN</span><a href="#" class="link" id="pan_gt">&gt;</a> <input type="number" id="pan_txt" class="numberInput" value="0" step="1" /></span>
+				<span class="row"><a href="#" class="link" id="tilt_lt">&lt;</a><span class="lbl">TILT</span><a href="#" class="link" id="tilt_gt">&gt;</a> <input type="number" id="tilt_txt" class="numberInput" value="0" step="1" /></span>
+				<span class="row"><a href="#" class="link" id="zoom_lt">-</a><span class="lbl">ZOOM</span><a href="#" class="link" id="zoom_gt">+</a> <input type="number" id="zoom_txt" class="numberInput" value="1" step="0.1" /></span>
+				<span class="row"><a href="#" class="link" id="roll_lt">&lt;</a><span class="lbl">ROLL</span><a href="#" class="link" id="roll_gt">&gt;</a> <input type="number" id="roll_txt" class="numberInput" value="0" step="1" /></span>
 				<span class="row">Duration:<input id="vcam_duration_in_txt" type="number" value="1" step="0.1" class='numberInput'>s | Delay:<input id="vcam_delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | Ease:
 					<select id="vcam_ease_in_sl">
 						<option value="ease">ease</option>
@@ -1060,7 +1068,7 @@
 					<span class="row"><a href="#" id="resetbutton" class="button">RESET</a></span>
 				</div>
 			</div>
-		<div class="row">Get your code (html/css):<input id="onlycss_ck" type="checkbox" checked /><label for="onlycss_ck">Only CSS</label> | <input type="checkbox" id="toPos_ck" checked /><label for="toPos_ck">Transform Origin in %</label></div>
+		<div class="row">Get your code (html/css):<input id="onlycss_ck" type="checkbox" checked /><label for="onlycss_ck">Only CSS</label> | <input type="checkbox" id="toPos_ck" checked /><label for="toPos_ck">Transform Origin in %</label> | Scenes: <input type="number" id="scenes_txt" value="3" min="1" step="1" class="numberInput" /></div>
 		<div class="row"><a href="#" id="create_btn" class="button">Create CSS</a></div>
 		<div class="row">
 			<textarea name="htmlOutput" id="htmlOutput_txt" class="output" cols="15" rows="10"></textarea>
@@ -1150,17 +1158,13 @@ var bnr = (function(){
 */
 var $banner = bnr.$('banner')[0];
 var $cta = bnr.$('cta')[0];
+var frameDuration = 3000;
 var tl = [
-	[0,function(){bnr.appendClass($banner, 'scene1');}],
-	[,function(){bnr.appendClass($banner, 'scene2');}],
-	[,function(){bnr.appendClass($banner, 'scene3');}]
+@SCENES@
 ];
-bnr.timeline(tl,3000);
-//CLICKTAG
-var clickTag = 'http://www.google.com';
-bnr.on($banner, 'click', function(){
-	window.open(window.clickTag);
-});		
+@INIT@
+@CTA@
+	
 </textarea>
 		<p class="footer">&copy;2015 Emmanuel Ulloa</p>
 		</div>
@@ -1293,6 +1297,31 @@ $(function(){
 			$vcam_ui.css('display', 'none');
 		}
 	});
+	var vcamOb = {pan:0, tilt:0, zoom:1, roll:0};
+	$('#pan_txt, #tilt_txt, #zoom_txt, #roll_txt').change(function(evt){
+		var $this = $(evt.target);
+		var id = $this.prop('id');
+		var wkm = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('vcam_ui'))['-webkit-transform']);
+		var val = parseFloat($this.val());
+		if(id == 'pan_txt'){
+			vcamOb.pan = val;
+			wkm = wkm.translate(val, 0, 0);
+		}
+		if(id == 'tilt_txt'){
+			vcamOb.tilt = val;
+			wkm = wkm.translate(0, val, 0);
+		}
+		if(id == 'zoom_txt'){
+			vcamOb.zoom = val;
+			wkm.a += val;
+			wkm.d += val;
+		}
+		if(id == 'roll_txt'){
+			vcamOb.roll = val;
+			wkm = wkm.rotate(0, 0, val);
+		}
+		$vcam_ui.css('-webkit-transform', wkm.toString());
+	});
 	$('#pan_lt, #pan_gt, #tilt_lt, #tilt_gt, #zoom_lt, #zoom_gt, #roll_lt, #roll_gt').click(function(evt){
 		evt.preventDefault();
 		evt.stopPropagation();
@@ -1300,33 +1329,46 @@ $(function(){
 		var id = $this.prop('id');
 		var factor = (evt.shiftKey)?10:1;
 		var wkm = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('vcam_ui'))['-webkit-transform']);
+
 		if(id == 'pan_lt'){
-			wkm = wkm.translate(-1 * factor, 0, 0);
+			vcamOb.pan += fixDecimal(-1 * factor);
+			wkm = wkm.translate(fixDecimal(-1 * factor), 0, 0);
 		}
 		if(id == 'pan_gt'){
-			wkm = wkm.translate(1 * factor, 0, 0);
+			vcamOb.pan += fixDecimal(1 * factor);
+			wkm = wkm.translate(fixDecimal(1 * factor), 0, 0);
 		}
 		if(id == 'tilt_lt'){
-			wkm = wkm.translate(0, -1 * factor, 0);
+			vcamOb.tilt += fixDecimal(-1 * factor);
+			wkm = wkm.translate(0, fixDecimal(-1 * factor), 0);
 		}
 		if(id == 'tilt_gt'){
-			wkm = wkm.translate(0, 1 * factor, 0);
+			vcamOb.tilt += fixDecimal(1 * factor);
+			wkm = wkm.translate(0, fixDecimal(1 * factor), 0);
 		}
 		if(id == 'zoom_lt'){
+			vcamOb.zoom += 0.1;
 			wkm.a += 0.1;
 			wkm.d += 0.1;
 		}
 		if(id == 'zoom_gt'){
+			vcamOb.zoom += -0.1;
 			wkm.a += -0.1;
 			wkm.d += -0.1;
 		}
 		if(id == 'roll_lt'){
-			wkm = wkm.rotate(0, 0, -1 * factor);
+			vcamOb.roll += fixDecimal(-1 * factor);
+			wkm = wkm.rotate(0, 0, fixDecimal(-1 * factor));
 		}
 		if(id == 'roll_gt'){
-			wkm = wkm.rotate(0, 0, 1 * factor);
+			vcamOb.roll += fixDecimal(1 * factor);
+			wkm = wkm.rotate(0, 0, fixDecimal(1 * factor));
 		}
 		$vcam_ui.css('-webkit-transform', wkm.toString());
+		$('#pan_txt').val(vcamOb.pan);
+		$('#tilt_txt').val(vcamOb.tilt);
+		$('#zoom_txt').val(vcamOb.zoom);
+		$('#roll_txt').val(vcamOb.roll);
 		//console.log(wkm.toString());
 	});
 	$('#vcam_reset_btn').click(function(evt){
@@ -1360,6 +1402,7 @@ $(function(){
 		var s = '',
 			_n = '\n',
 			_t = '\t';
+		s += '/* ' + name + ' pan = ' + vcamOb.pan + ', tilt = ' + vcamOb.tilt + ', zoom = ' + vcamOb.zoom + ', roll = ' + vcamOb.roll + ' */' + _n;
 		s += '.scene' + scene + ' .' + name +  '{' + _n;
 		s += _t + 'transform: ' + wkmatrix.toString() + ';' + _n;
 		s += _t + '-webkit-transform: ' + wkmatrix.toString() + ';' + _n;
@@ -1907,12 +1950,26 @@ $(function(){
 		var s = '',
 			_n = '\n',
 			_t = '\t';
+		var zcript = 'script';
+		var cta = '';
+		var initFoo = '';
+		var bnrjs = $('.bnr').val();
+		var name = $('#banner_txt').val() + css.container.width + 'x' + css.container.height;
+		var rm = $('#rm_sl').val();
+		var scenes = parseInt($('#scenes_txt').val());
 		if(!onlycss){
 			s += '<!DOCTYPE html>' + _n;
 			s += '<html lang="en">' + _n;
 			s += '<head>' + _n;
 			s += '<meta charset="UTF-8">' + _n;
-			s += '<title>Document</title>' + _n;
+			s += '<meta name="ad.size" content="width='+css.container.width+',height='+css.container.height+'">' + _n;
+			s += '<title>'+ name +'</title>' + _n;
+			if(rm == 'dcm'){
+				s += '<'+zcript+' type="text/javascript">var clickTag = "http://www.google.com";</'+zcript+'>'+ _n;
+			}
+			if(rm == 'dc'){
+				s += '<'+zcript+' src="http://s0.2mdn.net/ads/studio/Enabler.js" type="text/javascript"></'+zcript+'>' + _n;
+			}
 			s += '<style type="text/css">' + _n;	
 		}
 
@@ -1922,6 +1979,9 @@ $(function(){
 			s += '</style>' + _n;
 			s += '</head>' + _n;
 			s += '<body>' + _n;
+			if(rm == 'atlas'){
+				s += '<a href="{{PUB_CLICKTHROUGH}}" target="_blank">' + _n;
+			}
 			s += '<div class="banner">' + _n;
 			s += '<div class="' + $('#vcam_name').val() + '">' + _n;
 			for(var i = 0; i < css.layers.length; i++){
@@ -1929,8 +1989,55 @@ $(function(){
 			}
 			s += '</div>' + _n;
 			s += '</div>' + _n;
-			var zcript = 'script';
-			s += '<'+zcript+'  type="text/javascript">' + _n + $('.bnr').val() + _n + '</'+zcript+'>' + _n;
+			if(rm == 'atlas'){
+				s += '</a>' + _n;
+			}
+			var scenesCode = '';
+			for(var i = 1; i <= scenes; i++ ){
+				var dur = (i == 1)?'0':'';
+				scenesCode += _t + "["+dur+",function(){bnr.appendClass($banner,'scene" + i + "');}]";
+				if(i < scenes){
+					scenesCode += ',';
+				}
+				scenesCode += _n;
+			}
+			bnrjs = bnrjs.replace('@SCENES@', scenesCode);
+			if(rm == 'dc'){
+				initFoo += 'if (Enabler.isInitialized()) {' + _n;
+				initFoo += 'bnr.timeline(tl,frameDuration);' + _n;
+				initFoo += '}else{' + _n + 'Enabler.addEventListener(studio.events.StudioEvent.INIT, function(){bnr.timeline(tl,frameDuration);});' + _n + '}';
+				bnrjs = bnrjs.replace('@INIT@', initFoo);
+			}else if(rm == 'flashtalking'){
+				initFoo += 'var myFT = new FT();' + _n;
+				initFoo += "myFT.addEventListener('ready', function(){bnr.timeline(tl,frameDuration);});" + _n;
+				cta += 'myFT.applyClickTag($banner, 1);'+ _n;
+				bnrjs = bnrjs.replace('@INIT@', initFoo);
+				bnrjs = bnrjs.replace('@CTA@', cta);
+			}else{
+				bnrjs = bnrjs.replace('@INIT@', 'bnr.timeline(tl,frameDuration);');
+			}
+			if(rm == 'dcm'){
+				cta += "bnr.on($banner,'click', function(){ window.open(window.clickTag); });" + _n;
+				bnrjs = bnrjs.replace('@CTA@', cta);
+			}else if(rm == 'dc'){
+				cta += "bnr.on($banner,'click', function(){ Enabler.exit('clickTag'); });" + _n;
+				bnrjs = bnrjs.replace('@CTA@', cta);
+			}else{
+				bnrjs = bnrjs.replace('@CTA@', '');
+			}
+			/*
+	<!--[if lte IE 9]>
+	<div class="ie9">Show backup image</div>
+	<![endif]-->
+			*/
+			if(rm == 'flashtalking'){
+				s += '<!--' + _n;
+				s += '/* save as manifest.js */' + _n;
+				s += 'FT.manifest({"filename":"'+name+'.html","width":"'+css.container.width+'","height":"'+css.container.height+'","clickTagCount":1});' + _n;
+				s += '-->' + _n;
+				s += '<'+zcript+' src="http://cdn.flashtalking.com/frameworks/js/api/2/8/html5API.js"></'+zcript+'>' + _n;
+			}
+			s += '<'+zcript+'  type="text/javascript">' + _n + bnrjs + _n + '</'+zcript+'>' + _n;
 			s += '</body>' + _n;
 			s += '</html>' + _n;			
 		}
@@ -2190,19 +2297,7 @@ $(function(){
   		};
   		return map[side];
   	}
-  	$('#scene_element_txt').change(function(evt){
-  		var nn = $(evt.target).val();
-  		currentTranCiSSioner.css = currentTranCiSSioner.css.replace('.' + currentTranCiSSioner.name, '.' + nn);
-  		currentTranCiSSioner.name = nn;
-  	});
-  	$('#ss_next_scene').click(function(evt){
-  		var $sceneIn = $('#scene_in_txt'), $sceneOut = $('#scene_out_txt'), next = parseInt($sceneIn.val());
-  		$sceneIn.val(next + 1);
-  		$sceneOut.val(next + 2);
-  		evt.preventDefault();
-  	});
-  	$('#tranCiSSioner_app-button').click(function(evt){
-  		//
+  	function tranCiSSionerMagic(){
   		/* tranCiSSioner MAGIC */
   		var s = '',
 			_n = '\n',
@@ -2363,8 +2458,21 @@ $(function(){
 			s += _t + '-webkit-transition: ' + transOut.join(', ').replace('@TRANSFORM@', '-webkit-transform') + ';' + _n;
 			s += '}' + _n;			
 		}
-		//fill
-		$('#transition_css_txt').val(s);
+		return s;
+  	}
+  	$('#scene_element_txt').change(function(evt){
+  		var nn = $(evt.target).val();
+  		currentTranCiSSioner.css = currentTranCiSSioner.css.replace('.' + currentTranCiSSioner.name, '.' + nn);
+  		currentTranCiSSioner.name = nn;
+  	});
+  	$('#ss_next_scene').click(function(evt){
+  		var $sceneIn = $('#scene_in_txt'), $sceneOut = $('#scene_out_txt'), next = parseInt($sceneIn.val());
+  		$sceneIn.val(next + 1);
+  		$sceneOut.val(next + 2);
+  		evt.preventDefault();
+  	});
+  	$('#tranCiSSioner_app-button').click(function(evt){
+		$('#transition_css_txt').val(tranCiSSionerMagic());
 		$('#transition_css_txt').select();
 		return s;
   	});
