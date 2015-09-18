@@ -44,7 +44,7 @@
 			font-family: 'Chango', cursive;
 			font-size: 200%;
 			font-weight: bold;
-			padding-top: 20px;
+			padding-top: 10px;
 			margin-bottom: 10px;
 		}
 		p{
@@ -176,6 +176,7 @@
 	-webkit-transition: background-color 0.3s ease-out;
 }
 .dropTarget:hover {
+	color: white;
 	background-color: crimson;
 }
 .to_md {
@@ -444,8 +445,14 @@
 		}
 		.tranCiSSioner_tools .colWrapper {
 			width: 100%;
-			height: 50%;
+			height: 310px;
 			border-radius: 10px;
+			overflow: hidden;
+			background-color: ghostwhite;
+			margin: 0;
+			padding: 0;
+			box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+			-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.45);
 		}
 		.tranCiSSioner_tools .col1{
 			padding: 1%;
@@ -453,12 +460,7 @@
 			float: left;
 			display: inline-block;
 			background-color: lightgreen;
-			-webkit-border-top-left-radius: 10px;
-			-webkit-border-bottom-left-radius: 10px;
-			-moz-border-radius-topleft: 10px;
-			-moz-border-radius-bottomleft: 10px;
-			border-top-left-radius: 10px;
-			border-bottom-left-radius: 10px;
+			height: 100%;
 		}
 		.tranCiSSioner_tools .col2{
 			width:31%;
@@ -474,12 +476,7 @@
 			float: right;
 			display: inline-block;
 			background-color: lightpink;
-			-webkit-border-top-right-radius: 10px;
-			-webkit-border-bottom-right-radius: 10px;
-			-moz-border-radius-topright: 10px;
-			-moz-border-radius-bottomright: 10px;
-			border-top-right-radius: 10px;
-			border-bottom-right-radius: 10px;
+			height: 100%;
 		}
 		.position_scene{
 			margin: 8px 0px;
@@ -553,7 +550,8 @@
 		}
 		.ss_container {
 			border: 1px solid #999;
-			background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJ0lEQVQYV2M8c+bMfwYkYGxsjMxlYKSDgv///6O44ezZs6huoL0CAHomKYWYrWVpAAAAAElFTkSuQmCC) repeat;
+			background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJ0lEQVQYV2M8c+bMfwYkYGxsjMxlYKSDgv///6O44ezZs6huoL0CAHomKYWYrWVpAAAAAElFTkSuQmCC);
+			background-repeat: repeat;
 			width: 96%;
 			margin-right: 2%;
 			margin-left: 2%;
@@ -699,7 +697,8 @@
 					</table>
 				</div>
 				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_in_txt" type="number" value="10" class='numberInput' />px</span>
-				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span>
+				<span class="row">Rotate: <input type="number" id="rotate_in_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_in_txt" value="1" step="0.1" class="numberInput"></span>
+				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span -->
 				<hr />
 				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
@@ -806,7 +805,8 @@
 					</table>
 				</div>
 				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_out_txt" type="number" value="10" class='numberInput' />px</span>
-				<span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span>
+				<span class="row">Rotate: <input type="number" id="rotate_out_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_out_txt" value="1" step="0.1" class="numberInput"></span>
+				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span -->
 				<hr />
 				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
@@ -859,6 +859,7 @@
 			</div>
 			</div>
 			<div class="bottom">
+				<input type="checkbox" id="tranCiSSioner_useMatrix_ck" checked /><label for="tranCiSSioner_useMatrix_ck">Use Matrix Operations</label> |
 				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
 				<textarea id="transition_css_txt" class="output" cols="30" rows="10"></textarea>
 			<!--ul>
@@ -940,7 +941,7 @@
 			<div id="vcam" class="controls vcam">
 				<span class="titleChar"><h1>V<span class="color">CAM</span></h1></span>
 				<span class="row">Name: <input type="text" value="vcam" id="vcam_name" /></span>
-				<span class="row">Scene: <input type="number" value="1" step="1" min="1" id="vcam_scene" /></span> 
+				<span class="row">Scene: <input type="number" value="1" step="1" min="1" id="vcam_scene" /><a href="#" class="button" id="vcam_capture" style="display:none;">Capture NEXT Scene</a></span> 
 				<span class="row"><a href="#" class="link" id="pan_lt">&lt;</a><span class="lbl">PAN</span><a href="#" class="link" id="pan_gt">&gt;</a></span>
 				<span class="row"><a href="#" class="link" id="tilt_lt">&lt;</a><span class="lbl">TILT</span><a href="#" class="link" id="tilt_gt">&gt;</a></span>
 				<span class="row"><a href="#" class="link" id="zoom_lt">-</a><span class="lbl">ZOOM</span><a href="#" class="link" id="zoom_gt">+</a></span>
@@ -992,7 +993,7 @@
 						</optgroup>
 					</select>
 				</span>
-				<div class="row"><a href="#" id="vcam_create_btn" class="button">Create CAM Transition</a><a href="#" id="vcam_reset_btn" class="button">reset VCAM</a></div>
+				<div class="row"><a href="#" id="vcam_create_btn" class="button">Create VCAM Transition</a><a href="#" id="vcam_reset_btn" class="button">reset VCAM</a></div>
 				<textarea id="vcam_txt" class="output" cols="15" rows="10"></textarea>
 			</div>			
 			<div class="ui-info">
@@ -1133,7 +1134,7 @@ var bnr = (function(){
 			}
 			var me = this;
 			for(var i = 0; i < val.length; i++){
-				var f = val[i][1], ff = (val[i][0] < 100) ? val[i][0] * me._T.F : (!val[i][0])? me._T.F : val[i][0];
+				var f = val[i][1], ff = (val[i][0] < 10) ? val[i][0] * me._T.F : (!val[i][0])? me._T.F : val[i][0];
 				this._T.T.push(setTimeout(f, me._T.D += Math.abs(ff)));
 			}
 		}
@@ -1335,31 +1336,30 @@ $(function(){
 		evt.preventDefault();
 		evt.stopPropagation();
 		vcamCode();
+		$('#vcam_capture').css('display', '');
+	});
+	$('#vcam_capture').click(function(evt){
+		var $vcam_txt  = $('#vcam_txt');
+		var scene = $('#vcam_scene').val();
+		$('#vcam_scene').val(parseInt(scene) + 1);
+		var s = $vcam_txt.val() + vcamCapture();
+		$vcam_txt.val(s);
+		$vcam_txt.select();
 	});
 	function changeVCAMSize(){
 		$vcam_ui.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
 	}
-	function vcamCode(){
-		var s = '',
-			_n = '\n',
-			_t = '\t';
+	function vcamCapture(){
 		var name = $('#vcam_name').val();
 		var scene = $('#vcam_scene').val();
 		var duration = $('#vcam_duration_in_txt').val();
 		var delay = $('#vcam_delay_in_txt').val();
 		var ease = $('#vcam_ease_in_sl').val();
 		var wkmatrix = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('vcam_ui'))['-webkit-transform']);
-		//console.log(wkmatrix.toString());
-		var sc = wkmatrix.a;
-		var x = 0;
-		var y = 0;
-		wkmatrix = wkmatrix.inverse().translate(x, y);
-		//console.log(wkmatrix.toString());
-		s += '.' + name + '{' + _n;
-		s += _t + 'display: block;' + _n;
-		s += _t + 'width: ' + css.container.width + 'px;' + _n;
-		s += _t + 'height: ' + css.container.height + 'px;' + _n;
-		s += '}' + _n;
+		wkmatrix = wkmatrix.inverse();
+		var s = '',
+			_n = '\n',
+			_t = '\t';
 		s += '.scene' + scene + ' .' + name +  '{' + _n;
 		s += _t + 'transform: ' + wkmatrix.toString() + ';' + _n;
 		s += _t + '-webkit-transform: ' + wkmatrix.toString() + ';' + _n;
@@ -1367,6 +1367,19 @@ $(function(){
 		s += _t + 'transition: transform ' + duration + 's ' + ease + ((delay == '0')?'':' ' + delay + 's') + ';' + _n;
 		s += _t + '-webkit-transition: -webkit-transform ' + duration + 's ' + ease + ((delay == '0')?'':' ' + delay + 's') + ';' + _n;
 		s += '}' + _n;
+		return s;
+	}
+	function vcamCode(){
+		var s = '',
+			_n = '\n',
+			_t = '\t';
+		var name = $('#vcam_name').val();
+		s += '.' + name + '{' + _n;
+		s += _t + 'display: block;' + _n;
+		s += _t + 'width: ' + css.container.width + 'px;' + _n;
+		s += _t + 'height: ' + css.container.height + 'px;' + _n;
+		s += '}' + _n;
+		s += vcamCapture();
 		var $vcam_txt  = $('#vcam_txt');
 		$vcam_txt.val(s);
 		$vcam_txt.select();
@@ -1386,6 +1399,8 @@ $(function(){
 	function changeColors(bg,col){
 		css.container.bgColor = bg;
 		css.container.borderColor = col;
+		$('.ss_container').css('background-image', 'none');
+		$('.ss_container').css('background-color', bg);
 		$stage.css('background-color', bg).css('border-color',col);
 		$('.to_md').css('background-color', bg);
 	}
@@ -2009,15 +2024,19 @@ $(function(){
 			s += _t + 'background-repeat: no-repeat;' + _n;
 			s += _t + 'background-position: ' + getElementProp($layer, 'background-position') + ';' + _n;
 			s += _t + 'background-size: ' + getElementProp($layer, 'background-size')+ ';' + _n;
-			if(transform != 'none'){
-				s += _t + 'transform: ' + transform + ';' + _n;
-				s += _t + '-webkit-transform: ' + transform + ';' + _n;
-				s += _t + '-ms-transform: ' + transform + ';' + _n;
+			if(tCSS){
+				s += '@MATRIX@';
+			}else{
+				if(transform != 'none'){
+					s += _t + 'transform: ' + transform + ';' + _n;
+					s += _t + '-webkit-transform: ' + transform + ';' + _n;
+					s += _t + '-ms-transform: ' + transform + ';' + _n;	
+				}	
 			}
 			s += _t + 'transform-origin: ' + to + ';' + _n;
 			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
 			s += _t + '-ms-transform-origin: ' + to + ';' + _n;
-			s += (tCSS)?_t + '@FILTER@' + _n:'';
+			s += (tCSS)?'@FILTER@':'';
 			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
 			s += '}' + _n;		
 		return s;
@@ -2137,14 +2156,15 @@ $(function(){
   	$id('stage-container').addEventListener('dragover', handleDragOver, false);
   	$id('stage-container').addEventListener('drop', handleFileSelect, false);
   	//tranCiSSioner
-  	var currentTranCiSSioner = {target:null,name:'',x:0,y:0,css:''};
+  	var currentTranCiSSioner = {target:null,name:'',x:0,y:0,css:'',matrix:''};
   	$('#trancissionerbutton').click(function(evt){
   		currentTranCiSSioner = {
   			target:css.currentLayer,
   			name:css.currentLayer.attr('id'),
   			x:parseFloat(css.currentLayer.css('left')),
   			y:parseFloat(css.currentLayer.css('top')),
-  			css:getElementClass(css.currentLayer,true)
+  			css:getElementClass(css.currentLayer, true),
+  			matrix:getElementProp(css.currentLayer, 'transform')
   		};
   		$('#scene_element_txt').val(currentTranCiSSioner.name);
   		$('#left_scene_txt').val(currentTranCiSSioner.x);
@@ -2166,7 +2186,7 @@ $(function(){
 			'right': {x:offset, y:0},
 			'bl': {x:-offset, y:offset},
 			'bottom': {x:0, y:offset},
-			'br': {x:0, y:offset}		
+			'br': {x:offset, y:offset}		
   		};
   		return map[side];
   	}
@@ -2191,8 +2211,7 @@ $(function(){
 		var offsetIn = parseFloat($('#offset_in_txt').val());
 		var sideIn = $("input:radio[name=scene_in_rb]:checked").val();
 		var sideOut = $("input:radio[name=scene_out_rb]:checked").val();
-		var transformIn = $('#matrix_in_txt').val();
-		var transformOut = $('#matrix_out_txt').val();
+		var useMatrix = $('#tranCiSSioner_useMatrix_ck').prop('checked');
 		var blurIn  = $('#tcss_blur_in_ck').prop('checked') ?$('#tcss_blur_in_ck').val() :'';
 		var blurOut = $('#tcss_blur_out_ck').prop('checked')?$('#tcss_blur_out_ck').val():'';
 		var fadeIn = $('#tcss_fade_in_sl').val();
@@ -2209,26 +2228,44 @@ $(function(){
 		s += '/* LAYER: ' + currentTranCiSSioner.name + ' PROPERTIES */' + _n;
 		var tempIn = currentTranCiSSioner.css;
 		tempIn = tempIn.replace('@OPACITY@', o1);
-		tempIn = tempIn.replace('@LEFT@', x1);
-		tempIn = tempIn.replace('@TOP@', y1);
+		if(!useMatrix){
+			tempIn = tempIn.replace('@LEFT@', x1);
+			tempIn = tempIn.replace('@TOP@', y1);
+			tempIn = tempIn.replace('@MATRIX@', '');
+		}else{
+			tempIn = tempIn.replace('@LEFT@', currentTranCiSSioner.x + 'px');
+			tempIn = tempIn.replace('@TOP@', currentTranCiSSioner.y + 'px');
+			willChange.transform = true;
+			var transformIn = new WebKitCSSMatrix(currentTranCiSSioner.matrix);
+			transformIn = transformIn.rotate(parseInt($('#rotate_in_txt').val()));
+			transformIn = transformIn.scale(parseFloat($('#scale_in_txt').val()));
+			transformIn = transformIn.translate(sm.x, sm.y);
+			console.log([sm.x, sm.y]);
+			var temp_mtrx = '';
+			temp_mtrx += _t + 'transform: ' + transformIn.toString() + ';' + _n;
+			temp_mtrx += _t + '-webkit-transform: ' + transformIn.toString()  + ';' + _n;
+			tempIn = tempIn.replace('@MATRIX@', temp_mtrx);			
+		}
+		
 		//will-change
 		var willChangeArr = ['opacity'];
-		if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br' || sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
-			willChangeArr.push('left','top');
-		}
-		if(sideIn == 'top' || sideIn == 'bottom' || sideOut == 'top' || sideOut == 'bottom'){
-			willChangeArr.push('top');
-		}
-		if(sideIn == 'left' || sideIn == 'right' || sideOut == 'left' || sideOut == 'right'){
-			willChangeArr.push('left');
-		}
-		if(transformIn != '' || transformOut != ''){
+		if(!useMatrix){
+			if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br' || sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
+				willChangeArr.push('left','top');
+			}
+			if(sideIn == 'top' || sideIn == 'bottom' || sideOut == 'top' || sideOut == 'bottom'){
+				willChangeArr.push('top');
+			}
+			if(sideIn == 'left' || sideIn == 'right' || sideOut == 'left' || sideOut == 'right'){
+				willChangeArr.push('left');
+			}			
+		}else{
 			willChangeArr.push('transform');
 		}
 		if(filterIn != ' ' || filterOut != ' '){
 			willChangeArr.push('-webkit-filter');
 			if(filterIn != ' '){
-				tempIn = tempIn.replace('@FILTER@', '-webkit-filter: ' + filterIn + ';');
+				tempIn = tempIn.replace('@FILTER@', _t + '-webkit-filter: ' + filterIn + ';' + _n);
 			}
 		}else{
 			tempIn = tempIn.replace('@FILTER@', '');
@@ -2239,15 +2276,11 @@ $(function(){
 		s += '/* scene '+ sceneIn + ' ' + currentTranCiSSioner.name + ' APPEARS */' + _n;
 		willChange = {'opacity':true, 'left': false, 'top': false};
 		if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br'){
-			willChange.left = true;
-			willChange.top = true;
+			willChange.left = willChange.top = !useMatrix;
 		}else if(sideIn == 'top' || sideIn == 'bottom'){
-			willChange.top = true;
+			willChange.top = !useMatrix;
 		}else if(sideIn == 'left' || sideIn == 'right'){
-			willChange.left = true;
-		}
-		if(transformIn != ''){
-			willChange.transform = true;
+			willChange.left = !useMatrix;
 		}
 		s += '.scene' + sceneIn  + ' .'+ currentTranCiSSioner.name + '{' + _n;
 		var transIn = [];
@@ -2255,18 +2288,20 @@ $(function(){
 			s += _t + 'opacity: 1;' + _n;
 			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's')) ;
 		}
-		if(willChange.left){
-			s += _t + 'left: ' + $('#left_scene_txt').val() + 'px;' + _n;
-			transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
-		}
-		if(willChange.top){
-			s += _t + 'top: ' + $('#top_scene_txt').val() + 'px;' + _n;
-			transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
-		}
-		if(willChange.transform){
-			s += _t + 'transform: ' + transformIn + ';' + _n;
-			s += _t + '-webkit-transform: ' + transformIn + ';' + _n;
-			s += _t + '-ms-transform: ' + transformIn + ';' + _n;
+		if(!useMatrix){
+			if(willChange.left){
+				s += _t + 'left: ' + $('#left_scene_txt').val() + 'px;' + _n;
+				transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+			}
+			if(willChange.top){
+				s += _t + 'top: ' + $('#top_scene_txt').val() + 'px;' + _n;
+				transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+			}			
+		}else{
+			willChange.transform = true;
+			s += _t + 'transform: ' + currentTranCiSSioner.matrix + ';' + _n;
+			s += _t + '-webkit-transform: ' + currentTranCiSSioner.matrix  + ';' + _n;
+			s += _t + '-ms-transform: ' + currentTranCiSSioner.matrix  + ';' + _n;
 			transIn.push ('@TRANSFORM@ ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
 		}
 		if(filterIn != ' '){
@@ -2278,7 +2313,7 @@ $(function(){
 		s += '}' + _n; 
 		/* SCENE OUT */
 		var sceneOut = $('#scene_out_txt').val();
-		if(sceneOut != '0'){
+		if(sceneOut > '0'){
 			var offsetOut = parseFloat($('#offset_out_txt').val());
 			sm = sideMap(sideOut, offsetOut);
 			var x2 = 0, y2 = 0, o2 = 0;
@@ -2289,33 +2324,35 @@ $(function(){
 			s += '.scene' + sceneOut + ' .'+ currentTranCiSSioner.name +'{' + _n;
 			willChange = {'opacity':true, 'left': false, 'top': false};
 			if(sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
-				willChange.left = true;
-				willChange.top = true;
+				willChange.left = willChange.top = !useMatrix;
 			}else if(sideOut == 'top' || sideOut == 'bottom'){
-				willChange.top = true;
+				willChange.top = !useMatrix;
 			}else if(sideOut == 'left' || sideOut == 'right'){
-				willChange.left = true;
-			}
-			if(transformOut != ''){
-				willChange.transform = true;
+				willChange.left = !useMatrix;
 			}
 			var transOut = [];
 			if(willChange.opacity){
 				s += _t + 'opacity: '+ o2 + ';' + _n;
 				transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
 			}
-			if(willChange.left){
-				s += _t + 'left: ' + x2 + ';'  + _n;
-				transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
-			}
-			if(willChange.top){
-				s += _t + 'top: ' + y2 + ';' + _n;
-				transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
-			}
-			if(willChange.transform){
-				s += _t + 'transform: ' + transformOut + ';' + _n;
-				s += _t + '-webkit-transform: ' + transformOut + ';' + _n;
-				s += _t + '-ms-transform: ' + transformOut + ';' + _n;
+			if(!useMatrix){
+				if(willChange.left){
+					s += _t + 'left: ' + x2 + ';'  + _n;
+					transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				}
+				if(willChange.top){
+					s += _t + 'top: ' + y2 + ';' + _n;
+					transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				}				
+			}else{
+				willChange.transform = true;
+				var transformOut = new WebKitCSSMatrix();
+				transformOut = transformOut.rotate(parseInt($('#rotate_out_txt').val()));
+				transformOut = transformOut.scale(parseFloat($('#scale_out_txt').val()));
+				transformOut = transformOut.translate(sm.x, sm.y);
+				s += _t + 'transform: ' + transformOut.toString() + ';' + _n;
+				s += _t + '-webkit-transform: ' + transformOut.toString()  + ';' + _n;
+				s += _t + '-ms-transform: ' + transformOut.toString()  + ';' + _n;
 				transOut.push ('@TRANSFORM@ ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
 			}
 			if(filterOut != ' '){
