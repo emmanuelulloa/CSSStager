@@ -948,8 +948,8 @@
 			</div>
 			<div id="vcam" class="controls vcam">
 				<span class="titleChar"><h1>V<span class="color">CAM</span></h1></span>
-				<span class="row">Name: <input type="text" value="vcam" id="vcam_name" /></span>
-				<span class="row">Scene: <input type="number" value="1" step="1" min="1" id="vcam_scene" /><a href="#" class="button" id="vcam_capture" style="display:none;">Capture NEXT Scene</a></span> 
+				<span class="row">Name: <input type="text" value="vcam" id="vcam_name" /> Scene: <input type="number" value="1" step="1" min="1" id="vcam_scene" class="numberInput" /><a href="#" class="button" id="vcam_capture" style="display:none;">Capture NEXT Scene</a></span> 
+				<span class="row">Apply matrix to vcam: <input type="text" id="vcam_matrix"></span>
 				<span class="row"><a href="#" class="link" id="pan_lt">&lt;</a><span class="lbl">PAN</span><a href="#" class="link" id="pan_gt">&gt;</a> <input type="number" id="pan_txt" class="numberInput" value="0" step="1" /></span>
 				<span class="row"><a href="#" class="link" id="tilt_lt">&lt;</a><span class="lbl">TILT</span><a href="#" class="link" id="tilt_gt">&gt;</a> <input type="number" id="tilt_txt" class="numberInput" value="0" step="1" /></span>
 				<span class="row"><a href="#" class="link" id="zoom_lt">-</a><span class="lbl">ZOOM</span><a href="#" class="link" id="zoom_gt">+</a> <input type="number" id="zoom_txt" class="numberInput" value="1" step="0.1" /></span>
@@ -1372,6 +1372,9 @@ $(function(){
 		//console.log(wkm.toString());
 	});
 	$('#vcam_reset_btn').click(function(evt){
+		vcamOb = {pan:0, tilt:0, zoom:1, roll:0};
+		$('#pan_txt, #tilt_txt, #roll_txt').val('0');
+		$('#zoom_txt').val('1');
 		$vcam_ui.css('-webkit-transform', 'none');
 	});
 	$('#vcam_create_btn').click(function(evt){
@@ -1388,6 +1391,13 @@ $(function(){
 		$vcam_txt.val(s);
 		$vcam_txt.select();
 	});
+	$('#vcam_matrix').keypress(function (e) {
+	  if (e.which == 13) {
+	    var wkmatrix = new WebKitCSSMatrix($('#vcam_matrix').val());
+	    $vcam_ui.css('-webkit-transform', wkmatrix.toString());
+	    return false;
+	  }
+	});
 	function changeVCAMSize(){
 		$vcam_ui.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
 	}
@@ -1398,11 +1408,12 @@ $(function(){
 		var delay = $('#vcam_delay_in_txt').val();
 		var ease = $('#vcam_ease_in_sl').val();
 		var wkmatrix = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('vcam_ui'))['-webkit-transform']);
+		var ormatrix = wkmatrix.toString();
 		wkmatrix = wkmatrix.inverse();
 		var s = '',
 			_n = '\n',
 			_t = '\t';
-		s += '/* ' + name + ' pan = ' + vcamOb.pan + ', tilt = ' + vcamOb.tilt + ', zoom = ' + vcamOb.zoom + ', roll = ' + vcamOb.roll + ' */' + _n;
+		s += '/* ' + name + ' ' + ormatrix + ' */' + _n;
 		s += '.scene' + scene + ' .' + name +  '{' + _n;
 		s += _t + 'transform: ' + wkmatrix.toString() + ';' + _n;
 		s += _t + '-webkit-transform: ' + wkmatrix.toString() + ';' + _n;
