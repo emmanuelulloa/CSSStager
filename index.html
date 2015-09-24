@@ -583,6 +583,16 @@
 			background-color: rgba(0,0,0,0.3);
 			font-family: courier, mono;
 		}
+		.ss_guide_vert{
+			width: 1px;
+			height: 1px;
+			position: absolute;
+			border-left: 1px dashed fuchsia;
+			margin: 0;
+			padding: 0;
+			top: 0px;
+			left: 0px;
+		}
 		/* misc */
 		.ui-button, .ui-button:visited {
 			outline: none;
@@ -876,6 +886,7 @@
 			<div class="col1">
 				<div class="ss_container">
 					<div class="ss_image"></div>
+					<div class="ss_guide_vert"></div>
 					<div class="ss_guide">
 						x:0px y:0px
 					</div>
@@ -2488,7 +2499,7 @@ $(function(){
 		return s;
   	});
 //Sprite Slicer
-var $guideY = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
+var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
 var currentSpriteSlice = {target:null,name:'', x:0, y:0, width:0, height:0, css:''};
 $('#spriteslicerbutton').click(function(evt){
 	//$cuts.val('');
@@ -2521,12 +2532,18 @@ $('#spriteSlicer_close').click(function(evt){
 $ss_container.on('mousemove', function(evt){
 	var posY = Math.round(evt.pageY - $ss_container.offset().top);
 	var posX = Math.round(evt.pageX - $ss_container.offset().left);
-	$guideY.text('x: ' + posX +' - y: ' + posY + 'px')
+	$guideY.text('x: ' + posX +' - y: ' + posY + 'px');
+	$guideX.css('left', posX + 'px');
+	$guideX.css('height', posY + 'px');
 	$guideY.css('top', posY + 'px');
 });
 $ss_container.on('click', function(evt){
+	var posX = Math.round(evt.pageX - $ss_container.offset().left);
 	var posY = Math.round(evt.pageY - $ss_container.offset().top);
 	var cuts = $cuts.val() + posY + ',';
+	if(evt.shiftKey){
+		cuts = $cuts.val() + posX + ':' + posY  + ',';
+	}
 	$cuts.val(cuts);
 });
 var currentSlices;
@@ -2542,19 +2559,28 @@ function createSlices(){
 	var staggerIn = parseFloat($('#ss_delay_in').val());
 	var staggerOut = parseFloat($('#ss_delay_out').val());
 	var cuts_arr = $cuts.val().split(',');
-	cuts_arr[cuts_arr.length - 1] = currentSpriteSlice.height;
+	cuts_arr[cuts_arr.length - 1] = currentSpriteSlice.height + '';
 	var s = '',
 		_n = '\n',
 		_t = '\t';
 	var pos = currentSpriteSlice.y;
 	var height = 0;
 	var offset = 0;
+	var posX = currentSpriteSlice.x;
+	var width = 0;
+	var offsetX = 0;
 	var last = cuts_arr.length;
 	currentSlices = [];
 	s += '/* SPRITES: ' + $cuts.val() + ' */' + _n;
 	for(var i=0; i < cuts_arr.length; i++){
-		var slice = {top:0,height:0,backgroundPositionY:0};
+		var slice = {top:0, height:0, width:0, left:0, backgroundPositionY:0, backgroundPositionX:0};
 		var val = parseInt(cuts_arr[i]);
+		var valX = 0;
+		if(cuts_arr[i].indexOf(':') != -1){
+			var raw = cuts_arr[i].split(':');
+			val = parseInt(raw[1]);
+			valX = parseInt(raw[0]);
+		}
 		var name = currentSpriteSlice.name + ( i + 1 );
 		height = (i != 0)?(val - parseInt(cuts_arr[i-1])): val;
 		s += '/* LAYER: ' + name + ' PROPERTIES */' + _n;
@@ -2566,17 +2592,20 @@ function createSlices(){
 		}else{
 			s += _t + 'opacity: 1;' + _n;
 		}
-		s += _t + 'left: ' + currentSpriteSlice.x + 'px;' + _n;
+		s += _t + 'left: ' + (currentSpriteSlice.x + valX) + 'px;' + _n;
 		slice.top = pos;
 		s += _t + 'top: ' + pos + 'px;' + _n;
 		pos += (layered)?0:height;
-		s += _t + 'width: ' + currentSpriteSlice.width + 'px;' + _n;
+		width = (currentSpriteSlice.width - valX);
+		slice.width = width;
+		s += _t + 'width: ' + width + 'px;' + _n;
 		slice.height = height;
 		s += _t + 'height: ' + height + 'px;' + _n;
-		s += _t + 'background-image: url('+ css.images[currentSpriteSlice.name] + ');' + _n;
+		s += _t + 'background-image: url("'+ css.images[currentSpriteSlice.name] + '");' + _n;
 		s += _t + 'background-repeat: no-repeat;' + _n;
 		slice.backgroundPositionY = offset * -1;
-		s += _t + 'background-position: 0px ' + (offset * -1) + 'px;' + _n;
+		slice.backgroundPositionX =  (valX * -1);
+		s += _t + 'background-position: ' + slice.backgroundPositionX + 'px ' + slice.backgroundPositionY + 'px;' + _n;
 		offset = val;
 		s += _t + 'background-size: ' + currentSpriteSlice.bgSize + ';' + _n;
 		if(transition){
@@ -2614,9 +2643,11 @@ $('#spriteSplicer_app-button').click(function(evt){
 $applyButton.click(function(evt){
 	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 	var slice = currentSlices[parseInt($slices.val()) - 1];
-	$iLayer.css('background-position', '0px ' + slice.backgroundPositionY + 'px');
+	$iLayer.css('background-position', slice.backgroundPositionX +'px ' + slice.backgroundPositionY + 'px');
+	$iLayer.css('width', slice.width + 'px');
 	$iLayer.css('height', slice.height + 'px');
 	$('#' + css.currentLayer.attr('id')).css('top', slice.top + 'px');
+	$('#' + css.currentLayer.attr('id')).css('left', slice.left + 'px');
 	updateHUD(css.currentLayer);
 	$('.overlay').hide();
   	$('.spriteSlicer_tools').hide();
