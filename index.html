@@ -701,7 +701,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 			<div id="tranCiSSioner_close" class="close"></div>
 			<div class="colWrapper">
 			<div class="col1">
-				<span class="row"><label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'> <a href="#" id="ss_next_scene" class="ui-button">+</a> </span>
+				<span class="row">
+					<label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'> <a href="#" id="ss_next_scene" class="ui-button">+</a> 
+					<select id="tcss_preset_in">
+						<option value="op:0|dur:0.5">Fade</option>
+						<option value="sc:0.7|dur:0.7|e:cubic-bezier(0.47, 2.02, 0.31, -0.36)">Bounce</option>
+						<option value="sc:1.5|dur:0.3|e:cubic-bezier(.175, .885,.32,1.275)">Zoom</option>
+						<option value="rot:180|dur:0.7|e:cubic-bezier(.39,.575,.565,1)">Rotate</option>
+						<option value="pos:l|offset:200|dur:0.5|e:cubic-bezier(.41,.41,.35,1.2)">Slide</option>
+						<option value="pos:l|offset:200|dur:0.5|e:cubic-bezier(.755,.05,.855,.06)">Swoosh</option>
+					</select>
+				</span>
 				<hr />
 				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_in_txt" value="0" class='numberInput'></span>
 				<span class="row">
