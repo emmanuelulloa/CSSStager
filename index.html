@@ -704,12 +704,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 				<span class="row">
 					<label for="" class="lbl">Scene <strong>IN</strong>:</label> <input id="scene_in_txt" type="number" min="1" step="1" value="1" class='numberInput'> <a href="#" id="ss_next_scene" class="ui-button">+</a> 
 					<select id="tcss_preset_in">
-						<option value="op:0|dur:0.5">Fade</option>
-						<option value="sc:0.7|dur:0.7|e:cubic-bezier(0.47, 2.02, 0.31, -0.36)">Bounce</option>
-						<option value="sc:1.5|dur:0.3|e:cubic-bezier(.175, .885,.32,1.275)">Zoom</option>
-						<option value="rot:180|dur:0.7|e:cubic-bezier(.39,.575,.565,1)">Rotate</option>
-						<option value="pos:l|offset:200|dur:0.5|e:cubic-bezier(.41,.41,.35,1.2)">Slide</option>
-						<option value="pos:l|offset:200|dur:0.5|e:cubic-bezier(.755,.05,.855,.06)">Swoosh</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"ease-out"}'>Select a preset</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"ease-out"}'>Fade</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"0.7","dur":"0.7","dy":"0.5","e":"cubic-bezier(0.47, 2.02, 0.31, -0.36)"}'>Bounce</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1.5","dur":"0.3","dy":"0.5","e":"cubic-bezier(.175, .885,.32,1.275)"}'>Zoom</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"270","sc":"1","dur":"0.7","dy":"0.5","e":"cubic-bezier(0.39, 0.58, 0.57, 1)"}'>Spin</option>
+						<option value='{"op":"0","pos":"left","offset":"200","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"cubic-bezier(.41,.41,.35,1.2)"}'>Slide</option>
+						<option value='{"op":"0","pos":"none","offset":"200","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"cubic-bezier(.755,.05,.855,.06)"}'>Swoosh</option>
 					</select>
 				</span>
 				<hr />
@@ -764,9 +765,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
 						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
 						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
-						<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
-						<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
-						<option value="cubic-bezier(0.4,0,0.2,1)">fast out - slow in</option>
+						<optgroup label='Chrome easings:'>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+							<option value="cubic-bezier(0.45,0.05,0.55,0.95)">In Out Sine</option>
+							<option value="cubic-bezier(0.46,0.03,0.52,0.96)">In Out Quadratic</option>
+							<option value="cubic-bezier(0.65,0.05,0.36,1)">In Out Cubic</option>
+							<option value="cubic-bezier(0.68,-0.55,0.27,1.55)">In Out Back</option>
+							<option value="cubic-bezier(0.4,0,0.2,1)">fast out, slow in</option>
+							<option value="cubic-bezier(0.47, 0, 0.75, 0.72)">In Sine</option>
+							<option value="cubic-bezier(0.55, 0.09, 0.68, 0.53)">In Quadratic</option>
+							<option value="cubic-bezier(0.55, 0.06, 0.68, 0.19)">In Cubic</option>
+							<option value="cubic-bezier(0.6, -0.28, 0.74, 0.05)">In Back</option>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out, linear in</option>
+							<option value="cubic-bezier(0.39, 0.58, 0.57, 1)">Out Sine</option>
+							<option value="cubic-bezier(0.25, 0.46, 0.45, 0.94)">Out Quadratic</option>
+							<option value="cubic-bezier(0.22, 0.61, 0.36, 1)">Out Cubic</option>
+							<option value="cubic-bezier(0.18, 0.89, 0.32, 1.28)">Out Back</option>
+							<option value="cubic-bezier(0, 0, 0.2, 1)">linear out, slow in</option>
+						</optgroup>
 						<optgroup label='Penner easings:'>
 							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
 							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
@@ -872,9 +889,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
 						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
 						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
-						<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
-						<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
-						<option value="cubic-bezier(0.4,0,0.2,1)">fast out - slow in</option>
+						<optgroup label='Chrome easings:'>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+							<option value="cubic-bezier(0.45,0.05,0.55,0.95)">In Out Sine</option>
+							<option value="cubic-bezier(0.46,0.03,0.52,0.96)">In Out Quadratic</option>
+							<option value="cubic-bezier(0.65,0.05,0.36,1)">In Out Cubic</option>
+							<option value="cubic-bezier(0.68,-0.55,0.27,1.55)">In Out Back</option>
+							<option value="cubic-bezier(0.4,0,0.2,1)">fast out, slow in</option>
+							<option value="cubic-bezier(0.47, 0, 0.75, 0.72)">In Sine</option>
+							<option value="cubic-bezier(0.55, 0.09, 0.68, 0.53)">In Quadratic</option>
+							<option value="cubic-bezier(0.55, 0.06, 0.68, 0.19)">In Cubic</option>
+							<option value="cubic-bezier(0.6, -0.28, 0.74, 0.05)">In Back</option>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out, linear in</option>
+							<option value="cubic-bezier(0.39, 0.58, 0.57, 1)">Out Sine</option>
+							<option value="cubic-bezier(0.25, 0.46, 0.45, 0.94)">Out Quadratic</option>
+							<option value="cubic-bezier(0.22, 0.61, 0.36, 1)">Out Cubic</option>
+							<option value="cubic-bezier(0.18, 0.89, 0.32, 1.28)">Out Back</option>
+							<option value="cubic-bezier(0, 0, 0.2, 1)">linear out, slow in</option>
+						</optgroup>
 						<optgroup label='Penner easings:'>
 							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
 							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
@@ -906,7 +939,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 			</div>
 			</div>
 			<div class="bottom">
-				<input type="checkbox" id="tranCiSSioner_useMatrix_ck" checked /><label for="tranCiSSioner_useMatrix_ck">Use Matrix Operations</label> |
+				<select id="tranCiSSioner_useMatrix_sl">
+					<option value="2">Transform operations</option>
+					<option value="1">Matrix operations</option>
+					<option value="0">Left/Top</option>
+				</select>
+				<!--input type="checkbox" id="tranCiSSioner_useMatrix_ck" checked /><label for="tranCiSSioner_useMatrix_ck">Use Matrix Operations</label--> |
 				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
 				<textarea id="transition_css_txt" class="output" cols="30" rows="10"></textarea>
 			<!--ul>
@@ -1018,9 +1056,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
 						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
 						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
-						<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
-						<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
-						<option value="cubic-bezier(0.4,0,0.2,1)">fast out - slow in</option>
+						<optgroup label='Chrome easings:'>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+							<option value="cubic-bezier(0.45,0.05,0.55,0.95)">In Out Sine</option>
+							<option value="cubic-bezier(0.46,0.03,0.52,0.96)">In Out Quadratic</option>
+							<option value="cubic-bezier(0.65,0.05,0.36,1)">In Out Cubic</option>
+							<option value="cubic-bezier(0.68,-0.55,0.27,1.55)">In Out Back</option>
+							<option value="cubic-bezier(0.4,0,0.2,1)">fast out, slow in</option>
+							<option value="cubic-bezier(0.47, 0, 0.75, 0.72)">In Sine</option>
+							<option value="cubic-bezier(0.55, 0.09, 0.68, 0.53)">In Quadratic</option>
+							<option value="cubic-bezier(0.55, 0.06, 0.68, 0.19)">In Cubic</option>
+							<option value="cubic-bezier(0.6, -0.28, 0.74, 0.05)">In Back</option>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out, linear in</option>
+							<option value="cubic-bezier(0.39, 0.58, 0.57, 1)">Out Sine</option>
+							<option value="cubic-bezier(0.25, 0.46, 0.45, 0.94)">Out Quadratic</option>
+							<option value="cubic-bezier(0.22, 0.61, 0.36, 1)">Out Cubic</option>
+							<option value="cubic-bezier(0.18, 0.89, 0.32, 1.28)">Out Back</option>
+							<option value="cubic-bezier(0, 0, 0.2, 1)">linear out, slow in</option>
+						</optgroup>
 						<optgroup label='Penner easings:'>
 							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
 							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
@@ -2370,7 +2424,7 @@ $(function(){
 		var offsetIn = parseFloat($('#offset_in_txt').val());
 		var sideIn = $("input:radio[name=scene_in_rb]:checked").val();
 		var sideOut = $("input:radio[name=scene_out_rb]:checked").val();
-		var useMatrix = $('#tranCiSSioner_useMatrix_ck').prop('checked');
+		var useMatrix = parseInt($('#tranCiSSioner_useMatrix_sl').val());
 		var blurIn  = $('#tcss_blur_in_ck').prop('checked') ?$('#tcss_blur_in_ck').val() :'';
 		var blurOut = $('#tcss_blur_out_ck').prop('checked')?$('#tcss_blur_out_ck').val():'';
 		var fadeIn = $('#tcss_fade_in_sl').val();
@@ -2395,14 +2449,21 @@ $(function(){
 			tempIn = tempIn.replace('@LEFT@', currentTranCiSSioner.x + 'px');
 			tempIn = tempIn.replace('@TOP@', currentTranCiSSioner.y + 'px');
 			willChange.transform = true;
-			var transformIn = new WebKitCSSMatrix(currentTranCiSSioner.matrix);
-			transformIn = transformIn.rotate(parseInt($('#rotate_in_txt').val()));
-			transformIn = transformIn.scale(parseFloat($('#scale_in_txt').val()));
-			transformIn = transformIn.translate(sm.x, sm.y);
-			console.log([sm.x, sm.y]);
 			var temp_mtrx = '';
-			temp_mtrx += _t + 'transform: ' + transformIn.toString() + ';' + _n;
-			temp_mtrx += _t + '-webkit-transform: ' + transformIn.toString()  + ';' + _n;
+			if(useMatrix == 1){
+				var transformIn = new WebKitCSSMatrix(currentTranCiSSioner.matrix);
+				transformIn = transformIn.rotate(parseInt($('#rotate_in_txt').val()));
+				transformIn = transformIn.scale(parseFloat($('#scale_in_txt').val()));
+				transformIn = transformIn.translate(sm.x, sm.y);
+				temp_mtrx += _t + 'transform: ' + transformIn.toString() + ';' + _n;
+				temp_mtrx += _t + '-webkit-transform: ' + transformIn.toString()  + ';' + _n;
+				temp_mtrx += _t + '-ms-transform: ' + transformIn.toString()  + ';' + _n;			
+			}else{
+				var transformInS = 'scale('+$('#scale_in_txt').val()+') rotate('+$('#rotate_in_txt').val()+'deg) translate('+sm.x+'px, '+sm.y+'px)';
+				temp_mtrx += _t + 'transform: ' + transformInS + ';' + _n;
+				temp_mtrx += _t + '-webkit-transform: ' + transformInS  + ';' + _n;
+				temp_mtrx += _t + '-ms-transform: ' + transformInS  + ';' + _n;
+			}
 			tempIn = tempIn.replace('@MATRIX@', temp_mtrx);			
 		}
 		
@@ -2432,7 +2493,7 @@ $(function(){
 		tempIn = tempIn.replace('@WILL_CHANGE@', willChangeArr.join(', '));
 		s += tempIn;
 		/* SCENE IN */
-		s += '/* scene '+ sceneIn + ' ' + currentTranCiSSioner.name + ' APPEARS */' + _n;
+		s += '/* scene '+ sceneIn + ' ' + currentTranCiSSioner.name + ' IN */' + _n;
 		willChange = {'opacity':true, 'left': false, 'top': false};
 		if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br'){
 			willChange.left = willChange.top = !useMatrix;
@@ -2479,7 +2540,7 @@ $(function(){
 			x2 = (currentTranCiSSioner.x + sm.x) + 'px';
 			y2 = (currentTranCiSSioner.y + sm.y) + 'px';
 			o2 = parseFloat($('#opacity_out_txt').val()) + '';
-			s += '/* scene '+ sceneOut + ' ' + currentTranCiSSioner.name + ' DISAPPEARS */' + _n;
+			s += '/* scene '+ sceneOut + ' ' + currentTranCiSSioner.name + ' OUT */' + _n;
 			s += '.scene' + sceneOut + ' .'+ currentTranCiSSioner.name +'{' + _n;
 			willChange = {'opacity':true, 'left': false, 'top': false};
 			if(sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
@@ -2505,14 +2566,22 @@ $(function(){
 				}				
 			}else{
 				willChange.transform = true;
-				var transformOut = new WebKitCSSMatrix();
-				transformOut = transformOut.rotate(parseInt($('#rotate_out_txt').val()));
-				transformOut = transformOut.scale(parseFloat($('#scale_out_txt').val()));
-				transformOut = transformOut.translate(sm.x, sm.y);
-				s += _t + 'transform: ' + transformOut.toString() + ';' + _n;
-				s += _t + '-webkit-transform: ' + transformOut.toString()  + ';' + _n;
-				s += _t + '-ms-transform: ' + transformOut.toString()  + ';' + _n;
-				transOut.push ('@TRANSFORM@ ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				if(useMatrix == 1){
+					var transformOut = new WebKitCSSMatrix();
+					transformOut = transformOut.rotate(parseInt($('#rotate_out_txt').val()));
+					transformOut = transformOut.scale(parseFloat($('#scale_out_txt').val()));
+					transformOut = transformOut.translate(sm.x, sm.y);	
+					s += _t + 'transform: ' + transformOut.toString() + ';' + _n;
+					s += _t + '-webkit-transform: ' + transformOut.toString()  + ';' + _n;
+					s += _t + '-ms-transform: ' + transformOut.toString()  + ';' + _n;
+					
+				}else{
+					var transformOutS = 'scale('+$('#scale_out_txt').val()+') rotate('+$('#rotate_out_txt').val()+'deg) translate('+sm.x+'px, '+sm.y+'px)';
+					s += _t + 'transform: ' + transformOutS + ';' + _n;
+					s += _t + '-webkit-transform: ' + transformOutS  + ';' + _n;
+					s += _t + '-ms-transform: ' + transformOutS  + ';' + _n;
+				}
+				transOut.push ('@TRANSFORM@ ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));					
 			}
 			if(filterOut != ' '){
 				s += _t + '-webkit-filter: ' + filterOut + ';' + _n;
@@ -2540,7 +2609,19 @@ $(function(){
   	$('#tranCiSSioner_app-button').click(function(evt){
 		$('#transition_css_txt').val(tranCiSSionerMagic());
 		$('#transition_css_txt').select();
-		return s;
+		//return s;
+  	});
+  	$('#tcss_preset_in').change(function(evt){
+  		var $this = $(evt.target);
+	  	var ob = JSON.parse($this.val());
+	  	$('#opacity_in_txt').val(ob.op);
+	  	$('#offset_in_txt').val(ob.offset);
+	  	$('#rotate_in_txt').val(ob.rot);
+	  	$('#scale_in_txt').val(ob.sc);
+	  	$('#duration_in_txt').val(ob.dur);
+	  	$('#delay_in_txt').val(ob.dy);
+	  	$('#ease_in_sl option[value="'+ob.e+'"]').attr('selected', 'selected');
+	  	$('input:radio[name="scene_in_rb"][value="'+ob.pos+'"]').attr('checked', 'checked');
   	});
 //Sprite Slicer
 var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
