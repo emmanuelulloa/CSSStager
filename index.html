@@ -430,7 +430,7 @@
 			border-radius: 15px;
 			padding: 2%;
 			width: 68%;
-			height: 83%;
+			height: 540px;
 			margin: 2% auto;
 			display: none;
 		}
@@ -708,9 +708,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"ease-out"}'>Fade</option>
 						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"0.7","dur":"0.7","dy":"0.5","e":"cubic-bezier(0.47, 2.02, 0.31, -0.36)"}'>Bounce</option>
 						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1.5","dur":"0.3","dy":"0.5","e":"cubic-bezier(.175, .885,.32,1.275)"}'>Zoom</option>
-						<option value='{"op":"0","pos":"none","offset":"10","rot":"270","sc":"1","dur":"0.7","dy":"0.5","e":"cubic-bezier(0.39, 0.58, 0.57, 1)"}'>Spin</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"270","sc":"1","dur":"0.7","dy":"0.5","e":"cubic-bezier(.175, .885,.32,1.275)"}'>Spin</option>
 						<option value='{"op":"0","pos":"left","offset":"200","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"cubic-bezier(.41,.41,.35,1.2)"}'>Slide</option>
-						<option value='{"op":"0","pos":"none","offset":"200","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"cubic-bezier(.755,.05,.855,.06)"}'>Swoosh</option>
+						<option value='{"op":"0","pos":"left","offset":"200","rot":"0","sc":"1","dur":"0.5","dy":"0.5","e":"cubic-bezier(.755,.05,.855,.06)"}'>Swoosh</option>
 					</select>
 				</span>
 				<hr />
@@ -744,7 +744,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						</tr>
 					</table>
 				</div>
-				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_in_txt" type="number" value="10" class='numberInput' />px</span>
+				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_in_txt" type="number" value="10" class='numberInput' /><select id="pfx_in_sl"><option value="px">px</option><option value="%">%</option></select></span>
 				<span class="row">Rotate: <input type="number" id="rotate_in_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_in_txt" value="1" step="0.1" class="numberInput"></span>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span -->
 				<hr />
@@ -836,7 +836,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 				</span-->
 			</div>
 			<div class="col3">
-				<span class="row"><label class="lbl">Scene <strong>OUT</strong>:</label> <input id="scene_out_txt" type="number" min="0" step="1" value="2" class='numberInput'></span>
+				<span class="row">
+					<label class="lbl">Scene <strong>OUT</strong>:</label> <input id="scene_out_txt" type="number" min="0" step="1" value="2" class='numberInput'>
+					<select id="tcss_preset_out">
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1","dur":"0.5","dy":"0","e":"ease-out"}'>Select a preset</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1","dur":"0.5","dy":"0","e":"ease-out"}'>Fade</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"0.7","dur":"0.7","dy":"0","e":"cubic-bezier(0.47, 2.02, 0.31, -0.36)"}'>Bounce</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"0","sc":"1.5","dur":"0.3","dy":"0","e":"cubic-bezier(.175, .885,.32,1.275)"}'>Zoom</option>
+						<option value='{"op":"0","pos":"none","offset":"10","rot":"-270","sc":"1","dur":"0.7","dy":"0","e":"cubic-bezier(.175, .885,.32,1.275)"}'>Spin</option>
+						<option value='{"op":"0","pos":"right","offset":"200","rot":"0","sc":"1","dur":"0.5","dy":"0","e":"cubic-bezier(.41,.41,.35,1.2)"}'>Slide</option>
+						<option value='{"op":"0","pos":"right","offset":"200","rot":"0","sc":"1","dur":"0.5","dy":"0","e":"cubic-bezier(.755,.05,.855,.06)"}'>Swoosh</option>
+					</select>
+				</span>
 				<hr />
 				<span class="row"><label class="lbl">Opacity:</label> <input type="number" name="" id="opacity_out_txt" value="0" class='numberInput'></span>
 				<span class="row">
@@ -868,7 +879,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						</tr>
 					</table>
 				</div>
-				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_out_txt" type="number" value="10" class='numberInput' />px</span>
+				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_out_txt" type="number" value="10" class='numberInput' /><select id="pfx_out_sl"><option value="px">px</option><option value="%">%</option></select></span>
 				<span class="row">Rotate: <input type="number" id="rotate_out_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_out_txt" value="1" step="0.1" class="numberInput"></span>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span -->
 				<hr />
@@ -2386,6 +2397,8 @@ $(function(){
   		currentTranCiSSioner = {
   			target:css.currentLayer,
   			name:css.currentLayer.attr('id'),
+  			width:parseFloat(css.currentLayer.css('width')),
+  			height:parseFloat(css.currentLayer.css('height')),
   			x:parseFloat(css.currentLayer.css('left')),
   			y:parseFloat(css.currentLayer.css('top')),
   			css:getElementClass(css.currentLayer, true),
@@ -2459,7 +2472,7 @@ $(function(){
 				temp_mtrx += _t + '-webkit-transform: ' + transformIn.toString()  + ';' + _n;
 				temp_mtrx += _t + '-ms-transform: ' + transformIn.toString()  + ';' + _n;			
 			}else{
-				var transformInS = 'scale('+$('#scale_in_txt').val()+') rotate('+$('#rotate_in_txt').val()+'deg) translate('+sm.x+'px, '+sm.y+'px)';
+				var transformInS = 'scale('+$('#scale_in_txt').val()+') rotate('+$('#rotate_in_txt').val()+'deg) translate('+sm.x+$('#pfx_in_sl').val()+', '+sm.y+$('#pfx_in_sl').val()+')';
 				temp_mtrx += _t + 'transform: ' + transformInS + ';' + _n;
 				temp_mtrx += _t + '-webkit-transform: ' + transformInS  + ';' + _n;
 				temp_mtrx += _t + '-ms-transform: ' + transformInS  + ';' + _n;
@@ -2576,7 +2589,7 @@ $(function(){
 					s += _t + '-ms-transform: ' + transformOut.toString()  + ';' + _n;
 					
 				}else{
-					var transformOutS = 'scale('+$('#scale_out_txt').val()+') rotate('+$('#rotate_out_txt').val()+'deg) translate('+sm.x+'px, '+sm.y+'px)';
+					var transformOutS = 'scale('+$('#scale_out_txt').val()+') rotate('+$('#rotate_out_txt').val()+'deg) translate('+sm.x+$('#pfx_out_sl').val()+', '+sm.y+$('#pfx_out_sl').val()+')';
 					s += _t + 'transform: ' + transformOutS + ';' + _n;
 					s += _t + '-webkit-transform: ' + transformOutS  + ';' + _n;
 					s += _t + '-ms-transform: ' + transformOutS  + ';' + _n;
@@ -2611,17 +2624,32 @@ $(function(){
 		$('#transition_css_txt').select();
 		//return s;
   	});
+  	function getTCSSOffset(){
+  		return Math.max(currentTranCiSSioner.width, currentTranCiSSioner.height);
+  	}
   	$('#tcss_preset_in').change(function(evt){
   		var $this = $(evt.target);
 	  	var ob = JSON.parse($this.val());
 	  	$('#opacity_in_txt').val(ob.op);
-	  	$('#offset_in_txt').val(ob.offset);
+	  	$('#offset_in_txt').val(getTCSSOffset());
 	  	$('#rotate_in_txt').val(ob.rot);
 	  	$('#scale_in_txt').val(ob.sc);
 	  	$('#duration_in_txt').val(ob.dur);
 	  	$('#delay_in_txt').val(ob.dy);
 	  	$('#ease_in_sl option[value="'+ob.e+'"]').attr('selected', 'selected');
-	  	$('input:radio[name="scene_in_rb"][value="'+ob.pos+'"]').attr('checked', 'checked');
+	  	$('input:radio[name="scene_in_rb"][value="'+ob.pos+'"]').prop('checked', 'checked');
+  	});
+  	$('#tcss_preset_out').change(function(evt){
+  		var $this = $(evt.target);
+	  	var ob = JSON.parse($this.val());
+	  	$('#opacity_out_txt').val(ob.op);
+	  	$('#offset_out_txt').val(getTCSSOffset());
+	  	$('#rotate_out_txt').val(ob.rot);
+	  	$('#scale_out_txt').val(ob.sc);
+	  	$('#duration_out_txt').val(ob.dur);
+	  	$('#delay_out_txt').val(ob.dy);
+	  	$('#ease_out_sl option[value="'+ob.e+'"]').attr('selected', 'selected');
+	  	$('input:radio[name="scene_out_rb"][value="'+ob.pos+'"]').prop('checked', 'checked');
   	});
 //Sprite Slicer
 var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
