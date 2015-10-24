@@ -429,7 +429,7 @@
 			background-color: #FFF;
 			border-radius: 15px;
 			padding: 2%;
-			width: 68%;
+			width: 72%;
 			height: 540px;
 			margin: 2% auto;
 			display: none;
@@ -481,7 +481,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6f0a3', end
 
 		}
 		.tranCiSSioner_tools .col2{
-			width:31%;
 			padding: 1%;
 			margin: 0;
 			float: left;
@@ -744,7 +743,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						</tr>
 					</table>
 				</div>
-				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_in_txt" type="number" value="10" class='numberInput' /><select id="pfx_in_sl"><option value="px">px</option><option value="%">%</option></select></span>
+				<span class="row">
+					Transform origin:
+					<select id="to_in_sl">
+						<option value="50% 50%">center</option>
+						<option value="50% 0%">top</option>
+						<option value="50% 100%">bottom</option>
+						<option value="0% 50%">left</option>
+						<option value="100% 50%">right</option>
+						<option value="0% 0%">top left</option>
+						<option value="100% 0%">top right</option>
+						<option value="0% 100%">bottom left</option>
+						<option value="100% 100%">bottom right</option>
+					</select>
+				Offset:<input id="offset_in_txt" type="number" value="10" class='numberInput' /><select id="pfx_in_sl"><option value="px">px</option><option value="%">%</option></select></span>
 				<span class="row">Rotate: <input type="number" id="rotate_in_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_in_txt" value="1" step="0.1" class="numberInput"></span>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span -->
 				<hr />
@@ -879,7 +891,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						</tr>
 					</table>
 				</div>
-				<span class="row"><label for="" class="lbl">Offset:</label><input id="offset_out_txt" type="number" value="10" class='numberInput' /><select id="pfx_out_sl"><option value="px">px</option><option value="%">%</option></select></span>
+				<span class="row">
+					Transform origin:
+					<select id="to_out_sl">
+						<option value="50% 50%">center</option>
+						<option value="50% 0%">top</option>
+						<option value="50% 100%">bottom</option>
+						<option value="0% 50%">left</option>
+						<option value="100% 50%">right</option>
+						<option value="0% 0%">top left</option>
+						<option value="100% 0%">top right</option>
+						<option value="0% 100%">bottom left</option>
+						<option value="100% 100%">bottom right</option>
+					</select>
+					Offset:<input id="offset_out_txt" type="number" value="10" class='numberInput' /><select id="pfx_out_sl"><option value="px">px</option><option value="%">%</option></select></span>
 				<span class="row">Rotate: <input type="number" id="rotate_out_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_out_txt" value="1" step="0.1" class="numberInput"></span>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span -->
 				<hr />
@@ -2269,9 +2294,13 @@ $(function(){
 					s += _t + '-ms-transform: ' + transform + ';' + _n;	
 				}	
 			}
-			s += _t + 'transform-origin: ' + to + ';' + _n;
-			s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
-			s += _t + '-ms-transform-origin: ' + to + ';' + _n;
+			if(tCSS){
+				s += '@TO@';
+			}else{
+				s += _t + 'transform-origin: ' + to + ';' + _n;
+				s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
+				s += _t + '-ms-transform-origin: ' + to + ';' + _n;				
+			}
 			s += (tCSS)?'@FILTER@':'';
 			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
 			s += '}' + _n;		
@@ -2402,7 +2431,8 @@ $(function(){
   			x:parseFloat(css.currentLayer.css('left')),
   			y:parseFloat(css.currentLayer.css('top')),
   			css:getElementClass(css.currentLayer, true),
-  			matrix:getElementProp(css.currentLayer, 'transform')
+  			matrix:getElementProp(css.currentLayer, 'transform'),
+  			to:getElementProp(css.currentLayer, 'transform-origin')
   		};
   		$('#scene_element_txt').val(currentTranCiSSioner.name);
   		$('#left_scene_txt').val(currentTranCiSSioner.x);
@@ -2454,6 +2484,12 @@ $(function(){
 		s += '/* LAYER: ' + currentTranCiSSioner.name + ' PROPERTIES */' + _n;
 		var tempIn = currentTranCiSSioner.css;
 		tempIn = tempIn.replace('@OPACITY@', o1);
+		var $toIN = $('#to_in_sl').val();
+		var $toOUT = $('#to_out_sl').val();
+		var toIN = _t + 'transform-origin: ' + $toIN + ';' + _n;
+		toIN += _t + '-webkit-transform-origin: ' + $toIN + ';' + _n;
+		toIN += _t + '-ms-transform-origin: ' + $toIN + ';' + _n;
+		tempIn = tempIn.replace('@TO@', toIN);
 		if(!useMatrix){
 			tempIn = tempIn.replace('@LEFT@', x1);
 			tempIn = tempIn.replace('@TOP@', y1);
@@ -2595,6 +2631,12 @@ $(function(){
 					s += _t + '-ms-transform: ' + transformOutS  + ';' + _n;
 				}
 				transOut.push ('@TRANSFORM@ ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));					
+			}
+			if($toIN !== $toOUT){
+				var toOUT = _t + 'transform-origin: ' + $toOUT + ';' + _n;
+				toOUT += _t + '-webkit-transform-origin: ' + $toOUT + ';' + _n;
+				toOUT += _t + '-ms-transform-origin: ' + $toOUT + ';' + _n;
+				s += toOUT;				
 			}
 			if(filterOut != ' '){
 				s += _t + '-webkit-filter: ' + filterOut + ';' + _n;
