@@ -429,7 +429,7 @@
 			background-color: #FFF;
 			border-radius: 15px;
 			padding: 2%;
-			width: 72%;
+			width: 80%;
 			height: 540px;
 			margin: 2% auto;
 			display: none;
@@ -2767,17 +2767,20 @@ function createSlices(){
 	var last = cuts_arr.length;
 	currentSlices = [];
 	s += '/* SPRITES: ' + $cuts.val() + ' */' + _n;
-	for(var i=0; i < cuts_arr.length; i++){
+	var prvVal = 0;
+	for(var i=0, prv=-1; i < cuts_arr.length; i++, prv++){
 		var slice = {top:0, height:0, width:0, left:0, backgroundPositionY:0, backgroundPositionX:0};
-		var val = parseInt(cuts_arr[i]);
+		var val = 0;
 		var valX = 0;
 		if(cuts_arr[i].indexOf(':') != -1){
 			var raw = cuts_arr[i].split(':');
 			val = parseInt(raw[1]);
 			valX = parseInt(raw[0]);
+		}else{
+			val = parseInt(cuts_arr[i]);
 		}
 		var name = currentSpriteSlice.name + ( i + 1 );
-		height = (i != 0)?(val - parseInt(cuts_arr[i-1])): val;
+		height = val - prvVal;
 		s += '/* LAYER: ' + name + ' PROPERTIES */' + _n;
 		s += '.' + name + '{' + _n;
 		s += _t + 'display: block;' + _n;
@@ -2827,8 +2830,10 @@ function createSlices(){
 			s += _t + '-webkit-' + trans;
 			s += '}' + _n;
 		}
+		prvVal = val;
 		currentSlices.push(slice);
 	}
+	console.log('>>>>', currentSlices);
 	$slices.attr('max', currentSlices.length);
 	$('#ss_code_txt').val(s).select();
 }
@@ -2841,8 +2846,10 @@ $applyButton.click(function(evt){
 	$iLayer.css('background-position', slice.backgroundPositionX +'px ' + slice.backgroundPositionY + 'px');
 	$iLayer.css('width', slice.width + 'px');
 	$iLayer.css('height', slice.height + 'px');
+	$('#' + css.currentLayer.attr('id')).css('width', slice.width + 'px');
+	$('#' + css.currentLayer.attr('id')).css('height', slice.height + 'px');
 	$('#' + css.currentLayer.attr('id')).css('top', slice.top + 'px');
-	$('#' + css.currentLayer.attr('id')).css('left', slice.left + 'px');
+	$('#' + css.currentLayer.attr('id')).css('left', (slice.left + slice.backgroundPositionX * -1) + 'px');
 	updateHUD(css.currentLayer);
 	$('.overlay').hide();
   	$('.spriteSlicer_tools').hide();
