@@ -2264,16 +2264,17 @@ $(function(){
 			s += '<!DOCTYPE html>' + _n;
 			s += '<html lang="en">' + _n;
 			s += '<head>' + _n;
+			s += '<title>'+ name +'</title>' + _n;
 			s += '<meta charset="UTF-8">' + _n;
 			s += '<meta name="ad.size" content="width='+css.container.width+',height='+css.container.height+'">' + _n;
-			s += '<title>'+ name +'</title>' + _n;
+			s += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />' + _n;
 			if(rm == 'dcm'){
-				s += '<'+zcript+' type="text/javascript">'+_n+'clickTag = "http://www.google.com";'+_n+ '//Validate with https://h5validator.appspot.com/dcm'+_n+'</'+zcript+'>'+ _n;
+				s += '<'+zcript+' type="text/javascript">'+_n+'var clickTag = "http://www.google.com";'+_n+ '//Validate with https://h5validator.appspot.com/dcm'+_n+'</'+zcript+'>'+ _n;
 			}
 			if(rm == 'dc'){
 				s += '<'+zcript+' src="http://s0.2mdn.net/ads/studio/Enabler.js" type="text/javascript"></'+zcript+'>' + _n;
 			}
-			s += '<style type="text/css">' + _n;	
+			s += '<style type="text/css" media="screen">' + _n;	
 		}
 
 		s += createCSS();
