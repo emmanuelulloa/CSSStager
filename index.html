@@ -558,9 +558,32 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 		.spriteSlicer_tools .app-button:hover{
 			background-color: seagreen;
 		}
+		.spriteSlicer_tools .trans-table {
+			width: 500px;
+			margin: 0;
+			padding: 3px;
+			display: none;
+		}
+		.spriteSlicer_tools .trans-table td {
+			text-align: right;
+			margin: 0;
+			padding: 3px;
+			font-weight: bold;
+			font-size: 10px;
+		}
+		.spriteSlicer_tools .trans-table .col-in{
+			text-align: left;
+			background-color: rgb(230,240,163);
+			width: 200px;
+		}
+		.spriteSlicer_tools .trans-table .col-out{
+			text-align: left;
+			background-color: rgb(252,236,252);
+			width: 200px;
+		}
 		#ss_code_txt {
 			width: 95%;
-			height: 50%;
+			height: 40%;
 		}
 		#ss_cuts_txt {
 			border: none;
@@ -608,6 +631,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 			color: white;
 			background-color: rgba(0,0,0,0.3);
 			font-family: courier, mono;
+		}
+		.ss_guide2{
+			color: mediumseagreen;
+			font-size: 20px;
+			font-family: courier, mono;
+			font-weight: bold;
+			padding-bottom: 3px;
 		}
 		.ss_guide_vert{
 			width: 1px;
@@ -777,6 +807,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
 						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
 						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.24, 1.245)">bounce in</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.515, 0.845)">bounce out</option>
+						<option value="cubic-bezier(0.76, -0.245, 0.24, 1.245)">bounce in out</option>
 						<optgroup label='Chrome easings:'>
 							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
 							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
@@ -829,6 +862,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 				<!-- ELEMENT PROPERTIES & ANIMATIONS -->
 				<span class="row">Element class: <input id="scene_element_txt" type="text" value=".myDiv" /></span>
 				<span class="row"><label for="left_scene_txt">X:</label> <input id="left_scene_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_scene_txt"> Y:</label> <input id="top_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
+				<span class="row"><label id="width_scene_lbl" for="width_scene_txt">width:</label> <input id="width_scene_txt" type="number" size="4" value='0' class="numberInput" /> <label id="height_scene_lbl" for="width_scene_txt">height:</label> <input id="height_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
 				<!--span class="row"><input type="checkbox" name="use_animation_ck" id="use_animation_ck"><label for="use_animation_ck"> Use attention getter:</label></span>
 				<span class="row">
 					<select name="use_animation_sl" id="use_animation_sl">
@@ -925,6 +959,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
 						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
 						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.24, 1.245)">bounce in</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.515, 0.845)">bounce out</option>
+						<option value="cubic-bezier(0.76, -0.245, 0.24, 1.245)">bounce in out</option>
 						<optgroup label='Chrome easings:'>
 							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
 							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
@@ -979,6 +1016,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 					<option value="2">Transform operations</option>
 					<option value="1">Matrix operations</option>
 					<option value="0">Left/Top</option>
+					<option value="-1">No transform</option>
 				</select>
 				<!--input type="checkbox" id="tranCiSSioner_useMatrix_ck" checked /><label for="tranCiSSioner_useMatrix_ck">Use Matrix Operations</label--> |
 				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
@@ -1004,16 +1042,206 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 				</div>
 			</div>
 			<div class="col2">
-				<span class="row">Vertical cut positions: <input id="ss_cuts_txt" value="" type="text" /></span>
-				<span class="row"><input type="checkbox" id="ss_layered_ck"><label for="ss_layered_ck">Layered (elements will have the same 'y' position)</label></span>
-				<hr />				
-				<span class="row"><input type="checkbox" id="ss_transition_ck" ><label for="ss_transition_ck">Use opacity transitions:</label></span>			
-				<span class="row">Scene IN <input type="number" id="ss_scene_in_txt" value="1" class="numberInput">| Scene OUT <input type="number" id="ss_scene_out_txt" value="2" class="numberInput"></span>
-				<span class="row">Delay IN: <input type="number" id="ss_delay_in" step="0.1" min="0" value="0.5" class="numberInput"/>s | Delay OUT:<input type="number" id="ss_delay_out" step="0.1" min="0" value="0.3" class="numberInput"/>s</span>
+				<span class="ss_guide2" class="row">x:0px y:0px</span>
+				<span class="row"><select id="ss_direction_sl"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select> cut positions: <input id="ss_cuts_txt" value="" type="text" /></span>
+				<span class="row"><input type="checkbox" id="ss_layered_ck"><label for="ss_layered_ck">Layered (sprites will have the same position)</label></span>
+				<hr />
+				<!-- TABLE -->
+<span class="row"><input type="checkbox" id="ss_transition_ck" ><label for="ss_transition_ck">Add transitions.</label></span>
+<table class="trans-table" cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td align="left" valign="top">&nbsp;</td>
+		<td align="left" valign="top" class="col-in"><strong>IN</strong></td>
+		<td align="left" valign="top" class="col-out"><strong>OUT</strong></td>
+	</tr>
+	<tr>
+		<td align="left" valign="top">Scene:</td>
+		<td align="left" valign="top" class="col-in"><input type="number" id="ss_scene_in_txt" value="1" class="numberInput" /></td>
+		<td align="left" valign="top" class="col-out"><input type="number" id="ss_scene_out_txt" value="2" class="numberInput" /></td>
+	</tr>
+	<tr>
+		<td align="left" valign="top">Preset:</td>
+		<td align="left" valign="top" class="col-in">
+			<select id="ss_trans_in">
+				<option value="none" selected>Opacity only</option>
+				<option value="translate(-100%, 0)">Left</option>
+				<option value="translate(100%, 0)">Right</option>
+				<option value="translate(0, -100%)">Up</option>
+				<option value="translate(0, 100%)">Down</option>
+				<option value="scale(.3,.3)">Zoom in</option>
+				<option value="scale(2,2)">Zoom out</option>
+				<option value="rotate(-90deg)">Rotate in</option>
+				<option value="rotate(90deg)">Rotate out</option>
+				<option value="rotate(-2turn)">Spin in</option>
+				<option value="rotate(2turn)">Spin out</option>
+			</select>
+		</td>
+		<td align="left" valign="top" class="col-out">
+			<select id="ss_trans_out">
+				<option value="none" selected>Opacity only</option>
+				<option value="translate(-100%, 0)">Left</option>
+				<option value="translate(100%, 0)">Right</option>
+				<option value="translate(0, -100%)">Up</option>
+				<option value="translate(0, 100%)">Down</option>
+				<option value="scale(.3,.3)">Zoom in</option>
+				<option value="scale(2,2)">Zoom out</option>
+				<option value="rotate(-90deg)">Rotate in</option>
+				<option value="rotate(90deg)">Rotate out</option>
+				<option value="rotate(-2turn)">Spin in</option>
+				<option value="rotate(2turn)">Spin out</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td align="left" valign="top">Ease:</td>
+		<td align="left" valign="top" class="col-in">
+<select id="ss_ease_in">
+						<option value="ease">ease</option>
+						<option value="ease-out" selected >ease-out</option>
+						<option value="ease-in">ease-in</option>
+						<option value="ease-in-out">ease-in-out</option>
+						<option value="linear">linear</option>
+						<option value="cubic-bezier(.65, 1.95, .03, .32)">bounce</option>
+						<option value="cubic-bezier(0.47, 2.02, 0.31, -0.36)">elastic</option>
+						<option value="cubic-bezier(.25,2,.75,.5)">spring</option>
+						<option value="cubic-bezier(.175, .885,.32,1.275)">swing</option>
+						<option value="cubic-bezier(.755,.05,.855,.06)">snap</option>
+						<option value="cubic-bezier(.2,1,.9,-0.5)">hesitate</option>
+						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
+						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
+						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.24, 1.245)">bounce in</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.515, 0.845)">bounce out</option>
+						<option value="cubic-bezier(0.76, -0.245, 0.24, 1.245)">bounce in out</option>
+						<optgroup label='Chrome easings:'>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+							<option value="cubic-bezier(0.45,0.05,0.55,0.95)">In Out Sine</option>
+							<option value="cubic-bezier(0.46,0.03,0.52,0.96)">In Out Quadratic</option>
+							<option value="cubic-bezier(0.65,0.05,0.36,1)">In Out Cubic</option>
+							<option value="cubic-bezier(0.68,-0.55,0.27,1.55)">In Out Back</option>
+							<option value="cubic-bezier(0.4,0,0.2,1)">fast out, slow in</option>
+							<option value="cubic-bezier(0.47, 0, 0.75, 0.72)">In Sine</option>
+							<option value="cubic-bezier(0.55, 0.09, 0.68, 0.53)">In Quadratic</option>
+							<option value="cubic-bezier(0.55, 0.06, 0.68, 0.19)">In Cubic</option>
+							<option value="cubic-bezier(0.6, -0.28, 0.74, 0.05)">In Back</option>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out, linear in</option>
+							<option value="cubic-bezier(0.39, 0.58, 0.57, 1)">Out Sine</option>
+							<option value="cubic-bezier(0.25, 0.46, 0.45, 0.94)">Out Quadratic</option>
+							<option value="cubic-bezier(0.22, 0.61, 0.36, 1)">Out Cubic</option>
+							<option value="cubic-bezier(0.18, 0.89, 0.32, 1.28)">Out Back</option>
+							<option value="cubic-bezier(0, 0, 0.2, 1)">linear out, slow in</option>
+						</optgroup>
+						<optgroup label='Penner easings:'>
+							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
+							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
+							<option value="cubic-bezier(.645,.045,.355,1)">easeInOutCubic</option>
+							<option value="cubic-bezier(.6,.04,.98,.335)">easeInCirc</option>
+							<option value="cubic-bezier(.075,.82,.165,1)">easeOutCirc</option>
+							<option value="cubic-bezier(.785,.135,.15,.86)">easeInOutCirc</option>
+							<option value="cubic-bezier(.95,.05,.795,.035)">easeInExpo</option>
+							<option value="cubic-bezier(.19,1,.22,1)">easeOutExpo</option>
+							<option value="cubic-bezier(1,0,0,1)">easeInOutExpo</option>
+							<option value="cubic-bezier(.55,.085,.68,.53)">easeInQuad</option>
+							<option value="cubic-bezier(.25,.46,.45,.94)">easeOutQuad</option>
+							<option value="cubic-bezier(.455,.03,.515,.955)">easeInOutQuad</option>
+							<option value="cubic-bezier(.895,.03,.685,.22)">easeInQuart</option>
+							<option value="cubic-bezier(.165,.84,.44,1)">easeOutQuart</option>
+							<option value="cubic-bezier(.77,0,.175,1)">easeInOutQuart</option>
+							<option value="cubic-bezier(.755,.05,.855,.06)">easeInQuint</option>
+							<option value="cubic-bezier(.23,1,.32,1)">easeOutQuint</option>
+							<option value="cubic-bezier(.86,0,.07,1)">easeInOutQuint</option>
+							<option value="cubic-bezier(.47,0,.745,.715)">easeInSine</option>
+							<option value="cubic-bezier(.39,.575,.565,1)">easeOutSine</option>
+							<option value="cubic-bezier(.445,.05,.55,.95)">easeInOutSine</option>
+							<option value="cubic-bezier(.6,-.28,.735,.045)">easeInBack</option>
+							<option value="cubic-bezier(.175, .885,.32,1.275)">easeOutBack</option>
+							<option value="cubic-bezier(.68,-.55,.265,1.55)">easeInOutBack</option>
+						</optgroup>						
+					</select>
+		</td>
+		<td align="left" valign="top" class="col-out">
+					<select id="ss_ease_out">
+						<option value="ease">ease</option>
+						<option value="ease-out">ease-out</option>
+						<option value="ease-in" selected >ease-in</option>
+						<option value="ease-in-out">ease-in-out</option>
+						<option value="linear">linear</option>
+						<option value="cubic-bezier(.65, 1.95, .03, .32)">bounce</option>
+						<option value="cubic-bezier(0.47, 2.02, 0.31, -0.36)">elastic</option>
+						<option value="cubic-bezier(.25,2,.75,.5)">spring</option>
+						<option value="cubic-bezier(.175, .885,.32,1.275)">swing</option>
+						<option value="cubic-bezier(.755,.05,.855,.06)">snap</option>
+						<option value="cubic-bezier(.2,1,.9,-0.5)">hesitate</option>
+						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
+						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
+						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.24, 1.245)">bounce in</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.515, 0.845)">bounce out</option>
+						<option value="cubic-bezier(0.76, -0.245, 0.24, 1.245)">bounce in out</option>
+						<optgroup label='Chrome easings:'>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
+							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
+							<option value="cubic-bezier(0.45,0.05,0.55,0.95)">In Out Sine</option>
+							<option value="cubic-bezier(0.46,0.03,0.52,0.96)">In Out Quadratic</option>
+							<option value="cubic-bezier(0.65,0.05,0.36,1)">In Out Cubic</option>
+							<option value="cubic-bezier(0.68,-0.55,0.27,1.55)">In Out Back</option>
+							<option value="cubic-bezier(0.4,0,0.2,1)">fast out, slow in</option>
+							<option value="cubic-bezier(0.47, 0, 0.75, 0.72)">In Sine</option>
+							<option value="cubic-bezier(0.55, 0.09, 0.68, 0.53)">In Quadratic</option>
+							<option value="cubic-bezier(0.55, 0.06, 0.68, 0.19)">In Cubic</option>
+							<option value="cubic-bezier(0.6, -0.28, 0.74, 0.05)">In Back</option>
+							<option value="cubic-bezier(0.4,0,1,1)">fast out, linear in</option>
+							<option value="cubic-bezier(0.39, 0.58, 0.57, 1)">Out Sine</option>
+							<option value="cubic-bezier(0.25, 0.46, 0.45, 0.94)">Out Quadratic</option>
+							<option value="cubic-bezier(0.22, 0.61, 0.36, 1)">Out Cubic</option>
+							<option value="cubic-bezier(0.18, 0.89, 0.32, 1.28)">Out Back</option>
+							<option value="cubic-bezier(0, 0, 0.2, 1)">linear out, slow in</option>
+						</optgroup>
+						<optgroup label='Penner easings:'>
+							<option value="cubic-bezier(.55,.055,.675,.19)">easeInCubic</option>
+							<option value="cubic-bezier(.215,.61,.355,1)">easeOutCubic</option>
+							<option value="cubic-bezier(.645,.045,.355,1)">easeInOutCubic</option>
+							<option value="cubic-bezier(.6,.04,.98,.335)">easeInCirc</option>
+							<option value="cubic-bezier(.075,.82,.165,1)">easeOutCirc</option>
+							<option value="cubic-bezier(.785,.135,.15,.86)">easeInOutCirc</option>
+							<option value="cubic-bezier(.95,.05,.795,.035)">easeInExpo</option>
+							<option value="cubic-bezier(.19,1,.22,1)">easeOutExpo</option>
+							<option value="cubic-bezier(1,0,0,1)">easeInOutExpo</option>
+							<option value="cubic-bezier(.55,.085,.68,.53)">easeInQuad</option>
+							<option value="cubic-bezier(.25,.46,.45,.94)">easeOutQuad</option>
+							<option value="cubic-bezier(.455,.03,.515,.955)">easeInOutQuad</option>
+							<option value="cubic-bezier(.895,.03,.685,.22)">easeInQuart</option>
+							<option value="cubic-bezier(.165,.84,.44,1)">easeOutQuart</option>
+							<option value="cubic-bezier(.77,0,.175,1)">easeInOutQuart</option>
+							<option value="cubic-bezier(.755,.05,.855,.06)">easeInQuint</option>
+							<option value="cubic-bezier(.23,1,.32,1)">easeOutQuint</option>
+							<option value="cubic-bezier(.86,0,.07,1)">easeInOutQuint</option>
+							<option value="cubic-bezier(.47,0,.745,.715)">easeInSine</option>
+							<option value="cubic-bezier(.39,.575,.565,1)">easeOutSine</option>
+							<option value="cubic-bezier(.445,.05,.55,.95)">easeInOutSine</option>
+							<option value="cubic-bezier(.6,-.28,.735,.045)">easeInBack</option>
+							<option value="cubic-bezier(.175, .885,.32,1.275)">easeOutBack</option>
+							<option value="cubic-bezier(.68,-.55,.265,1.55)">easeInOutBack</option>
+						</optgroup>						
+					</select>
+		</td>
+	</tr>
+	<tr>
+		<td align="left" valign="top">Time:</td>
+		<td align="left" valign="top" class="col-in">
+			<input type="number" id="ss_delay_in" step="0.1" min="0.2" value="0.5" class="numberInput"/>s
+		</td>
+		<td align="left" valign="top" class="col-out">
+			<input type="number" id="ss_delay_out" step="0.1" min="0.1" value="0.3" class="numberInput"/>s
+		</td>
+	</tr>
+</table>				
+				<!-- TABLE -->	
 				<span class="row"><input type="checkbox" id="ss_scene_per_slice_ck"><label for="ss_scene_per_slice_ck">Each slice is a scene</label></span>	
 				<span class="row"><input type="checkbox" id="ss_staggered_ck" /><label for="ss_staggered_ck">Staggered delay</label></span>
 				<span class="row"><a href="#" id="spriteSplicer_app-button" class="app-button">Create CSS</a></span>
-				<span class="row"><textarea id="ss_code_txt" class="output" cols="50" rows="15"></textarea></span>
+				<span class="row"><textarea id="ss_code_txt" class="output" cols="50" rows="13"></textarea></span>
 				<span class="row">Apply slice to current element:<input type="number" id="ss_slices" min="1" step="1" max="1" value="1" /> <a href="#" id="ss_apply" class="button">&lt; apply</a></span>
 				<hr />
 				<span class="row"><a href="#" id="ss_reset" class="button">reset</a></span>
@@ -1033,6 +1261,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value="dc">DoubleClick Studio</option>
 						<option value="flashtalking">FlashTalking</option>
 						<option value="atlas">Atlas</option>
+						<option value="sizmek">Sizmek</option>
 					</select>
 				</span>
 				<span class="row">Background/Guide Image: </span>
@@ -1092,6 +1321,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 						<option value="cubic-bezier(.5,0,.8,.15)">anticipate</option>
 						<option value="cubic-bezier(.41,.41,.35,1.2)">overshoot</option>
 						<option value="cubic-bezier(.45,-0.67,.53,1.63)">anticipate overshoot</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.24, 1.245)">bounce in</option>
+						<option value="cubic-bezier(0.485, 0.155, 0.515, 0.845)">bounce out</option>
+						<option value="cubic-bezier(0.76, -0.245, 0.24, 1.245)">bounce in out</option>
 						<optgroup label='Chrome easings:'>
 							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
 							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
@@ -1180,7 +1412,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 					<span class="row"><label for="rot_rng" class="lbl">Rotation:</label> <input id="rot_rng" type="range" value='0' min='-180' max='180' /></span>
 					<span class="row"><label for="sk_rng" class="lbl">Skew:</label> <input id="sk_rng" type="range" value='0' min='-60' max='60' /></span>
 					<span class="row"><label for="rot_txt">Rotation: </label><input type="number" size="4" value='0' class="numberInput" id="rot_txt"> deg</span>
-					<span class="row"><label for="scx_txt">Scale X:</label> <input id="scx_txt" type="number" size="4" value='1' class="numberInput" /><label for="scy_txt"> Scale Y:</label> <input id="scy_txt" type="number" size="4" value='1' class="numberInput" /></span>
+					<span class="row"><label for="scx_txt">Scale X:</label> <input id="scx_txt" type="number" size="4" value='1' step="0.1" class="numberInput" /><label for="scy_txt"> Scale Y:</label> <input id="scy_txt" type="number" size="4" value='1' step="0.1" class="numberInput" /></span>
 					<span class="row"><label for="x_txt">Translate X:</label> <input id="x_txt" type="number" size="4" value='0' class="numberInput" />px</span>
 					<span class="row"><label for="y_txt">Translate Y:</label> <input id="y_txt" type="number" size="4" value='0' class="numberInput" />px</span>
 					<span class="row"><a href="#" id="switchLT2T" class="button">Switch left/top to translate</a></span>
@@ -1208,97 +1440,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 			</div>
 		<div class="row">Get your code (html/css):</div>
 		<div class="row"><input id="onlycss_ck" type="checkbox" checked /><label for="onlycss_ck">Only CSS</label> | <input type="checkbox" id="toPos_ck" checked /><label for="toPos_ck">Transform Origin in %</label> | Scenes: <input type="number" id="scenes_txt" value="3" min="1" step="1" class="numberInput" /></div>
-		<div class="row"><a href="#" id="create_btn" class="button">Create CSS</a></div>
+		<div class="row"><a href="#" id="create_btn" class="button">Refresh Code</a></div>
 		<div class="row">
 			<textarea name="htmlOutput" id="htmlOutput_txt" class="output" cols="15" rows="10"></textarea>
 		</div>
 <textarea class="bnr">
-/*
-  _                
- | |__  _ __  _ __ 
- | '_ \| '_ \| '__|
- | |_) | | | | |   
- |_.__/|_| |_|_|   
-                   
-*/
-var bnr = (function(){
-		return {
-		_D: {
-			html5 : 'querySelector' in document && 'addEventListener' in window,
-			ie : (navigator.userAgent.toLowerCase() != -1) ? parseInt(navigator.userAgent.toLowerCase().split('msie')[1]) : 0,
-		},
-		detect : function(val){return this._D[val]},
-		ready: function(fn) {
-			if (document.readyState === 'complete') {
-				return fn();
-			}
-			document.addEventListener('DOMContentLoaded', fn, false);
-			return this;
-		},
-		$:function(S){
-			return document.getElementById(S) || document.getElementsByClassName(S) || document.getElementsByTagName(S) || document.querySelector(S) || document.querySelectorAll(S);
-		},
-		appendClass: function(el, c){
-			el.className += ' ' + c;
-		},
-		setClass: function(el, c){
-			el.className = c;
-		},
-		on: function(el,evt,f){
-			el.addEventListener(evt,f,false);
-		},
-		off: function(el,evt,f){
-			el.removeEventListener(evt,f,false);
-		},
-		_T : {
-			F: 2000,
-			L: 0,
-			T: [],
-			D: 0,
-			M: null
-		},
-		timeline: function(val,fd){
-			if (typeof val === 'string') {
-		      var map = {
-		        'loops': 	this._T.L,
-		        'duration': this._T.D,
-		        'timeline': this._T.M,
-		        'now': ((!this._T.N)?0:new Date().getTime() - this._T.N)
-		      };
-		      return map[val];
-		    }
-		    if (typeof val === 'boolean' && val === false) {
-		      for (var i = 0; i < this._T.T.length; i++) {
-		        clearTimeout(this._T.T[i]);
-		      }
-		      return;
-		    }
-			this._T.T = [];
-			this._T.D = 0;
-			this._T.M = val;
-			this._T.L++;
-			if(fd){
-				this._T.F = fd;
-			}
-			if(!this._T.N){
-				this._T.N = new Date().getTime();
-			}
-			var me = this;
-			for(var i = 0; i < val.length; i++){
-				var f = val[i][1], ff = (val[i][0] < 10) ? val[i][0] * me._T.F : (!val[i][0])? me._T.F : val[i][0];
-				this._T.T.push(setTimeout(f, me._T.D += Math.abs(ff)));
-			}
-		}
-	};
-})();
-/*
-              _                 _   _             
-   __ _ _ __ (_)_ __ ___   __ _| |_(_) ___  _ __  
-  / _` | '_ \| | '_ ` _ \ / _` | __| |/ _ \| '_ \ 
- | (_| | | | | | | | | | | (_| | |_| | (_) | | | |
-  \__,_|_| |_|_|_| |_| |_|\__,_|\__|_|\___/|_| |_|
-                                                  
-*/
+//bnr.js
+var bnr=function(){return{_D:{html5:"querySelector"in document&&"addEventListener"in window,ie:-1!=navigator.userAgent.toLowerCase()?parseInt(navigator.userAgent.toLowerCase().split("msie")[1]):0},detect:function(e){return this._D[e]},ready:function(e){return"complete"===document.readyState?e():(document.addEventListener("DOMContentLoaded",e,!1),this)},$:function(e){return document.getElementById(e)||document.getElementsByClassName(e)||document.getElementsByTagName(e)||document.querySelector(e)||document.querySelectorAll(e)},appendClass:function(e,t){e.className+=" "+t},setClass:function(e,t){e.className=t},on:function(e,t,n){e.addEventListener(t,n,!1)},off:function(e,t,n){e.removeEventListener(t,n,!1)},_T:{F:2e3,L:0,T:[],D:0,M:null},timeline:function(e,t){if("string"==typeof e){var n={loops:this._T.L,duration:this._T.D,timeline:this._T.M};return n[e]}if("boolean"!=typeof e||e!==!1){this._T.T=[],this._T.D=0,this._T.M=e,this._T.L++,t&&(this._T.F=t);for(var i=this,o=0;o<e.length;o++){var s=e[o][1],r=e[o][0]<10?e[o][0]*i._T.F:e[o][0]?e[o][0]:i._T.F;this._T.T.push(setTimeout(s,i._T.D+=Math.abs(r)))}}else for(var o=0;o<this._T.T.length;o++)clearTimeout(this._T.T[o])}}}();
+//ANIMATION
 var $banner = bnr.$('banner')[0];
 var $cta = bnr.$('cta')[0];
 var frameDuration = 3000;
@@ -1307,7 +1456,6 @@ var tl = [
 ];
 @INIT@
 @CTA@
-	
 </textarea>
 		<p class="footer">&copy;2015 Emmanuel Ulloa</p>
 		</div>
@@ -1605,6 +1753,7 @@ $(function(){
 		$layer.css('border', '1px dashed rgba(255, 0, 255, ' + (1 - op) + ')');
 	}
 	function deselect(){
+		$('#scale_txt').val(100);
 		$('.layer').each(function(i,element){
 			$(element).removeClass('selected');
 		});
@@ -1885,8 +2034,8 @@ $(function(){
 			var ratio = parseFloat($this.val())/100;
 			var name = css.currentLayer.attr('id');
 			css.imgSizes[name].scale = ratio;
-			var w = fixDecimal(css.imgSizes[name].width * css.imgSizes[name].scale) + 'px';
-			var h = fixDecimal(css.imgSizes[name].height * css.imgSizes[name].scale) + 'px';
+			var w = Math.round(fixDecimal(css.imgSizes[name].width * css.imgSizes[name].scale)) + 'px';
+			var h = Math.round(fixDecimal(css.imgSizes[name].height * css.imgSizes[name].scale)) + 'px';
 			var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 			$iLayer.css('width', w);
 			$iLayer.css('height', h);
@@ -2119,7 +2268,7 @@ $(function(){
 			s += '<meta name="ad.size" content="width='+css.container.width+',height='+css.container.height+'">' + _n;
 			s += '<title>'+ name +'</title>' + _n;
 			if(rm == 'dcm'){
-				s += '<'+zcript+' type="text/javascript">var clickTag = "http://www.google.com";</'+zcript+'>'+ _n;
+				s += '<'+zcript+' type="text/javascript">'+_n+'clickTag = "http://www.google.com";'+_n+ '//Validate with https://h5validator.appspot.com/dcm'+_n+'</'+zcript+'>'+ _n;
 			}
 			if(rm == 'dc'){
 				s += '<'+zcript+' src="http://s0.2mdn.net/ads/studio/Enabler.js" type="text/javascript"></'+zcript+'>' + _n;
@@ -2131,6 +2280,10 @@ $(function(){
 
 		if(!onlycss){
 			s += '</style>' + _n;
+			if(rm == 'sizmek'){
+				s += '<'+zcript+' src="scripts/EBLoader.js"></'+zcript+'>' + _n;
+				s += '<!-- //Contents of scripts/EBLoader.js:' + _n + 'function loadServingSysScript(relativeUrl) {' + _n + _t + 'document.write("<script src=\'" + (document.location.protocol === "https:" ? "https://secure-" : "http://") + "ds.serving-sys.com/BurstingScript/" + relativeUrl + "\'><\/script>")' + _n + '}' + _n + '//Load secure or insecure version of EBLoader' + _n + 'loadServingSysScript("EBLoader.js");'+_n+' -->'+_n;
+			}
 			s += '</head>' + _n;
 			s += '<body>' + _n;
 			if(rm == 'atlas'){
@@ -2157,9 +2310,10 @@ $(function(){
 			}
 			bnrjs = bnrjs.replace('@SCENES@', scenesCode);
 			if(rm == 'dc'){
-				initFoo += 'if (Enabler.isInitialized()) {' + _n;
-				initFoo += 'bnr.timeline(tl,frameDuration);' + _n;
-				initFoo += '}else{' + _n + 'Enabler.addEventListener(studio.events.StudioEvent.INIT, function(){bnr.timeline(tl,frameDuration);});' + _n + '}';
+				initFoo += 'function adVisibilityHandler(evt){' + _n + _t +'bnr.timeline(tl,frameDuration);' + _n + '}' + _n;
+				initFoo += 'function pageLoadedHandler(evt){' + _n + _t +'if (Enabler.isVisible()) {' + _n + _t +_t +'adVisibilityHandler();' + _n + _t +'}else {' + _n + _t +_t +'Enabler.addEventListener(studio.events.StudioEvent.VISIBLE, adVisibilityHandler);' + _n + _t +'}' + _n + '}' + _n;
+				initFoo += 'function enablerInitHandler(evt){' + _n + _t +'if (Enabler.isPageLoaded()) {' + _n + _t +_t +'pageLoadedHandler();' + _n + _t +'}else {' + _n + _t +_t +'Enabler.addEventListener(studio.events.StudioEvent.PAGE_LOADED, pageLoadedHandler);' + _n + _t +'}' + _n + '}' + _n;
+				initFoo += 'if (Enabler.isInitialized()) {' + _n + _t +'enablerInitHandler();' + _n + '}else{' + _n + _t +'Enabler.addEventListener(studio.events.StudioEvent.INIT, enablerInitHandler);' + _n +'}' + _n;
 				bnrjs = bnrjs.replace('@INIT@', initFoo);
 			}else if(rm == 'flashtalking'){
 				initFoo += 'var myFT = new FT();' + _n;
@@ -2167,6 +2321,10 @@ $(function(){
 				cta += 'myFT.applyClickTag($banner, 1);'+ _n;
 				bnrjs = bnrjs.replace('@INIT@', initFoo);
 				bnrjs = bnrjs.replace('@CTA@', cta);
+			}else if(rm == 'sizmek'){
+				initFoo += 'function init(){'+ _n + _t + "bnr.on($banner,'click',function(evt){EB.clickthrough()});" + _n + _t + 'bnr.timeline(tl,frameDuration);' + _n + '}' + _n; 
+				initFoo += 'function initEB(){' + _n + _t + 'if(!EB.isInitialized()){' + _n + _t + _t + 'EB.addEventListener(EBG.EventName.EB_INITIALIZED, init});' + _n + _t + '}else{' + _n + _t + _t + 'init();' + _n + _t + '}' + _n + '}' + _n + "window.addEventListener('load', initEB);" + _n;
+				bnrjs = bnrjs.replace('@INIT@', initFoo);
 			}else{
 				bnrjs = bnrjs.replace('@INIT@', 'bnr.timeline(tl,frameDuration);');
 			}
@@ -2335,6 +2493,9 @@ $(function(){
 		}
 		s += _t + 'border: 1px solid ' + css.container.borderColor + ';' + _n;
 		s += _t + 'cursor: pointer;' + _n;
+		s += _t + 'outline: none;' + _n;
+		s += _t + '-webkit-tap-highlight-color: transparent;' + _n;
+		s += _t + 'user-select: none;' + _n;
 		s += _t + 'transform-style: preserve-3d;' + _n;
 		s += _t + '-webkit-transform-style: preserve-3d;' + _n;
 		s += _t + '-ms-transform-style: preserve-3d;' + _n;
@@ -2437,8 +2598,20 @@ $(function(){
   		$('#scene_element_txt').val(currentTranCiSSioner.name);
   		$('#left_scene_txt').val(currentTranCiSSioner.x);
   		$('#top_scene_txt').val(currentTranCiSSioner.y);
+  		$('#width_scene_txt').val(currentTranCiSSioner.width);
+  		$('#height_scene_txt').val(currentTranCiSSioner.height);
   		$('.tranCiSSioner_tools').show();
   		$('.overlay').show();
+  	});
+  	$('#width_scene_lbl, #height_scene_lbl').click(function(evt){
+  		var $target = $(evt.currentTarget).attr('id');
+  		if($target == $('#width_scene_lbl').attr('id')){
+  			$('#offset_in_txt').val($('#width_scene_txt').val());
+  			$('#offset_out_txt').val($('#width_scene_txt').val());
+  		}else{
+  			$('#offset_in_txt').val($('#height_scene_txt').val());
+  			$('#offset_out_txt').val($('#height_scene_txt').val());
+  		}
   	});
   	$('#tranCiSSioner_close').click(function(evt){
   		$('.overlay').hide();
@@ -2490,10 +2663,16 @@ $(function(){
 		toIN += _t + '-webkit-transform-origin: ' + $toIN + ';' + _n;
 		toIN += _t + '-ms-transform-origin: ' + $toIN + ';' + _n;
 		tempIn = tempIn.replace('@TO@', toIN);
-		if(!useMatrix){
-			tempIn = tempIn.replace('@LEFT@', x1);
-			tempIn = tempIn.replace('@TOP@', y1);
-			tempIn = tempIn.replace('@MATRIX@', '');
+		if(useMatrix < 1){
+			if(useMatrix == 0){
+				tempIn = tempIn.replace('@LEFT@', x1);
+				tempIn = tempIn.replace('@TOP@', y1);
+				tempIn = tempIn.replace('@MATRIX@', '');	
+			}else if (useMatrix == -1){
+				tempIn = tempIn.replace('@LEFT@', currentTranCiSSioner.x + 'px');
+				tempIn = tempIn.replace('@TOP@', currentTranCiSSioner.y + 'px');
+				tempIn = tempIn.replace('@MATRIX@', '');
+			}
 		}else{
 			tempIn = tempIn.replace('@LEFT@', currentTranCiSSioner.x + 'px');
 			tempIn = tempIn.replace('@TOP@', currentTranCiSSioner.y + 'px');
@@ -2518,16 +2697,18 @@ $(function(){
 		
 		//will-change
 		var willChangeArr = ['opacity'];
-		if(!useMatrix){
-			if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br' || sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
-				willChangeArr.push('left','top');
+		if(useMatrix < 1){
+			if(useMatrix == 0){
+				if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br' || sideOut == 'tl' || sideOut == 'tr' || sideOut == 'bl' || sideOut == 'br'){
+					willChangeArr.push('left','top');
+				}
+				if(sideIn == 'top' || sideIn == 'bottom' || sideOut == 'top' || sideOut == 'bottom'){
+					willChangeArr.push('top');
+				}
+				if(sideIn == 'left' || sideIn == 'right' || sideOut == 'left' || sideOut == 'right'){
+					willChangeArr.push('left');
+				}				
 			}
-			if(sideIn == 'top' || sideIn == 'bottom' || sideOut == 'top' || sideOut == 'bottom'){
-				willChangeArr.push('top');
-			}
-			if(sideIn == 'left' || sideIn == 'right' || sideOut == 'left' || sideOut == 'right'){
-				willChangeArr.push('left');
-			}			
 		}else{
 			willChangeArr.push('transform');
 		}
@@ -2557,15 +2738,17 @@ $(function(){
 			s += _t + 'opacity: 1;' + _n;
 			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's')) ;
 		}
-		if(!useMatrix){
-			if(willChange.left){
-				s += _t + 'left: ' + $('#left_scene_txt').val() + 'px;' + _n;
-				transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+		if(useMatrix < 0){
+			if(useMatrix == 0){
+				if(willChange.left){
+					s += _t + 'left: ' + $('#left_scene_txt').val() + 'px;' + _n;
+					transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+				}
+				if(willChange.top){
+					s += _t + 'top: ' + $('#top_scene_txt').val() + 'px;' + _n;
+					transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+				}				
 			}
-			if(willChange.top){
-				s += _t + 'top: ' + $('#top_scene_txt').val() + 'px;' + _n;
-				transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
-			}			
 		}else{
 			willChange.transform = true;
 			s += _t + 'transform: ' + currentTranCiSSioner.matrix + ';' + _n;
@@ -2577,6 +2760,7 @@ $(function(){
 			s += _t + '-webkit-filter: none;' + _n;
 			transIn.push('-webkit-filter ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
 		}
+		s += _t + '/* duration: ' + $('#duration_in_txt').val() + ', ease: ' + $('#ease_in_sl option:selected').text() + ', delay: '+ $('#delay_in_txt').val() + ' */' + _n;
 		s += _t + 'transition: ' + transIn.join(', ').replace('@TRANSFORM@', 'transform') + ';' + _n;
 		s += _t + '-webkit-transition: ' + transIn.join(', ').replace('@TRANSFORM@', '-webkit-transform') + ';' + _n;
 		s += '}' + _n; 
@@ -2604,15 +2788,17 @@ $(function(){
 				s += _t + 'opacity: '+ o2 + ';' + _n;
 				transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
 			}
-			if(!useMatrix){
-				if(willChange.left){
-					s += _t + 'left: ' + x2 + ';'  + _n;
-					transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+			if(useMatrix < 1){
+				if(useMatrix == 0){
+					if(willChange.left){
+						s += _t + 'left: ' + x2 + ';'  + _n;
+						transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+					}
+					if(willChange.top){
+						s += _t + 'top: ' + y2 + ';' + _n;
+						transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+					}						
 				}
-				if(willChange.top){
-					s += _t + 'top: ' + y2 + ';' + _n;
-					transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
-				}				
 			}else{
 				willChange.transform = true;
 				if(useMatrix == 1){
@@ -2642,6 +2828,7 @@ $(function(){
 				s += _t + '-webkit-filter: ' + filterOut + ';' + _n;
 				transOut.push('-webkit-filter ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
 			}
+			s += _t + '/* duration: ' + $('#duration_out_txt').val() + ', ease ' + $('#ease_out_sl option:selected').text() + ', delay: '+ $('#delay_out_txt').val() + ' */' + _n;
 			s += _t + 'transition: ' + transOut.join(', ').replace('@TRANSFORM@', 'transform') + ';' + _n;
 			s += _t + '-webkit-transition: ' + transOut.join(', ').replace('@TRANSFORM@', '-webkit-transform') + ';' + _n;
 			s += '}' + _n;			
@@ -2694,7 +2881,7 @@ $(function(){
 	  	$('input:radio[name="scene_out_rb"][value="'+ob.pos+'"]').prop('checked', 'checked');
   	});
 //Sprite Slicer
-var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
+var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $guide2 = $('.ss_guide2'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
 var currentSpriteSlice = {target:null,name:'', x:0, y:0, width:0, height:0, css:''};
 $('#spriteslicerbutton').click(function(evt){
 	//$cuts.val('');
@@ -2707,7 +2894,8 @@ $('#spriteslicerbutton').click(function(evt){
   		width:parseFloat($iLayer.css('width')),
   		height:parseFloat($iLayer.css('height')),
   		image: $iLayer.css('background-image'),
-  		bgSize: $iLayer.css('background-size')
+  		bgSize: $iLayer.css('background-size'),
+  		bgPosition: $iLayer.css('background-position')
 	};
 	$ss_container.css('width', currentSpriteSlice.width + 'px');
 	$ss_container.css('height', currentSpriteSlice.height + 'px');
@@ -2716,6 +2904,7 @@ $('#spriteslicerbutton').click(function(evt){
 	$ss_image.css('height', currentSpriteSlice.height + 'px');
 	$ss_image.css('background-repeat', 'no-repeat');
 	$ss_image.css('background-size', currentSpriteSlice.bgSize);
+	$ss_image.css('background-position', currentSpriteSlice.bgPosition);
 	$('.spriteSlicer_tools').show();
   	$('.overlay').show();
 });
@@ -2729,24 +2918,43 @@ $ss_container.on('mousemove', function(evt){
 	var posX = Math.round(evt.pageX - $ss_container.offset().left);
 	$guideY.text('x: ' + posX +' - y: ' + posY + 'px');
 	$guideX.css('left', posX + 'px');
-	$guideX.css('height', posY + 'px');
+	$guideX.css('height', parseInt(currentSpriteSlice.height * 2) + 'px');
 	$guideY.css('top', posY + 'px');
+	$guide2.text($guideY.text());
 });
 $ss_container.on('click', function(evt){
 	var posX = Math.round(evt.pageX - $ss_container.offset().left);
 	var posY = Math.round(evt.pageY - $ss_container.offset().top);
-	var cuts = $cuts.val() + posY + ',';
+	var direction = $('#ss_direction_sl').val();
+	var cuts;
+	if(direction == 'horizontal'){
+		var cuts = $cuts.val() + posY + ',';
+	}else{
+		var cuts = $cuts.val() + posX + ',';
+	}
+	/*
 	if(evt.shiftKey){
 		cuts = $cuts.val() + posX + ':' + posY  + ',';
 	}
+	*/
 	$cuts.val(cuts);
 });
+$('#ss_transition_ck').on('change', function(evt){
+	var $this = $(evt.target);
+	if($this.prop('checked')){
+		$('.trans-table').show();
+	}else{
+		$('.trans-table').hide();
+	}
+});
 var currentSlices;
-var $applyButton = $('#ss_apply');
 var $slices = $('#ss_slices');
 function createSlices(){
 	var layered = $('#ss_layered_ck').prop('checked');
+	var direction = $('#ss_direction_sl').val();
 	var transition = $('#ss_transition_ck').prop('checked');
+	var easeIn = $('#ss_ease_in').val();
+	var easeOut = $('#ss_ease_out').val();
 	var staggered = $('#ss_staggered_ck').prop('checked');
 	var sliceIsScene = $('#ss_scene_per_slice_ck').prop('checked');
 	var sceneIn = $('#ss_scene_in_txt').val();
@@ -2758,98 +2966,136 @@ function createSlices(){
 	var s = '',
 		_n = '\n',
 		_t = '\t';
-	var pos = currentSpriteSlice.y;
-	var height = 0;
-	var offset = 0;
-	var posX = currentSpriteSlice.x;
-	var width = 0;
-	var offsetX = 0;
+	var pos = {
+		x:0, 
+		y:0
+	};
+	var size = {
+		width:0, 
+		height:0
+	};
+	var offset = {
+		x:0,
+		y:0
+	}
 	var last = cuts_arr.length;
 	currentSlices = [];
-	s += '/* SPRITES: ' + $cuts.val() + ' */' + _n;
-	var prvVal = 0;
-	for(var i=0, prv=-1; i < cuts_arr.length; i++, prv++){
-		var slice = {top:0, height:0, width:0, left:0, backgroundPositionY:0, backgroundPositionX:0};
-		var val = 0;
-		var valX = 0;
-		if(cuts_arr[i].indexOf(':') != -1){
-			var raw = cuts_arr[i].split(':');
-			val = parseInt(raw[1]);
-			valX = parseInt(raw[0]);
-		}else{
-			val = parseInt(cuts_arr[i]);
-		}
+	s += '/* SPRITES: ' + direction + ' ' + $cuts.val() + ' */' + _n;
+	for(var i=0; i < cuts_arr.length; i++){
+		var slice = {
+			top: 0,
+			left: 0,
+			height: 0,
+			width: 0,
+			backgroundPositionY: 0,
+			backgroundPositionX: 0
+		};
 		var name = currentSpriteSlice.name + ( i + 1 );
-		height = val - prvVal;
+		var val = {x:0, y:0};
 		s += '/* LAYER: ' + name + ' PROPERTIES */' + _n;
-		s += '.' + name + '{' + _n;
+		s += '.' + name + ' {' + _n;
 		s += _t + 'display: block;' + _n;
 		s += _t + 'position: absolute;' + _n;
+		if(direction == 'horizontal'){
+			val.y = parseInt(cuts_arr[i]);
+			slice.top = currentSpriteSlice.y + pos.y;
+			slice.left = currentSpriteSlice.x;
+			slice.height = val.y - pos.y;
+			slice.width = currentSpriteSlice.width;
+			s += _t + 'left: ' + slice.left + 'px;' + _n;
+			s += _t + 'top: ' + slice.top + 'px;' + _n;
+			s += _t + 'width: ' + slice.width + 'px;' + _n;
+			s += _t + 'height: ' + slice.height + 'px;' + _n;
+			pos.y += (layered)?0:slice.height;
+		}else{
+			val.x = parseInt(cuts_arr[i]);
+			slice.top = currentSpriteSlice.y;
+			slice.left = currentSpriteSlice.x + pos.x;
+			slice.height = currentSpriteSlice.height;
+			slice.width = val.x - pos.x;
+			s += _t + 'left: ' + slice.left + 'px;' + _n;
+			s += _t + 'top: ' + slice.top + 'px;' + _n;
+			s += _t + 'width: ' + slice.width + 'px;' + _n;
+			s += _t + 'height: ' + slice.height + 'px;' + _n;
+			pos.x += (layered)?0:slice.width;
+		}
+		s += _t + 'background-image: url("'+ css.images[currentSpriteSlice.name] + '");' + _n;
+		s += _t + 'background-repeat: no-repeat;' + _n;
+		if(direction == 'horizontal'){
+			slice.backgroundPositionY = offset.y * -1;
+		}else{
+			slice.backgroundPositionX = offset.x * -1;
+		}
+		s += _t + 'background-position: ' + slice.backgroundPositionX + 'px ' + slice.backgroundPositionY + 'px;' + _n;
+		s += _t + 'background-size: ' + currentSpriteSlice.bgSize + ';' + _n;
+		offset.x = val.x;
+		offset.y = val.y;
+		var transIn = $('#ss_trans_in').val();
+		var transOut = $('#ss_trans_out').val();
+		var onlyOpacity = transIn == 'none' && transOut == 'none';
 		if(transition){
 			s += _t + 'opacity: 0;' + _n;
+			if(onlyOpacity){
+				s += _t + 'will-change: opacity;' + _n;
+			}else{
+				s += _t + 'will-change: opacity, transform;' + _n;
+				s += _t + 'transform: ' + transIn + ';' + _n;
+				s += _t + '-webkit-transform: ' + transIn + ';' + _n;
+			}
+			
 		}else{
 			s += _t + 'opacity: 1;' + _n;
 		}
-		s += _t + 'left: ' + (currentSpriteSlice.x + valX) + 'px;' + _n;
-		slice.top = pos;
-		s += _t + 'top: ' + pos + 'px;' + _n;
-		pos += (layered)?0:height;
-		width = (currentSpriteSlice.width - valX);
-		slice.width = width;
-		s += _t + 'width: ' + width + 'px;' + _n;
-		slice.height = height;
-		s += _t + 'height: ' + height + 'px;' + _n;
-		s += _t + 'background-image: url("'+ css.images[currentSpriteSlice.name] + '");' + _n;
-		s += _t + 'background-repeat: no-repeat;' + _n;
-		slice.backgroundPositionY = offset * -1;
-		slice.backgroundPositionX =  (valX * -1);
-		s += _t + 'background-position: ' + slice.backgroundPositionX + 'px ' + slice.backgroundPositionY + 'px;' + _n;
-		offset = val;
-		s += _t + 'background-size: ' + currentSpriteSlice.bgSize + ';' + _n;
-		if(transition){
-			s += _t + 'will-change: opacity;' + _n;
-		}
 		s += '}' + _n;
+		//***
 		if(transition){
 			var sIn = (sliceIsScene)?parseInt(sceneIn) + i:sceneIn;
 			s += '/* scene ' + sIn + ' ' + name + ' APPEARS */' + _n;
 			s += '.scene' + sIn + ' .' + name + '{' + _n;
-			s += _t + 'opacity: 1;' + _n;
 			var staggeredDelay = (staggered)?(Math.round(((i + 1) * staggerIn) * 100)/100):staggerIn;
-			var trans = 'transition: opacity 0.5s ease-out ' + staggeredDelay + 's;' + _n;
-			s += _t + trans;
-			s += _t + '-webkit-' + trans;
+			var trans;
+			s += _t + 'opacity: 1;' + _n;
+			if(onlyOpacity){
+				trans = 'transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's;' + _n;
+				s += _t + trans;
+				s += _t + '-webkit-' + trans;
+			}else{
+				s += _t + 'transform: none;' + _n;
+				s += _t + '-webkit-transform: none;' + _n;
+				s += _t + 'transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's, transform ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's; '+ _n;
+				s += _t + '-webkit-transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's, -webkit-transform ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's; '+ _n;
+			}
 			s += '}' + _n;
 			var sOut = (sliceIsScene)?parseInt(sceneOut) + i:sceneOut;
 			s += '/* scene ' + sOut + ' ' + name + ' DISAPPEARS */' + _n;
 			s += '.scene' + sOut + ' .' + currentSpriteSlice.name + ( i + 1 ) + '{' + _n;
 			s += _t + 'opacity: 0;' + _n;
 			staggeredDelay = (staggered)?(Math.round(((i + 1) * staggerOut) * 100)/100):staggerOut;
-			trans = 'transition: opacity 0.3s ease-in ' + staggeredDelay + 's;' + _n;
-			s += _t + trans;
-			s += _t + '-webkit-' + trans;
+			if(onlyOpacity){
+				trans = 'transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's;' + _n;
+				s += _t + trans;
+				s += _t + '-webkit-' + trans;
+			}else{
+				s += _t + 'transform: ' + transOut + ';' + _n;
+				s += _t + '-webkit-transform: ' + transOut + ';' + _n;
+				s += _t + 'transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's, transform ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's; '+ _n;
+				s += _t + '-webkit-transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's, -webkit-transform ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's; '+ _n;
+			}
 			s += '}' + _n;
 		}
-		prvVal = val;
+		//***
 		currentSlices.push(slice);
 	}
-	console.log('>>>>', currentSlices);
 	$slices.attr('max', currentSlices.length);
 	$('#ss_code_txt').val(s).select();
 }
 $('#spriteSplicer_app-button').click(function(evt){
 	createSlices();
 });
-$applyButton.click(function(evt){
-	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
+$('#ss_apply').click(function(evt){
 	var slice = currentSlices[parseInt($slices.val()) - 1];
-	$iLayer.css('background-position', slice.backgroundPositionX +'px ' + slice.backgroundPositionY + 'px');
-	$iLayer.css('width', slice.width + 'px');
-	$iLayer.css('height', slice.height + 'px');
-	$('#' + css.currentLayer.attr('id')).css('width', slice.width + 'px');
-	$('#' + css.currentLayer.attr('id')).css('height', slice.height + 'px');
-	$('#' + css.currentLayer.attr('id')).css('top', slice.top + 'px');
-	$('#' + css.currentLayer.attr('id')).css('left', (slice.left + slice.backgroundPositionX * -1) + 'px');
+	$('#' + css.currentLayer.attr('id') + I_LAYER).css('background-position', slice.backgroundPositionX +'px ' + slice.backgroundPositionY + 'px').css('width', slice.width + 'px').css('height', slice.height + 'px');
+	$('#' + css.currentLayer.attr('id')).css('width', slice.width + 'px').css('height', slice.height + 'px').css('top', slice.top + 'px').css('left', slice.left + 'px');
 	updateHUD(css.currentLayer);
 	$('.overlay').hide();
   	$('.spriteSlicer_tools').hide();
