@@ -1043,7 +1043,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 			</div>
 			<div class="col2">
 				<span class="ss_guide2" class="row">x:0px y:0px</span>
-				<span class="row"><select id="ss_direction_sl"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select> cut positions: <input id="ss_cuts_txt" value="" type="text" /></span>
+				<span class="row">
+					<select id="ss_direction_sl">
+						<option value="horizontal">Horizontal</option>
+						<option value="vertical">Vertical</option>
+						<option value="box">Box</option>
+					</select> 
+					cut positions: <input id="ss_cuts_txt" value="" type="text" /></span>
 				<span class="row"><input type="checkbox" id="ss_layered_ck"><label for="ss_layered_ck">Layered (sprites will have the same position)</label></span>
 				<hr />
 				<!-- TABLE -->
@@ -1236,10 +1242,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 			<input type="number" id="ss_delay_out" step="0.1" min="0.1" value="0.3" class="numberInput"/>s
 		</td>
 	</tr>
+	<tr>
+		<td align="left" valign="top" colspan="3"><input type="checkbox" id="ss_staggered_ck" /><label for="ss_staggered_ck">Staggered delay</label></td>
+	</tr>
+	<tr>
+		<td align="left" valign="top" colspan="3"><input type="checkbox" id="ss_scene_per_slice_ck"><label for="ss_scene_per_slice_ck">Each slice is a scene</label></td>
+	</tr>
 </table>				
 				<!-- TABLE -->	
-				<span class="row"><input type="checkbox" id="ss_scene_per_slice_ck"><label for="ss_scene_per_slice_ck">Each slice is a scene</label></span>	
-				<span class="row"><input type="checkbox" id="ss_staggered_ck" /><label for="ss_staggered_ck">Staggered delay</label></span>
 				<span class="row"><a href="#" id="spriteSplicer_app-button" class="app-button">Create CSS</a></span>
 				<span class="row"><textarea id="ss_code_txt" class="output" cols="50" rows="13"></textarea></span>
 				<span class="row">Apply slice to current element:<input type="number" id="ss_slices" min="1" step="1" max="1" value="1" /> <a href="#" id="ss_apply" class="button">&lt; apply</a></span>
@@ -1478,7 +1488,8 @@ $(function(){
 		images : {},
 		imgSizes : {},
 		layerTransforms : {},
-		currentLayer : null
+		currentLayer : null,
+		resetInfo : {}
 	}
 	var $stage = $('#stage'),
 		$vcam_ui = $('#vcam_ui'),
@@ -1529,6 +1540,11 @@ $(function(){
 						imageLayer.style.backgroundSize = img.width + 'px ' + img.height + 'px';
 						imageLayer.style.width = img.width + 'px';
 						imageLayer.style.height = img.height + 'px';
+						css.resetInfo[name] = {
+							backgroundSize : imageLayer.style.backgroundSize,
+							width : imageLayer.style.width,
+							height : imageLayer.style.height
+						}
 						css.imgSizes[name] = {width:img.width,height:img.height,scale:1};
 						delete img;
 						//Let's assemble
@@ -1841,6 +1857,12 @@ $(function(){
 		}
 		$('#htmlOutput_txt').val(createHTML());
 	}
+	function setWidth(val){
+		$('#' + css.currentLayer.attr('id') + I_LAYER).css('width', val + 'px');
+	}
+	function setHeight(val){
+		$('#' + css.currentLayer.attr('id') + I_LAYER).css('height', val + 'px');
+	}
 	function onHUDEvents(){
 		$stage.on('mousemove', function(evt){
 			var posX = Math.round(evt.pageX - $stage.offset().left);
@@ -1872,15 +1894,11 @@ $(function(){
 			$('#' + css.currentLayer.attr('id')).css('top', $this.val() + 'px');
 		});
 		$('#w_txt').change(function(evt){
-			var $this = $(evt.target),
-				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
-			$iLayer.css('width', $this.val() + 'px');
+			setWidth($(evt.target).val());
 			updateHUD(css.currentLayer);
 		});
 		$('#h_txt').change(function(evt){
-			var $this = $(evt.target),
-				$iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
-			$iLayer.css('height', $this.val() + 'px');
+			setHeight($(evt.target).val());
 			updateHUD(css.currentLayer);
 		});
 		$('#bgw_txt').change(function(evt){
@@ -2168,6 +2186,10 @@ $(function(){
 			$iLayer.css('transform','none');
 			$iLayer.css('-webkit-transform','none');
 			//$iLayer.css('opacity','1');
+			$iLayer.css('background-position', '0px 0px');
+			$iLayer.css('background-size', css.resetInfo[name].backgroundSize);
+			setWidth(parseInt(css.resetInfo[name].width));
+			setHeight(parseInt(css.resetInfo[name].height));
 			updateHUD(css.currentLayer);
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -2884,8 +2906,10 @@ $(function(){
 //Sprite Slicer
 var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $guide2 = $('.ss_guide2'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
 var currentSpriteSlice = {target:null,name:'', x:0, y:0, width:0, height:0, css:''};
+var lastSSCut = 0;
 $('#spriteslicerbutton').click(function(evt){
 	//$cuts.val('');
+	lastSSCut = 0;
 	var $iLayer = $('#' + css.currentLayer.attr('id') + I_LAYER);
 	currentSpriteSlice = {
 		target:css.currentLayer,
@@ -2917,11 +2941,13 @@ $('#spriteSlicer_close').click(function(evt){
 $ss_container.on('mousemove', function(evt){
 	var posY = Math.round(evt.pageY - $ss_container.offset().top);
 	var posX = Math.round(evt.pageX - $ss_container.offset().left);
-	$guideY.text('x: ' + posX +' - y: ' + posY + 'px');
+	var dir = $('#ss_direction_sl').val();
+	var dist = (dir == 'horizontal')?Math.abs(posY - lastSSCut):Math.abs(posX - lastSSCut);
+	$guideY.text('x: ' + posX +' - y: ' + posY + 'px ');
 	$guideX.css('left', posX + 'px');
 	$guideX.css('height', parseInt(currentSpriteSlice.height * 2) + 'px');
 	$guideY.css('top', posY + 'px');
-	$guide2.text($guideY.text());
+	$guide2.text($guideY.text() + dir + ' distance: ' + dist);
 });
 $ss_container.on('click', function(evt){
 	var posX = Math.round(evt.pageX - $ss_container.offset().left);
@@ -2929,15 +2955,13 @@ $ss_container.on('click', function(evt){
 	var direction = $('#ss_direction_sl').val();
 	var cuts;
 	if(direction == 'horizontal'){
-		var cuts = $cuts.val() + posY + ',';
+		cuts = $cuts.val() + posY + ',';
+	}else if (direction == 'vertical'){
+		cuts = $cuts.val() + posX + ',';
 	}else{
-		var cuts = $cuts.val() + posX + ',';
-	}
-	/*
-	if(evt.shiftKey){
+		//box
 		cuts = $cuts.val() + posX + ':' + posY  + ',';
 	}
-	*/
 	$cuts.val(cuts);
 });
 $('#ss_transition_ck').on('change', function(evt){
@@ -2982,7 +3006,11 @@ function createSlices(){
 	var last = cuts_arr.length;
 	currentSlices = [];
 	s += '/* SPRITES: ' + direction + ' ' + $cuts.val() + ' */' + _n;
-	for(var i=0; i < cuts_arr.length; i++){
+	var max = (direction == 'box')? cuts_arr.length - 1:cuts_arr.length;
+	var boxCount = 1;
+	for(var i=0; i < max; i++){
+		var allowSlice = direction == 'horizontal' || direction == 'vertical' || direction == 'box'  && (i + 1)%2 != 0;
+		if(allowSlice){
 		var slice = {
 			top: 0,
 			left: 0,
@@ -2991,7 +3019,8 @@ function createSlices(){
 			backgroundPositionY: 0,
 			backgroundPositionX: 0
 		};
-		var name = currentSpriteSlice.name + ( i + 1 );
+		var name = currentSpriteSlice.name + ((direction != 'box')?( i + 1 ):boxCount);
+		++boxCount;
 		var val = {x:0, y:0};
 		s += '/* LAYER: ' + name + ' PROPERTIES */' + _n;
 		s += '.' + name + ' {' + _n;
@@ -3001,32 +3030,46 @@ function createSlices(){
 			val.y = parseInt(cuts_arr[i]);
 			slice.top = currentSpriteSlice.y + pos.y;
 			slice.left = currentSpriteSlice.x;
-			slice.height = val.y - pos.y;
+			slice.height = Math.abs(val.y - pos.y);
 			slice.width = currentSpriteSlice.width;
 			s += _t + 'left: ' + slice.left + 'px;' + _n;
 			s += _t + 'top: ' + slice.top + 'px;' + _n;
 			s += _t + 'width: ' + slice.width + 'px;' + _n;
 			s += _t + 'height: ' + slice.height + 'px;' + _n;
 			pos.y += (layered)?0:slice.height;
-		}else{
+			slice.backgroundPositionY = offset.y * -1;
+		}else if (direction == 'vertical'){
 			val.x = parseInt(cuts_arr[i]);
 			slice.top = currentSpriteSlice.y;
 			slice.left = currentSpriteSlice.x + pos.x;
 			slice.height = currentSpriteSlice.height;
-			slice.width = val.x - pos.x;
+			slice.width = Math.abs(val.x - pos.x);
 			s += _t + 'left: ' + slice.left + 'px;' + _n;
 			s += _t + 'top: ' + slice.top + 'px;' + _n;
 			s += _t + 'width: ' + slice.width + 'px;' + _n;
 			s += _t + 'height: ' + slice.height + 'px;' + _n;
 			pos.x += (layered)?0:slice.width;
+			slice.backgroundPositionX = offset.x * -1;
+		}else{
+			var xy = cuts_arr[i].split(':');
+			var x = parseInt(xy[0]);
+			var y = parseInt(xy[1]);
+			var wh = cuts_arr[i+1].split(':');
+			var w = Math.abs(parseInt(wh[0] - x));
+			var h = Math.abs(parseInt(wh[1] - y));
+			slice.top = y;
+			slice.left = x;
+			slice.height = h;
+			slice.width = w;
+			s += _t + 'top: ' + (y + currentSpriteSlice.y) + 'px;' + _n;
+			s += _t + 'left: ' + (x + currentSpriteSlice.x) + 'px;' + _n;
+			s += _t + 'width: ' + w + 'px;' + _n;
+			s += _t + 'height: ' + h + 'px;' + _n;
+			slice.backgroundPositionX = x * -1;
+			slice.backgroundPositionY = y * -1;
 		}
 		s += _t + 'background-image: url("'+ css.images[currentSpriteSlice.name] + '");' + _n;
 		s += _t + 'background-repeat: no-repeat;' + _n;
-		if(direction == 'horizontal'){
-			slice.backgroundPositionY = offset.y * -1;
-		}else{
-			slice.backgroundPositionX = offset.x * -1;
-		}
 		s += _t + 'background-position: ' + slice.backgroundPositionX + 'px ' + slice.backgroundPositionY + 'px;' + _n;
 		s += _t + 'background-size: ' + currentSpriteSlice.bgSize + ';' + _n;
 		offset.x = val.x;
@@ -3084,10 +3127,11 @@ function createSlices(){
 			}
 			s += '}' + _n;
 		}
-		//***
 		currentSlices.push(slice);
+		}//**allowSlice
 	}
 	$slices.attr('max', currentSlices.length);
+	$slices.val(1);
 	$('#ss_code_txt').val(s).select();
 }
 $('#spriteSplicer_app-button').click(function(evt){
@@ -3095,12 +3139,15 @@ $('#spriteSplicer_app-button').click(function(evt){
 });
 $('#ss_apply').click(function(evt){
 	var slice = currentSlices[parseInt($slices.val()) - 1];
-	$('#' + css.currentLayer.attr('id') + I_LAYER).css('background-position', slice.backgroundPositionX +'px ' + slice.backgroundPositionY + 'px').css('width', slice.width + 'px').css('height', slice.height + 'px');
-	$('#' + css.currentLayer.attr('id')).css('width', slice.width + 'px').css('height', slice.height + 'px').css('top', slice.top + 'px').css('left', slice.left + 'px');
+	$('#' + css.currentLayer.attr('id') + I_LAYER).css('background-position', slice.backgroundPositionX +'px ' + slice.backgroundPositionY + 'px');
+	$('#' + css.currentLayer.attr('id')).css('top', slice.top + 'px').css('left', slice.left + 'px');
+	setWidth(slice.width);
+	setHeight(slice.height);
 	updateHUD(css.currentLayer);
 	$('.overlay').hide();
   	$('.spriteSlicer_tools').hide();
 });
+$('#ss_direction_sl').on('change', function(evt){$cuts.val('');});
 $('#ss_reset').click(function(evt){
 	$cuts.val('');
 });
