@@ -147,6 +147,12 @@
 .selected{
 	border:1px solid #00a8ff;
 }
+.selected.svg{
+	border: 1px dashed limegreen;
+	padding: 0;
+	margin: 0;
+	cursor: move;
+}
 .numberInput{
 	width: 45px;
 }
@@ -713,6 +719,22 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 			background-repeat: repeat;
 			z-index: 9999;
 			cursor:not-allowed;
+		}
+		#new_svg_txt {
+			width: 300px;
+			border: none;
+			background-color: gray;
+			color: white;
+			border-radius:3px;
+		}
+		#new_svg_btn {
+			background-color: orange;
+			border: none;
+			border-radius:3px;
+			margin-left: 2px;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
 		}
 	</style>
 </head>
@@ -1383,7 +1405,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', end
 				</span>
 				<div class="row"><a href="#" id="vcam_create_btn" class="button">Create VCAM Transition</a><a href="#" id="vcam_reset_btn" class="button">reset VCAM</a></div>
 				<textarea id="vcam_txt" class="output" cols="15" rows="10"></textarea>
-			</div>			
+			</div>	
+			<div class="ui-info"><span class="row"><input id='new_svg_txt' type="text" value='<svg width="100" height="100"><circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />Sorry, your browser does not support inline SVG.</svg>' /><input id="new_svg_btn" type="button" value="Add SVG"></span></div>		
 			<div class="ui-info">
 				Select element: 
 				<select id="elem_sl">
@@ -1485,7 +1508,9 @@ $(function(){
 		container : {width:550,height:400,bgColor:'#FFF',borderColor:'#666'},
 		background : {file:null},
 		layers : [],
-		images : {},
+		layersByName : {},
+		images: {},
+		svg: {},
 		imgSizes : {},
 		layerTransforms : {},
 		currentLayer : null,
@@ -1509,7 +1534,86 @@ $(function(){
 	var counter = 0, filesMax = 0;
 	var I_LAYER = '_iLayer';
 	var O_LAYER = '_oLayer';
-	function createLayer(files){
+	$('#new_svg_txt').click(function(evt){
+		$('#new_svg_txt').select();
+	});
+	$('#new_svg_btn').click(function(evt){
+		//var args = ($('#new_svg_txt').val()).split(',');
+		//var box = createLayer(null,parseInt(args[0]),parseInt(args[1]),parseInt(args[2]),parseInt(args[3]),args[4]);
+		var container = createLayer(null,0,0,32,32);
+		var inner = document.getElementById(container.id + I_LAYER);
+		inner.innerHTML = $('#new_svg_txt').val();
+		$(container).addClass('svg');
+		css.svg[container.id] = true;
+		selectLayer(getLayer(container.id));
+		openTools();
+		populateSelectMenu();
+		//$('#new_svg_txt').select();
+	});
+	function createLayer(name, x, y, width, height, bgColor, img){
+		if(!name){
+			name = "div_" + Math.round(Math.random() * 1000);
+		}
+		css.layersByName[name] = name;
+		var draggableLayer = document.createElement('div');
+		var opacityLayer = document.createElement('div');
+		var imageLayer = document.createElement('div');
+		css.resetInfo[name] = {
+			backgroundSize : '100% 100%',
+			width : width,
+			height : height
+		}
+		//for events this is the layer you want to target, it also holds the className = layer and the selected border. This layer is the one to use to obtain left and top values
+		draggableLayer.id = name;
+		draggableLayer.className = 'layer';
+		draggableLayer.style.left = x + 'px';
+		draggableLayer.style.top = y + 'px';
+		//this layer holds opacity, transform-origin and transformations
+		opacityLayer.id = name + O_LAYER;
+		//this layer holds image-background, image-position, width, height
+		imageLayer.id = name + I_LAYER;
+		imageLayer.style.width = width + 'px';
+		imageLayer.style.height = height + 'px';
+		if(img){
+			imageLayer.style.backgroundImage = 'url(' + img.src + ')';
+			imageLayer.style.backgroundRepeat = 'no-repeat';
+			imageLayer.style.backgroundPosition = '0px 0px';
+			imageLayer.style.backgroundSize = img.width + 'px ' + img.height + 'px';
+			css.resetInfo[name].backgroundSize = imageLayer.style.backgroundSize;
+			css.resetInfo[name].width = imageLayer.style.width;
+			css.resetInfo[name].height = imageLayer.style.height;
+			css.imgSizes[name] = {width:img.width,height:img.height,scale:1};
+		}
+		if(bgColor){
+			imageLayer.style.backgroundColor = bgColor;
+		}else{
+			imageLayer.style.backgroundColor = 'transparent';
+		}
+		//Let's assemble
+		opacityLayer.appendChild(imageLayer);
+		draggableLayer.appendChild(opacityLayer);
+		$stage.append(draggableLayer);
+		var $draggableLayer = $(draggableLayer);
+		$draggableLayer.draggable({
+			start:onDragStart
+		},{
+			stop:onDragStop
+		});
+		$draggableLayer.click(function(evt){
+			var layer = getLayer(evt.target.id);
+			if(layer === this){
+				if($(layer).is('.ui-draggable-dragging')){
+					return;
+				}
+					selectLayer(layer);
+				}
+				return;
+		});
+		css.layerTransforms[name] = {};
+		css.layers.push(draggableLayer);
+		return draggableLayer;
+	}
+	function buildImageLayer(files){
 		filesMax = files.length;
 		for(var i=0; i < files.length; i++){
 			var file = files[i];
@@ -1522,17 +1626,27 @@ $(function(){
 						img.src = evt.target.result;
 						var name = file.name.split('.')[0];
 						css.images[name] = file.name;
+						createLayer(name,0,0,img.width,img.height,null,img);
+						delete img;
+						if(counter == filesMax){
+							selectLayer(getLayer(name));
+							openTools();
+						}
+						populateSelectMenu();
+						/*
+						++counter;
+						var img = new Image();
+						img.src = evt.target.result;
+						var name = file.name.split('.')[0];
+						css.layersByName[name] = file.name;
 						var draggableLayer = document.createElement('div');
 						var opacityLayer = document.createElement('div');
 						var imageLayer = document.createElement('div');
-						//for events this is the layer you want to target, it also holds the className = layer and the selected border. This layer is the one to use to obtain left and top values
 						draggableLayer.id = name;
 						draggableLayer.className = 'layer';
 						draggableLayer.style.left = '0px';
 						draggableLayer.style.top = '0px';
-						//this layer holds opacity, transform-origin and transformations
 						opacityLayer.id = name + O_LAYER;
-						//this layer holds image-background, image-position, width, height
 						imageLayer.id = name + I_LAYER;
 						imageLayer.style.backgroundImage = 'url(' + img.src + ')';
 						imageLayer.style.backgroundRepeat = 'no-repeat';
@@ -1547,7 +1661,6 @@ $(function(){
 						}
 						css.imgSizes[name] = {width:img.width,height:img.height,scale:1};
 						delete img;
-						//Let's assemble
 						opacityLayer.appendChild(imageLayer);
 						draggableLayer.appendChild(opacityLayer);
 						$stage.append(draggableLayer);
@@ -1574,6 +1687,7 @@ $(function(){
 							openTools();
 						}
 						populateSelectMenu();
+						*/
 					}
 				})(file);
 				reader.readAsDataURL(file);
@@ -1787,7 +1901,7 @@ $(function(){
 		var $iLayer = $('#' + name + I_LAYER);
 		var $oLayer = $('#' + name + O_LAYER);
 		var layerTransform = css.layerTransforms[name];
-		$('#element_lbl').text('Element: ' + $layer.attr('id') + ' ' + $iLayer.css('width') + ' x ' + $iLayer.css('height'));
+		$('#element_lbl').text('Element: ' + $layer.attr('id'));
 		$('#left_txt').val($layer.css('left').replace('px',''));
 		$('#top_txt').val($layer.css('top').replace('px',''));
 		var op = parseFloat($iLayer.css('opacity'));
@@ -1795,6 +1909,7 @@ $(function(){
 		setLayerBorder($oLayer,op);
 		$('#w_txt').val($iLayer.css('width').replace('px',''));
 		$('#h_txt').val($iLayer.css('height').replace('px',''));
+		if($iLayer.css('background-image') != 'none'){
 		var bgsize = $iLayer.css('background-size').split(' ');
 		$('#bgw_txt').val(bgsize[0].replace('px',''));
 		$('#bgh_txt').val(bgsize[1].replace('px',''));
@@ -1824,38 +1939,44 @@ $(function(){
 		var toy = parseFloat(to[1]);
 		var rx = tox/w, ry = toy/h;
 		$('.to_marker').css('left', Math.round(rx * bgSize.width) + 'px');
-		$('.to_marker').css('top', Math.round(ry * bgSize.height) + 'px');
+		$('.to_marker').css('top', Math.round(ry * bgSize.height) + 'px');			
+		}
+
 		//TRANSFORMS
-		if(layerTransform.translate){
-			$('#x_txt').val(layerTransform.translate.x);
-			$('#y_txt').val(layerTransform.translate.y);
+		if(layerTransform){
+			if(layerTransform.translate){
+				$('#x_txt').val(layerTransform.translate.x);
+				$('#y_txt').val(layerTransform.translate.y);
+			}
+			if(layerTransform.scale){
+				if(layerTransform.scale.x == layerTransform.scale.y){
+					$('#sc_rng').val((layerTransform.scale.x * 100));
+				}
+				$('#scx_txt').val(parseFloat(layerTransform.scale.x));
+				$('#scy_txt').val(parseFloat(layerTransform.scale.y));
+			}
+			if(layerTransform.rotate){
+				$('#rot_rng').val(layerTransform.rotate);
+				$('#rot_txt').val(layerTransform.rotate);
+			}
+			if(layerTransform.skew){
+				$('#sk_rng').val(layerTransform.skew);
+			}			
 		}else{
+			resetTransformControls();
+		}
+
+		$('#htmlOutput_txt').val(createHTML());
+	}
+	function resetTransformControls(){
 			$('#x_txt').val('0');
 			$('#y_txt').val('0');
-		}
-		if(layerTransform.scale){
-			if(layerTransform.scale.x == layerTransform.scale.y){
-				$('#sc_rng').val((layerTransform.scale.x * 100));
-			}
-			$('#scx_txt').val(parseFloat(layerTransform.scale.x));
-			$('#scy_txt').val(parseFloat(layerTransform.scale.y));
-		}else{
 			$('#scx_txt').val('1');
 			$('#scy_txt').val('1');
-		}
-		if(layerTransform.rotate){
-			$('#rot_rng').val(layerTransform.rotate);
-			$('#rot_txt').val(layerTransform.rotate);
-		}else{
-			$('#rot_rng').val('0');
 			$('#rot_txt').val('0');
-		}
-		if(layerTransform.skew){
-			$('#sk_rng').val(layerTransform.skew);
-		}else{
+			$('#rot_rng').val('0');
 			$('#sk_rng').val('0');
-		}
-		$('#htmlOutput_txt').val(createHTML());
+			$('#sc_rng').val('100');
 	}
 	function setWidth(val){
 		$('#' + css.currentLayer.attr('id') + I_LAYER).css('width', val + 'px');
@@ -2191,6 +2312,7 @@ $(function(){
 			setWidth(parseInt(css.resetInfo[name].width));
 			setHeight(parseInt(css.resetInfo[name].height));
 			updateHUD(css.currentLayer);
+			resetTransformControls();
 			evt.preventDefault();
 			evt.stopPropagation();
 		});
@@ -2207,7 +2329,6 @@ $(function(){
 		layerTransform.translate.x = val.x;
 		layerTransform.translate.y = val.y;
 		var ct = createTransform(layerTransform);
-		console.log(ct);
 		$iLayer.css('transform', ct);
 		$iLayer.css('-webkit-transform', ct);
 		updateHUD(css.currentLayer);
@@ -2315,7 +2436,13 @@ $(function(){
 			s += '<div class="banner">' + _n;
 			s += '<div class="' + $('#vcam_name').val() + '">' + _n;
 			for(var i = 0; i < css.layers.length; i++){
-				s += _t + '<div class="' + $(css.layers[i]).attr('id') + '"></div>' + _n;
+				var divName = $(css.layers[i]).attr('id');
+				s += _t + '<div class="' + divName + '">';
+				if(css.svg[divName]){
+					s +=  _n + getElementProp(divName, 'svg') + _n; 
+				}
+				s += _t + '</div>' + _n;
+				
 			}
 			s += '</div>' + _n;
 			s += '</div>' + _n;
@@ -2387,6 +2514,9 @@ $(function(){
 		var name = $layer.attr('id');
 		var $iLayer = $('#' + name + I_LAYER);
 		var $oLayer = $('#' + name + O_LAYER);
+		if(prop == 'svg'){
+			return document.getElementById(id + I_LAYER).innerHTML;
+		}
 		if(prop == 'image'){
 			return $iLayer;
 		}
@@ -2453,19 +2583,23 @@ $(function(){
 			var top = getElementProp($layer, 'top') + 'px';
 			var w = getElementProp($layer, 'width') + 'px';
 			var h = getElementProp($layer, 'height') + 'px';
-			var fileName = getElementProp($layer, 'fileName');//css.images[name]
+			var fileName = getElementProp($layer, 'fileName');//css.layersByName[name]
 			s += '.' + name + '{' + _n;
 			s += _t + 'display: block;' + _n;
 			s += _t + 'position: absolute;' + _n;
 			s += _t + 'opacity: ' + ( tCSS ? '@OPACITY@': op ) + ';' + _n;
 			s += _t + 'left: ' + (tCSS?'@LEFT@': left ) + ';' + _n;
 			s += _t + 'top: ' + (tCSS?'@TOP@': top ) + ';' + _n;
-			s += _t + 'width: ' + w + ';' + _n;
-			s += _t + 'height: ' + h + ';' + _n;
-			s += _t + 'background-image: url("'+ fileName + '");' + _n;
-			s += _t + 'background-repeat: no-repeat;' + _n;
-			s += _t + 'background-position: ' + getElementProp($layer, 'background-position') + ';' + _n;
-			s += _t + 'background-size: ' + getElementProp($layer, 'background-size')+ ';' + _n;
+			if(!css.svg[name]){
+				s += _t + 'width: ' + w + ';' + _n;
+				s += _t + 'height: ' + h + ';' + _n;
+			}
+			if(css.images[name]){
+				s += _t + 'background-image: url("'+ fileName + '");' + _n;
+				s += _t + 'background-repeat: no-repeat;' + _n;
+				s += _t + 'background-position: ' + getElementProp($layer, 'background-position') + ';' + _n;
+				s += _t + 'background-size: ' + getElementProp($layer, 'background-size')+ ';' + _n;
+			}
 			if(tCSS){
 				s += '@MATRIX@';
 			}else{
@@ -2542,7 +2676,7 @@ $(function(){
 	});
 	function populateSelectMenu(){
 		var options = [];
-		for(var name in css.images){
+		for(var name in css.layersByName){
 			options.push('<option value="' + name + '">' + name + '</option>');
 		}
 		options.reverse();
@@ -2593,7 +2727,7 @@ $(function(){
 	function handleFileSelect(evt) {
     	evt.stopPropagation();
     	evt.preventDefault();
-    	createLayer(evt.dataTransfer.files)
+    	buildImageLayer(evt.dataTransfer.files)
 	}
 	function handleDragOver(evt){
 		evt.stopPropagation();
@@ -2943,11 +3077,18 @@ $ss_container.on('mousemove', function(evt){
 	var posX = Math.round(evt.pageX - $ss_container.offset().left);
 	var dir = $('#ss_direction_sl').val();
 	var dist = (dir == 'horizontal')?Math.abs(posY - lastSSCut):Math.abs(posX - lastSSCut);
+	if(dir == 'box'){
+		var raw = (lastSSCut + '').split(':');
+		var dx = Math.abs(posX - parseInt(raw[0]));
+		var dy = Math.abs(posY - parseInt(raw[1]));
+		dist = 'x: ' + dx + ' - y: ' + dy;
+		dir = '';
+	}
 	$guideY.text('x: ' + posX +' - y: ' + posY + 'px ');
 	$guideX.css('left', posX + 'px');
 	$guideX.css('height', parseInt(currentSpriteSlice.height * 2) + 'px');
 	$guideY.css('top', posY + 'px');
-	$guide2.text($guideY.text() + dir + ' distance: ' + dist);
+	$guide2.text($guideY.text() + dir + '\rdistance: ' + dist);
 });
 $ss_container.on('click', function(evt){
 	var posX = Math.round(evt.pageX - $ss_container.offset().left);
@@ -3068,7 +3209,7 @@ function createSlices(){
 			slice.backgroundPositionX = x * -1;
 			slice.backgroundPositionY = y * -1;
 		}
-		s += _t + 'background-image: url("'+ css.images[currentSpriteSlice.name] + '");' + _n;
+		s += _t + 'background-image: url("'+ css.layersByName[currentSpriteSlice.name] + '");' + _n;
 		s += _t + 'background-repeat: no-repeat;' + _n;
 		s += _t + 'background-position: ' + slice.backgroundPositionX + 'px ' + slice.backgroundPositionY + 'px;' + _n;
 		s += _t + 'background-size: ' + currentSpriteSlice.bgSize + ';' + _n;
@@ -3101,11 +3242,13 @@ function createSlices(){
 			s += _t + 'opacity: 1;' + _n;
 			if(onlyOpacity){
 				trans = 'transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's;' + _n;
+				s += _t + '/* duration: ' + staggerIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
 				s += _t + trans;
 				s += _t + '-webkit-' + trans;
 			}else{
 				s += _t + 'transform: none;' + _n;
 				s += _t + '-webkit-transform: none;' + _n;
+				s += _t + '/* duration: ' + staggerIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
 				s += _t + 'transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's, transform ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's; '+ _n;
 				s += _t + '-webkit-transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's, -webkit-transform ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's; '+ _n;
 			}
@@ -3117,11 +3260,13 @@ function createSlices(){
 			staggeredDelay = (staggered)?(Math.round(((i + 1) * staggerOut) * 100)/100):staggerOut;
 			if(onlyOpacity){
 				trans = 'transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's;' + _n;
+				s += _t + '/* duration: ' + staggerOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
 				s += _t + trans;
 				s += _t + '-webkit-' + trans;
 			}else{
 				s += _t + 'transform: ' + transOut + ';' + _n;
 				s += _t + '-webkit-transform: ' + transOut + ';' + _n;
+				s += _t + '/* duration: ' + staggerOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
 				s += _t + 'transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's, transform ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's; '+ _n;
 				s += _t + '-webkit-transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's, -webkit-transform ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's; '+ _n;
 			}
