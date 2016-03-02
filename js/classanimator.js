@@ -5,7 +5,7 @@ $(document).ready(function(){
 	//http://www.html5rocks.com/en/tutorials/file/dndfiles/
 	//http://blog.teamtreehouse.com/reading-files-using-the-html5-filereader-api
 	//http://keithclark.co.uk/articles/calculating-element-vertex-data-from-css-transforms/
-	var css = {
+	var data = {
 		container : {width:550,height:400,bgColor:'#FFF',borderColor:'#666'},
 		background : {file:null},
 		layers : [],
@@ -17,7 +17,7 @@ $(document).ready(function(){
 		$currentLayer : null,
 		resetInfo : {}
 	}
-	classanimator.css = css;
+	classanimator.data = data;
 	var $stage = $('#stage'),
 		$vcam_ui = $('#vcam_ui'),
 		$uiPos = $('.ui-pos'),
@@ -49,38 +49,39 @@ $(document).ready(function(){
 		var inner = document.getElementById(container.id + constants.I_LAYER);
 		inner.innerHTML = $('#new_svg_txt').val();
 		$(container).addClass('svg');
-		css.svg[container.id] = true;
+		data.svg[container.id] = true;
 		selectLayer(getLayer(container.id));
 		openTools();
 		populateSelectMenu();
 		//$('#new_svg_txt').select();
 	});
 	$('#delete_btn').click(function(evt){
-		destroyLayer(css.$currentLayer.attr('id'));
+		destroyLayer(data.$currentLayer.attr('id'));
 	});
 	function destroyLayer(name){
 		deselect();
 		var layerToDestroy = document.getElementById(name);
 		$(layerToDestroy).remove();
-		for(var i=0; i < css.layers.length; i++){
-			if(css.layers[i] == layerToDestroy){
-				css.layers.splice(i,1);
+		for(var i=0; i < data.layers.length; i++){
+			if(data.layers[i] == layerToDestroy){
+				data.layers.splice(i,1);
 			}
 		}
-		delete css.layerTransforms[name];
-		delete css.layersByName[name];
-		delete css.resetInfo[name];
+		delete data.layerTransforms[name];
+		delete data.layersByName[name];
+		delete data.resetInfo[name];
+		delete data.svg[name];
 		populateSelectMenu();
 	}
 	function createLayer(name, x, y, width, height, bgColor, img){
 		if(!name){
 			name = "div_" + Math.round(Math.random() * 1000);
 		}
-		css.layersByName[name] = name;
+		data.layersByName[name] = name;
 		var draggableLayer = document.createElement('div');
 		var opacityLayer = document.createElement('div');
 		var imageLayer = document.createElement('div');
-		css.resetInfo[name] = {
+		data.resetInfo[name] = {
 			backgroundSize : '100% 100%',
 			width : width,
 			height : height
@@ -104,7 +105,6 @@ $(document).ready(function(){
 		if(img){
 			imageLayer.style.backgroundImage = img.src;
 			imageLayer.style.backgroundRepeat = 'no-repeat';
-
 			if(img.backgroundPositionX != null){
 				imageLayer.style.backgroundPosition = img.backgroundPositionX + 'px ' + img.backgroundPositionY + 'px';
 			}else{
@@ -115,16 +115,19 @@ $(document).ready(function(){
 			}else{
 				imageLayer.style.backgroundSize = img.width + 'px ' + img.height + 'px';
 			}
-			css.resetInfo[name].backgroundSize = imageLayer.style.backgroundSize;
-			css.resetInfo[name].width = imageLayer.style.width;
-			css.resetInfo[name].height = imageLayer.style.height;
-			css.imageInfo[name] = {
-				width:img.width,
-				height:img.height,
-				scale:1
+			data.resetInfo[name].backgroundSize = imageLayer.style.backgroundSize;
+			data.resetInfo[name].width = imageLayer.style.width;
+			data.resetInfo[name].height = imageLayer.style.height;
+			data.imageInfo[name] = {
+				backgroundPosition: imageLayer.style.backgroundPosition,
+				backgroundSize: imageLayer.style.backgroundSize,
+				filename: img.filename,
+				width: img.width,
+				height: img.height,
+				scale: 1
 			};
 			if(img.name){
-				css.layersByName[name] = img.name;
+				data.layersByName[name] = img.name;
 			}
 		}
 		if(bgColor){
@@ -150,8 +153,8 @@ $(document).ready(function(){
 				}
 				return;
 		});
-		css.layerTransforms[name] = {};
-		css.layers.push(draggableLayer);
+		data.layerTransforms[name] = {};
+		data.layers.push(draggableLayer);
 		selectLayer(draggableLayer);
 		return draggableLayer;
 	}
@@ -167,8 +170,8 @@ $(document).ready(function(){
 						var img = new Image();
 						img.src = evt.target.result;
 						var name = file.name.split('.')[0];
-						css.images[name] = file.name;
-						createLayer(name,0,0,img.width,img.height,null,{src:'url(' + img.src + ')', width: img.width, height: img.height});
+						data.images[name] = file.name;
+						createLayer(name,0,0,img.width,img.height,null,{filename:file.name , src:'url(' + img.src + ')', width: img.width, height: img.height});
 						delete img;
 						if(counter == filesMax){
 							selectLayer(getLayer(name));
@@ -307,7 +310,7 @@ $(document).ready(function(){
 	  }
 	});
 	function changeVCAMSize(){
-		$vcam_ui.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
+		$vcam_ui.css('width', data.container.width + 'px').css('height', data.container.height + 'px');
 	}
 	function vcamCapture(){
 		var name = $('#vcam_name').val();
@@ -338,8 +341,8 @@ $(document).ready(function(){
 		var name = $('#vcam_name').val();
 		s += '.' + name + '{' + _n;
 		s += _t + 'display: block;' + _n;
-		s += _t + 'width: ' + css.container.width + 'px;' + _n;
-		s += _t + 'height: ' + css.container.height + 'px;' + _n;
+		s += _t + 'width: ' + data.container.width + 'px;' + _n;
+		s += _t + 'height: ' + data.container.height + 'px;' + _n;
 		s += '}' + _n;
 		s += vcamCapture();
 		var $vcam_txt  = $('#vcam_txt');
@@ -354,16 +357,16 @@ $(document).ready(function(){
 		$('#elementsProperties').slideUp();
 	}
 	function changeSize(w,h){
-		css.container.width = w;
-		css.container.height = h;
-		$width_txt.val(css.container.width);
-		$height_txt.val(css.container.height);
-		$stage.css('width', css.container.width + 'px').css('height', css.container.height + 'px');
+		data.container.width = w;
+		data.container.height = h;
+		$width_txt.val(data.container.width);
+		$height_txt.val(data.container.height);
+		$stage.css('width', data.container.width + 'px').css('height', data.container.height + 'px');
 		changeVCAMSize();
 	}
 	function changeColors(bg,col){
-		css.container.bgColor = bg;
-		css.container.borderColor = col;
+		data.container.bgColor = bg;
+		data.container.borderColor = col;
 		$('.ss_container').css('background-image', 'none');
 		$('.ss_container').css('background-color', bg);
 		$stage.css('background-color', bg).css('border-color',col);
@@ -380,17 +383,17 @@ $(document).ready(function(){
 	}
 	function selectLayer(el){
 		deselect();
-		css.$currentLayer = $(el);
-		css.$currentLayer.focus();
-		css.$currentLayer.addClass('selected');
-		css.$currentLayer.css('z-index',getNextHighestDepth());
-		updateHUD(css.$currentLayer);
+		data.$currentLayer = $(el);
+		data.$currentLayer.focus();
+		data.$currentLayer.addClass('selected');
+		data.$currentLayer.css('z-index',getNextHighestDepth());
+		updateHUD(data.$currentLayer);
 	}
 	function updateHUD($layer){
 		var name = $layer.attr('id');
 		var $iLayer = $('#' + name + constants.I_LAYER);
 		var $oLayer = $('#' + name + constants.O_LAYER);
-		var layerTransform = css.layerTransforms[name];
+		var layerTransform = data.layerTransforms[name];
 		$('#element_lbl').text('Element: ' + $layer.attr('id'));
 		$('#left_txt').val($layer.css('left').replace('px',''));
 		$('#top_txt').val($layer.css('top').replace('px',''));
@@ -469,10 +472,10 @@ $(document).ready(function(){
 			$('#sc_rng').val('100');
 	}
 	function setWidth(val){
-		$('#' + css.$currentLayer.attr('id') + constants.I_LAYER).css('width', val + 'px');
+		$('#' + data.$currentLayer.attr('id') + constants.I_LAYER).css('width', val + 'px');
 	}
 	function setHeight(val){
-		$('#' + css.$currentLayer.attr('id') + constants.I_LAYER).css('height', val + 'px');
+		$('#' + data.$currentLayer.attr('id') + constants.I_LAYER).css('height', val + 'px');
 	}
 	function onHUDEvents(){
 		//Set up all the easing menus
@@ -482,6 +485,7 @@ $(document).ready(function(){
 		$('#ss_ease_in').html($easing_template).val('ease-out');
 		$('#ss_ease_out').html($easing_template).val('ease-in');
 		$('#vcam_ease_in_sl').html($easing_template).val('linear');
+		$('#intro_animation_sl').html($easing_template).val('linear');
 		$stage.on('mousemove', function(evt){
 			var posX = Math.round(evt.pageX - $stage.offset().left);
 			var posY = Math.round(evt.pageY - $stage.offset().top);
@@ -496,106 +500,106 @@ $(document).ready(function(){
 			        offsetY = evt.clientY - rect.top;
 			    	rx = offsetX - 3,
 			    	ry = offsetY - 3;
-			    var w = parseFloat(css.$currentLayer.css('width')),
-			    	h = parseFloat(css.$currentLayer.css('height')),
-			    	$iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER); 
+			    var w = parseFloat(data.$currentLayer.css('width')),
+			    	h = parseFloat(data.$currentLayer.css('height')),
+			    	$iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER); 
 			    $iLayer.css('transform-origin', Math.round(rx/100 * w) + 'px ' + Math.round(ry/100 * h) + 'px');
-			    updateHUD(css.$currentLayer);
+			    updateHUD(data.$currentLayer);
 			}
 		});
 		$('#left_txt').change(function(evt){
 			var $this = $(evt.target);
-			$('#' + css.$currentLayer.attr('id')).css('left', $this.val() + 'px');
+			$('#' + data.$currentLayer.attr('id')).css('left', $this.val() + 'px');
 		});
 		$('#top_txt').change(function(evt){
 			var $this = $(evt.target);
-			$('#' + css.$currentLayer.attr('id')).css('top', $this.val() + 'px');
+			$('#' + data.$currentLayer.attr('id')).css('top', $this.val() + 'px');
 		});
 		$('#w_txt').change(function(evt){
 			setWidth($(evt.target).val());
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#h_txt').change(function(evt){
 			setHeight($(evt.target).val());
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#bgw_txt').change(function(evt){
 			var $this = $(evt.target),
-				$iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+				$iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			var sz = $iLayer.css('background-size').split(' ');
 			$iLayer.css('background-size', $this.val() + 'px ' + sz[1]);
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#bgh_txt').change(function(evt){
 			var $this = $(evt.target),
-				$iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+				$iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			var sz = $iLayer.css('background-size').split(' ');
 			$iLayer.css('background-size', sz[0] + ' ' + $this.val() + 'px');
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#bgx_txt').change(function(evt){
 			var $this = $(evt.target),
-				$iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+				$iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			var ps = $iLayer.css('background-position').split(' ');
 			$iLayer.css('background-position', $this.val() + 'px ' + ps[1]);
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#bgy_txt').change(function(evt){
 			var $this = $(evt.target),
-				$iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+				$iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			var ps = $iLayer.css('background-position').split(' ');
 			$iLayer.css('background-position', ps[0] + ' ' + $this.val() + 'px');
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#tox_txt').change(function(evt){
 			var $this = $(evt.target),
-				$iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+				$iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			var to = $iLayer.css('transform-origin').split(' ');
 			$iLayer.css('transform-origin', $this.val() + 'px ' + to[1]);
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#toy_txt').change(function(evt){
 			var $this = $(evt.target),
-				$iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+				$iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			var to = $iLayer.css('transform-origin').split(' ');
 			$iLayer.css('transform-origin', to[0] + ' ' + $this.val() + 'px');
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#opacity_rng').change(function(evt){
 			var $this = $(evt.target);
 			var op = (parseFloat($this.val()) / 100);
-			css.$currentLayer.find('#' + css.$currentLayer.attr('id') + constants.I_LAYER).css('opacity',op);
-			updateHUD(css.$currentLayer);
+			data.$currentLayer.find('#' + data.$currentLayer.attr('id') + constants.I_LAYER).css('opacity',op);
+			updateHUD(data.$currentLayer);
 		})
 		//TRANSFORM
 		$('#rot_rng').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.rotate){
 				layerTransform.rotate = 0;
 			}
 			layerTransform.rotate = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#rot_txt').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.rotate){
 				layerTransform.rotate = 0;
 			}
 			layerTransform.rotate = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#sc_rng').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.scale){
 				layerTransform.scale = {x:1,y:1};
 			}
@@ -603,113 +607,113 @@ $(document).ready(function(){
 			layerTransform.scale.y = parseFloat($this.val()) / 100;
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#sk_rng').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.skew){
 				layerTransform.skew = 0;
 			}
 			layerTransform.skew = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#x_txt').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.translate){
 				layerTransform.translate = {x:0,y:0};
 			}
 			layerTransform.translate.x = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#y_txt').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.translate){
 				layerTransform.translate = {x:0,y:0};
 			}
 			layerTransform.translate.y = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.$currentLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#scx_txt').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.scale){
 				layerTransform.scale = {x:1,y:1};
 			}
 			layerTransform.scale.x = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#scy_txt').change(function(evt){
 			var $this = $(evt.target);
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-			var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+			var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 			if(!layerTransform.scale){
 				layerTransform.scale = {x:1,y:1};
 			}
 			layerTransform.scale.y = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
 			$iLayer.css('-webkit-transform', createTransform(layerTransform));
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#scale_txt').change(function(evt){
 			var $this = $(evt.target);
 			var ratio = parseFloat($this.val())/100;
-			var name = css.$currentLayer.attr('id');
-			css.imageInfo[name].scale = ratio;
-			var w = Math.round(fixDecimal(css.imageInfo[name].width * css.imageInfo[name].scale)) + 'px';
-			var h = Math.round(fixDecimal(css.imageInfo[name].height * css.imageInfo[name].scale)) + 'px';
-			var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+			var name = data.$currentLayer.attr('id');
+			data.imageInfo[name].scale = ratio;
+			var w = Math.round(fixDecimal(data.imageInfo[name].width * data.imageInfo[name].scale)) + 'px';
+			var h = Math.round(fixDecimal(data.imageInfo[name].height * data.imageInfo[name].scale)) + 'px';
+			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			$iLayer.css('width', w);
 			$iLayer.css('height', h);
 			$iLayer.css('background-size', w + ' ' + h);
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#toPos_sl').change(function(evt){
 			var $this = $(evt.target);
-			var img = getLayerProperty(css.$currentLayer, 'image-layer');
+			var img = getLayerProperty(data.$currentLayer, 'image-layer');
 			img.css('transform-origin', $this.val());
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#align_sl').change(function(evt){
 			var val = $(evt.target).val();
-			var name = css.$currentLayer.attr('id');
-			var w = getLayerProperty(css.$currentLayer, 'width');
-			var h = getLayerProperty(css.$currentLayer, 'height');
-			var sw = css.container.width;
-			var sh = css.container.height;
+			var name = data.$currentLayer.attr('id');
+			var w = getLayerProperty(data.$currentLayer, 'width');
+			var h = getLayerProperty(data.$currentLayer, 'height');
+			var sw = data.container.width;
+			var sh = data.container.height;
 			if(val === 'top'){
-				css.$currentLayer.css('top','0px');
+				data.$currentLayer.css('top','0px');
 			}
 			if(val === 'bottom'){
-				css.$currentLayer.css('top', (sh - h) + 'px');
+				data.$currentLayer.css('top', (sh - h) + 'px');
 			}
 			if(val === 'left'){
-				css.$currentLayer.css('left','0px');
+				data.$currentLayer.css('left','0px');
 			}
 			if(val === 'right'){
-				css.$currentLayer.css('left', (sw - w) + 'px');
+				data.$currentLayer.css('left', (sw - w) + 'px');
 			}
 			if(val === 'center'){
-				css.$currentLayer.css('left', Math.round((sw - w)/2) + 'px');
+				data.$currentLayer.css('left', Math.round((sw - w)/2) + 'px');
 			}
 			if(val === 'middle'){
-				css.$currentLayer.css('top', Math.round((sh - h)/2) + 'px');
+				data.$currentLayer.css('top', Math.round((sh - h)/2) + 'px');
 			}
-			updateHUD(css.$currentLayer);
+			updateHUD(data.$currentLayer);
 		});
 		$('#switchLT2T').click(function(evt){
 			var $x = $('#left_txt'), $y = $('#top_txt'), $tx = $('#x_txt'), $ty = $('#y_txt');
@@ -717,8 +721,8 @@ $(document).ready(function(){
 			$ty.val($y.val());
 			$x.val('0');
 			$y.val('0');
-			css.$currentLayer.css('top', '0px');
-			css.$currentLayer.css('left', '0px');
+			data.$currentLayer.css('top', '0px');
+			data.$currentLayer.css('left', '0px');
 			setTranslate({x:parseFloat($tx.val()),y:parseFloat($ty.val())});
 			evt.preventDefault();
 		});
@@ -732,14 +736,14 @@ $(document).ready(function(){
 			evt.stopImmediatePropagation();
     		evt.preventDefault();
 			if(evt.which > 36 && evt.which < 41){
-				css.$currentLayer.focus();
-				var top = parseFloat(css.$currentLayer.css('top'));
-				var left = parseFloat(css.$currentLayer.css('left'));
+				data.$currentLayer.focus();
+				var top = parseFloat(data.$currentLayer.css('top'));
+				var left = parseFloat(data.$currentLayer.css('left'));
 				top = isNaN(top)?0:top;
 				left = isNaN(left)?0:left;
 				var step = (evt.shiftKey) ? 10 : 1;
-				var name = css.$currentLayer.attr('id');
-				var layerTransform = css.layerTransforms[name];
+				var name = data.$currentLayer.attr('id');
+				var layerTransform = data.layerTransforms[name];
 				var $iLayer = $('#' + name + constants.I_LAYER);
 				if(evt.altKey){
 					switch(evt.which){
@@ -779,36 +783,36 @@ $(document).ready(function(){
 				}else{
 					switch(evt.which){
 						case 38:
-							css.$currentLayer.css('top', (top + (step * -1)) + 'px' );
+							data.$currentLayer.css('top', (top + (step * -1)) + 'px' );
 						break;
 						case 40:
-							css.$currentLayer.css('top', (top + step) + 'px' );
+							data.$currentLayer.css('top', (top + step) + 'px' );
 						break;
 						case 37:
-							css.$currentLayer.css('left', (left + (step * -1)) + 'px' );
+							data.$currentLayer.css('left', (left + (step * -1)) + 'px' );
 						break;
 						case 39:
-							css.$currentLayer.css('left', (left + step) + 'px' );
+							data.$currentLayer.css('left', (left + step) + 'px' );
 						break;
 					}					
 				}
-				updateHUD(css.$currentLayer);
+				updateHUD(data.$currentLayer);
 			}
 			return false;
 		});/**/
 		$('#resetbutton').click(function(evt){
-			var name = css.$currentLayer.attr('id');
-			var layerTransform = css.layerTransforms[name];
+			var name = data.$currentLayer.attr('id');
+			var layerTransform = data.layerTransforms[name];
 			var $iLayer = $('#' + name + constants.I_LAYER);
 			layerTransform = {};
 			$iLayer.css('transform','none');
 			$iLayer.css('-webkit-transform','none');
 			//$iLayer.css('opacity','1');
 			$iLayer.css('background-position', '0px 0px');
-			$iLayer.css('background-size', css.resetInfo[name].backgroundSize);
-			setWidth(parseInt(css.resetInfo[name].width));
-			setHeight(parseInt(css.resetInfo[name].height));
-			updateHUD(css.$currentLayer);
+			$iLayer.css('background-size', data.resetInfo[name].backgroundSize);
+			setWidth(parseInt(data.resetInfo[name].width));
+			setHeight(parseInt(data.resetInfo[name].height));
+			updateHUD(data.$currentLayer);
 			resetTransformControls();
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -818,8 +822,8 @@ $(document).ready(function(){
 		})
 	}
 	function setTranslate(val){
-		var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
-		var layerTransform = css.layerTransforms[css.$currentLayer.attr('id')];
+		var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+		var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
 		if(!layerTransform.translate){
 			layerTransform.translate = {x:0,y:0};
 		}
@@ -828,7 +832,7 @@ $(document).ready(function(){
 		var ct = createTransform(layerTransform);
 		$iLayer.css('transform', ct);
 		$iLayer.css('-webkit-transform', ct);
-		updateHUD(css.$currentLayer);
+		updateHUD(data.$currentLayer);
 	}
   	function createTransform(o){
 		var s = '';
@@ -897,7 +901,7 @@ $(document).ready(function(){
 		var cta = '';
 		var initFoo = '';
 		var bnrjs = $('.bnr').val();
-		var name = $('#banner_txt').val() + css.container.width + 'x' + css.container.height;
+		var name = $('#banner_txt').val() + data.container.width + 'x' + data.container.height;
 		var rm = $('#rm_sl').val();
 		var scenes = parseInt($('#scenes_txt').val());
 		if(!onlycss){
@@ -906,7 +910,7 @@ $(document).ready(function(){
 			s += '<head>' + _n;
 			s += '<title>'+ name +'</title>' + _n;
 			s += '<meta charset="UTF-8">' + _n;
-			s += '<meta name="ad.size" content="width='+css.container.width+',height='+css.container.height+'">' + _n;
+			s += '<meta name="ad.size" content="width='+data.container.width+',height='+data.container.height+'">' + _n;
 			s += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />' + _n;
 			if(rm == 'dcm'){
 				s += '<'+zcript+' type="text/javascript">'+_n+'var clickTag = "http://www.google.com";'+_n+ '//Validate with https://h5validator.appspot.com/dcm'+_n+'</'+zcript+'>'+ _n;
@@ -932,10 +936,10 @@ $(document).ready(function(){
 			}
 			s += '<div class="banner">' + _n;
 			s += '<div class="' + $('#vcam_name').val() + '">' + _n;
-			for(var i = 0; i < css.layers.length; i++){
-				var divName = $(css.layers[i]).attr('id');
+			for(var i = 0; i < data.layers.length; i++){
+				var divName = $(data.layers[i]).attr('id');
 				s += _t + '<div class="' + divName + '">';
-				if(css.svg[divName]){
+				if(data.svg[divName]){
 					s +=  _n + getLayerProperty(divName, 'svg') + _n; 
 				}
 				s += _t + '</div>' + _n;
@@ -992,7 +996,7 @@ $(document).ready(function(){
 			if(rm == 'flashtalking'){
 				s += '<!--' + _n;
 				s += '/* save as manifest.js */' + _n;
-				s += 'FT.manifest({"filename":"'+name+'.html","width":"'+css.container.width+'","height":"'+css.container.height+'","clickTagCount":1});' + _n;
+				s += 'FT.manifest({"filename":"'+name+'.html","width":"'+data.container.width+'","height":"'+data.container.height+'","clickTagCount":1});' + _n;
 				s += '-->' + _n;
 				s += '<'+zcript+' src="http://cdn.flashtalking.com/frameworks/js/api/2/8/html5API.js"></'+zcript+'>' + _n;
 			}
@@ -1039,13 +1043,13 @@ $(document).ready(function(){
 			return parseInt($layer.css('top'));
 		}
 		if(prop == 'imageWidth'){
-			return css.imageInfo[name].width;
+			return data.imageInfo[name].width;
 		}
 		if(prop == 'imageHeight'){
-			return css.imageInfo[name].height;
+			return data.imageInfo[name].height;
 		}
 		if(prop == 'filename'){
-			return css.images[name];
+			return data.images[name] || data.imageInfo[name].filename;
 		}
 		if(prop == 'transform'){
 			return $iLayer.css('transform') || $iLayer.css('-webkit-transform');
@@ -1066,7 +1070,7 @@ $(document).ready(function(){
 		return null;
 	}
 	function getLayerClass($layer, tCSS){
-		//tCSS is for use in tranCiSSioner
+		//tCSS is for use in trancissioner
 		var s = '',
 			_n = '\n',
 			_t = '\t';
@@ -1083,31 +1087,16 @@ $(document).ready(function(){
 			var top = getLayerProperty($layer, 'top') + 'px';
 			var w = getLayerProperty($layer, 'width') + 'px';
 			var h = getLayerProperty($layer, 'height') + 'px';
-			var filename = getLayerProperty($layer, 'filename');//css.layersByName[name]
+			var filename = getLayerProperty($layer, 'filename');//data.layersByName[name]
 			s += '.' + name + '{' + _n;
 			s += _t + 'opacity: ' + ( tCSS ? '@OPACITY@': op ) + ';' + _n;
 			s += _t + 'display: block;' + _n;
 			s += _t + 'position: absolute;' + _n;
 			s += _t + 'left: ' + (tCSS?'@LEFT@': left ) + ';' + _n;
 			s += _t + 'top: ' + (tCSS?'@TOP@': top ) + ';' + _n;
-			if(!css.svg[name]){
+			if(!data.svg[name]){
 				s += _t + 'width: ' + w + ';' + _n;
 				s += _t + 'height: ' + h + ';' + _n;
-			}
-			if(css.images[name]){
-				s += _t + 'background-image: url("'+ filename + '");' + _n;
-				s += _t + 'background-repeat: no-repeat;' + _n;
-				s += _t + 'background-position: ' + getLayerProperty($layer, 'background-position') + ';' + _n;
-				s += _t + 'background-size: ' + getLayerProperty($layer, 'background-size')+ ';' + _n;
-			}
-			if(tCSS){
-				s += '@MATRIX@';
-			}else{
-				if(transform != 'none'){
-					s += _t + 'transform: ' + transform + ';' + _n;
-					s += _t + '-webkit-transform: ' + transform + ';' + _n;
-					s += _t + '-ms-transform: ' + transform + ';' + _n;	
-				}	
 			}
 			if(tCSS){
 				s += '@TO@';
@@ -1115,6 +1104,32 @@ $(document).ready(function(){
 				s += _t + 'transform-origin: ' + to + ';' + _n;
 				s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
 				s += _t + '-ms-transform-origin: ' + to + ';' + _n;				
+			}
+			s += _t + '/* BACKGROUND */' + _n;
+			if(data.images[name]){
+				s += _t + 'background-image: url("'+ filename + '");' + _n;
+				s += _t + 'background-repeat: no-repeat;' + _n;
+				s += _t + 'background-position: ' + getLayerProperty($layer, 'background-position') + ';' + _n;
+				s += _t + 'background-size: ' + getLayerProperty($layer, 'background-size')+ ';' + _n;
+			}else if(data.imageInfo[name]){
+				s += _t + 'background-image: url("'+ data.imageInfo[name].filename + '");' + _n;
+				s += _t + 'background-repeat: no-repeat;' + _n;
+				s += _t + 'background-position: ' + data.imageInfo[name].backgroundPosition + ';' + _n;
+				s += _t + 'background-size: ' +  data.imageInfo[name].backgroundSize + ';' + _n;
+			}
+			s += _t + '/* TRANSFORM */' + _n;
+			if(tCSS){
+				s += '@MATRIX@';
+			}else{
+				if(transform != 'none'){
+					s += _t + 'transform: ' + transform + ';' + _n;
+					s += _t + '-webkit-transform: ' + transform + ';' + _n;
+					s += _t + '-ms-transform: ' + transform + ';' + _n;	
+				}else{
+					s += _t + 'transform: none;' + _n;
+					s += _t + '-webkit-transform: none;' + _n;
+					s += _t + '-ms-transform: none;' + _n;	
+				}
 			}
 			s += (tCSS)?'@FILTER@':'';
 			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
@@ -1125,8 +1140,8 @@ $(document).ready(function(){
 		var s = '',
 			_n = '\n',
 			_t = '\t';
-		for(var i = 0; i < css.layers.length; i++){
-			s += getLayerClass($(css.layers[i]));
+		for(var i = 0; i < data.layers.length; i++){
+			s += getLayerClass($(data.layers[i]));
 		}
 		s += 'html, body {' + _n;
 		s += _t + 'margin: 0;' + _n;
@@ -1141,14 +1156,14 @@ $(document).ready(function(){
 		s += _t + 'display: block;' + _n;
 		s += _t + 'position: absolute;' + _n;
 		s += _t + 'overflow: hidden;' + _n;
-		s += _t + 'width: ' + (css.container.width - 2) + 'px;' + _n;
-		s += _t + 'height: ' + (css.container.height -2) + 'px;' + _n;
-		s += _t + 'background-color: ' + css.container.bgColor + ';' + _n;
-		if(css.background.file){
-			s += _t + 'background-image: url(' + css.background.file.name + ');' + _n;
+		s += _t + 'width: ' + (data.container.width - 2) + 'px;' + _n;
+		s += _t + 'height: ' + (data.container.height -2) + 'px;' + _n;
+		s += _t + 'background-color: ' + data.container.bgColor + ';' + _n;
+		if(data.background.file){
+			s += _t + 'background-image: url(' + data.background.file.name + ');' + _n;
 			s += _t + 'background-repeat: no-repeat;' + _n;
 		}
-		s += _t + 'border: 1px solid ' + css.container.borderColor + ';' + _n;
+		s += _t + 'border: 1px solid ' + data.container.borderColor + ';' + _n;
 		s += _t + 'cursor: pointer;' + _n;
 		s += _t + 'outline: none;' + _n;
 		s += _t + '-webkit-tap-highlight-color: transparent;' + _n;
@@ -1156,13 +1171,20 @@ $(document).ready(function(){
 		s += _t + 'transform-style: preserve-3d;' + _n;
 		s += _t + '-webkit-transform-style: preserve-3d;' + _n;
 		s += _t + '-ms-transform-style: preserve-3d;' + _n;
+		s += _t + 'transform: translate3d(0,0,0) rotateZ(0.001deg);' + _n;
+		s += _t + '-webkit-transform: translate3d(0,0,0) rotateZ(0.001deg);' + _n;
+		s += _t + '-ms-transform: translate3d(0,0,0) rotateZ(0.001deg);' + _n;
+		s += _t + 'box-shadow: 0 0 1px rgba(0, 0, 0, 0);' + _n;
+		s += _t + 'backface-visibility: hidden;' + _n;
+		s += _t + '-webkit-backface-visibility: hidden;' + _n;
+		s += _t + '-moz-osx-font-smoothing: grayscale;' + _n;
 		s += '}' + _n;	
 		return s;	
 	}
 	//EVENTS
 	$guide_fl.change(function(evt){
-		css.background.file = evt.target.files[0];
-		if (css.background.file.type.match(/image.*/)){
+		data.background.file = evt.target.files[0];
+		if (data.background.file.type.match(/image.*/)){
 			var reader = new FileReader();
 			reader.onload = function(evt){
 				var img = new Image();
@@ -1171,12 +1193,12 @@ $(document).ready(function(){
 				delete img;
 				$stage.css('background-image', 'url(' + reader.result + ')');
 			}
-			reader.readAsDataURL(css.background.file);
+			reader.readAsDataURL(data.background.file);
 		}
 	});
 	function populateSelectMenu(){
 		var options = [];
-		for(var name in css.layersByName){
+		for(var name in data.layersByName){
 			options.push('<option value="' + name + '">' + name + '</option>');
 		}
 		options.reverse();
@@ -1238,26 +1260,34 @@ $(document).ready(function(){
   	getElement('stage').addEventListener('drop', handleFileSelect, false);
   	getElement('stage-container').addEventListener('dragover', handleDragOver, false);
   	getElement('stage-container').addEventListener('drop', handleFileSelect, false);
-  	//tranCiSSioner
+
+/*
+  _                    ____ _ ____ ____  _                       
+ | |_ _ __ __ _ _ __  / ___(_) ___/ ___|(_) ___  _ __   ___ _ __ 
+ | __| '__/ _` | '_ \| |   | \___ \___ \| |/ _ \| '_ \ / _ \ '__|
+ | |_| | | (_| | | | | |___| |___) |__) | | (_) | | | |  __/ |   
+  \__|_|  \__,_|_| |_|\____|_|____/____/|_|\___/|_| |_|\___|_|   
+
+*/
   	var currentTranCiSSioner = {target:null,name:'',x:0,y:0,css:'',matrix:''};
   	$('#trancissionerbutton').click(function(evt){
   		currentTranCiSSioner = {
-  			target:css.$currentLayer,
-  			name:css.$currentLayer.attr('id'),
-  			width:parseFloat(css.$currentLayer.css('width')),
-  			height:parseFloat(css.$currentLayer.css('height')),
-  			x:parseFloat(css.$currentLayer.css('left')),
-  			y:parseFloat(css.$currentLayer.css('top')),
-  			css:getLayerClass(css.$currentLayer, true),
-  			matrix:getLayerProperty(css.$currentLayer, 'transform'),
-  			to:getLayerProperty(css.$currentLayer, 'transform-origin')
+  			target:data.$currentLayer,
+  			name:data.$currentLayer.attr('id'),
+  			width:parseFloat(data.$currentLayer.css('width')),
+  			height:parseFloat(data.$currentLayer.css('height')),
+  			x:parseFloat(data.$currentLayer.css('left')),
+  			y:parseFloat(data.$currentLayer.css('top')),
+  			css:getLayerClass(data.$currentLayer, true),
+  			matrix:getLayerProperty(data.$currentLayer, 'transform'),
+  			to:getLayerProperty(data.$currentLayer, 'transform-origin')
   		};
   		$('#scene_element_txt').val(currentTranCiSSioner.name);
   		$('#left_scene_txt').val(currentTranCiSSioner.x);
   		$('#top_scene_txt').val(currentTranCiSSioner.y);
   		$('#width_scene_txt').val(currentTranCiSSioner.width);
   		$('#height_scene_txt').val(currentTranCiSSioner.height);
-  		$('.tranCiSSioner_tools').show();
+  		$('.trancissioner_tools').show();
   		$('.overlay').show();
   	});
   	$('#width_scene_lbl, #height_scene_lbl').click(function(evt){
@@ -1270,9 +1300,9 @@ $(document).ready(function(){
   			$('#offset_out_txt').val($('#height_scene_txt').val());
   		}
   	});
-  	$('#tranCiSSioner_close').click(function(evt){
+  	$('#trancissioner_close').click(function(evt){
   		$('.overlay').hide();
-  		$('.tranCiSSioner_tools').hide();
+  		$('.trancissioner_tools').hide();
   	});
   	function sideMap(side, offset){
   		var map = {
@@ -1288,8 +1318,77 @@ $(document).ready(function(){
   		};
   		return map[side];
   	}
-  	function tranCiSSionerMagic(){
-  		/* tranCiSSioner MAGIC */
+  	function parseVii(obj, useWebkit){
+  		var s = '',
+			_n = '\n',
+			_t = '\t';
+		function usePX(val){
+			if(val.indexOf('%') == -1){
+				return 'px';
+			}
+			return '';
+		}
+		if(obj.o != null){
+  			s += _t + 'opacity: ' + obj.o + ';' + _n;
+  		}
+  		if(obj.w != null){
+  			s += _t + 'width: ' + obj.w + usePX(obj.w) + ';' + _n;
+  		}
+  		if(obj.h != null){
+  			s += _t + 'height: ' + obj.h + usePX(obj.h) + ';' + _n;
+  		}
+  		var w = '';
+  		if(useWebkit){
+  			w = '-webkit-';
+  		}
+  		if(obj.x != null || obj.y != null || obj.r != null || obj.t != null || obj.s != null || obj.sx != null || obj.sy != null){
+  			var t =  w + 'transform: ';
+  			if(obj.x && obj.y ){
+  				t += 'translate3d(' + obj.x + usePX(obj.x) +', ' + obj.y + usePX(obj.y) + ', 0) ';
+  			}else if(obj.x){
+  				t += 'translate3d(' + obj.x + usePX(obj.x) +', 0, 0) ';
+  			}else if(obj.y){
+  				t += 'translate3d(0, ' + obj.y + usePX(obj.y) + ', 0) ';
+  			}else{
+  				t += 'translate3d(0, 0, 0) '
+  			}
+  			if(obj.r){
+  				t += 'rotate(' + obj.r + 'deg) ';
+  			}else if(obj.rt){
+  				t += 'rotate(' + obj.t + 'turn) ';
+  			}
+  			if(obj.s){
+  				t += 'scale(' + obj.s + ') ';
+  			}else if(obj.sx){
+  				t += 'scale(' + obj.sx + ', 0) ';
+  			}else if(obj.sy){
+  				t += 'scale(0, ' + obj.sy + ') ';
+  			}
+  			t += ';' + _n;
+  			s += _t + t;
+  		}
+  		return s;
+  	}
+  	function getVii(val){
+  		var raw = val.toLowerCase().split(' ');
+  		var retObj = {};
+  		for(var i=0; i < raw.length; i++){
+  			var keyValue = raw[i].split(':');
+  			retObj[keyValue[0]] = keyValue[1];
+  		}
+  		return retObj;
+  	}
+  	function compareVii(obj1, obj2){
+  		var ret = true;
+  		for (var k in obj1){
+  			if(obj2[k] == undefined || null){
+  				ret = false;
+  			}
+  		}
+  		return ret;
+  	}
+  	function trancissionerMagic(){
+  		/* trancissioner MAGIC */
   		var s = '',
 			_n = '\n',
 			_t = '\t';
@@ -1297,7 +1396,7 @@ $(document).ready(function(){
 		var offsetIn = parseFloat($('#offset_in_txt').val());
 		var sideIn = $("input:radio[name=scene_in_rb]:checked").val();
 		var sideOut = $("input:radio[name=scene_out_rb]:checked").val();
-		var useMatrix = parseInt($('#tranCiSSioner_useMatrix_sl').val());
+		var useMatrix = parseInt($('#trancissioner_useMatrix_sl').val());
 		var blurIn  = $('#tcss_blur_in_ck').prop('checked') ?$('#tcss_blur_in_ck').val() :'';
 		var blurOut = $('#tcss_blur_out_ck').prop('checked')?$('#tcss_blur_out_ck').val():'';
 		var fadeIn = $('#tcss_fade_in_sl').val();
@@ -1305,12 +1404,24 @@ $(document).ready(function(){
 		var filterIn  = blurIn + ' ' + fadeIn;
 		var filterOut = blurOut + ' ' + fadeOut;
 		var willChange = {'opacity':true, 'left': false, 'top': false, 'transform': false};
+		var useAnimation = $('#use_animation_ck').prop('checked');
+		//INTRO ANIMATION
+		var useTween = $('#intro_animation_use_tween').prop('checked');
+		var aniEase = $('#intro_animation_tween_ease').val();
+		var framesQty = +$('#intro_animation_tween_frames').val();
+		//STAGGERED DELAY
+		var isStaggered = +$('#anim_trans_staggered').val() > 1;
+		var staggers = +$('#anim_trans_staggered').val();
+		var staggerDuration = +$('#intro_animation_delay').val() || 0.5;
+		var staggerWithNthChild = $('#anim_trans_stagger_nthchild_ck').prop('checked');
+		var staggerIn = '';
+		var staggerOut = '';
 		var sm = sideMap(sideIn, offsetIn);
 		var sceneIn = $('#scene_in_txt').val();
 		var x1 = 0, y1 = 0, o1 = 0;
 		x1 = (currentTranCiSSioner.x + sm.x) + 'px';
 		y1 = (currentTranCiSSioner.y + sm.y) + 'px';
-		o1 = parseFloat($('#opacity_in_txt').val()) + '';
+		o1 = (useAnimation)? 1 : parseFloat($('#opacity_in_txt').val()) + '';
 		s += '/* LAYER: ' + currentTranCiSSioner.name + ' PROPERTIES */' + _n;
 		var tempIn = currentTranCiSSioner.css;
 		tempIn = tempIn.replace('@OPACITY@', o1);
@@ -1320,6 +1431,108 @@ $(document).ready(function(){
 		toIN += _t + '-webkit-transform-origin: ' + $toIN + ';' + _n;
 		toIN += _t + '-ms-transform-origin: ' + $toIN + ';' + _n;
 		tempIn = tempIn.replace('@TO@', toIN);
+		if(useAnimation){
+			tempIn = tempIn.replace('@LEFT@', currentTranCiSSioner.x + 'px');
+			tempIn = tempIn.replace('@TOP@', currentTranCiSSioner.y + 'px');
+			tempIn = tempIn.replace('@MATRIX@', '');
+			tempIn = tempIn.replace('@FILTER@', '');
+			tempIn = tempIn.replace('@WILL_CHANGE@', 'transform, opacity');
+			s += tempIn;
+			s += '/* animation for ' + currentTranCiSSioner.name + ' in scene # '+ sceneIn +' */' + _n;
+			var kfName = currentTranCiSSioner.name + '-frames-scene' + sceneIn;
+			var frame1 = $('#intro_animation_frame1').val();
+			var frame2 = $('#intro_animation_frame2').val();
+			var keyframes = '@keyframes ' + kfName + '{' + _n;
+			if(useTween){
+				var step = 100/framesQty;
+				var currKF = 0;
+				var iniObj = getVii($('#intro_animation_ini').val());
+				var endObj = getVii($('#intro_animation_end').val());
+				if(!compareVii(iniObj, endObj)){
+					$('#intro_animation_end').css('border','1px solid red');
+				}else{
+					$('#intro_animation_end').css('border','');
+				}
+				var easeFoo = easings.getEase(aniEase);
+				var updateFoo = function(t,c,b,e){
+					return e(t) * c + b;
+				}
+				var viiStrings_arr = [];
+				var kfPercents_arr = [];
+				for(var i = 0; i <= framesQty; i++){
+					keyframes += _t + currKF + '%{' + _n;
+					var t = (i == 0)? 0 : i/framesQty;
+					var b = 0;
+					var c = 0;
+					var vii = '';
+					for(var k in iniObj){
+						b = parseInt(iniObj[k]);
+						c = parseInt(endObj[k]) - b;
+						vii += k + ':' + fixDecimal(updateFoo(t, c, b, easeFoo)) + ' ';
+					}
+					kfPercents_arr.push(currKF);
+					viiStrings_arr.push(vii);
+					keyframes += _t + parseVii(getVii(vii), false);
+					keyframes += _t + '}' + _n;
+					currKF += step;
+				}
+				keyframes += '}' + _n;
+				keyframes += '@-webkit-keyframes ' + kfName + '{' + _n;
+				for(var i = 0; i < viiStrings_arr.length; i++){
+					keyframes += _t + kfPercents_arr[i] + '%{' + _n;
+					keyframes += _t + parseVii(getVii(viiStrings_arr[i]), true);
+					keyframes += _t + '}' + _n;
+				}
+				keyframes += '}' + _n;
+			}else{
+				keyframes += _t + frame1 +'{' + _n;
+				keyframes += parseVii(getVii($('#intro_animation_ini').val()), false);
+				keyframes += _t + '}' + _n;
+				keyframes += _t + frame2 +'{' + _n;
+				keyframes += parseVii(getVii($('#intro_animation_end').val()), false);
+				keyframes += _t + '}' + _n;
+				keyframes += '}' + _n;
+				keyframes += '@-webkit-keyframes ' + kfName + '{' + _n;
+				keyframes += _t + frame1 +'{' + _n;
+				keyframes += parseVii(getVii($('#intro_animation_ini').val()), true);
+				keyframes += _t + '}' + _n;
+				keyframes += _t + frame2 +'{' + _n;
+				keyframes += parseVii(getVii($('#intro_animation_end').val()), true);
+				keyframes += _t + '}' + _n;	
+				keyframes += '}' + _n;		
+			}
+			s += keyframes;
+			var dur = +$('#intro_animation_duration').val();
+			var timeDur = (dur > 49)?'ms':'s';
+			var loops = +$('#intro_animation_loops').val();
+			if(loops < 1){
+				loops = 'infinite';
+			}
+			var delay = +$('#intro_animation_delay').val();
+			var timeDelay = (delay > 49)?'ms ':'s ';
+			var fixedDelay = (delay === 0)? '' : delay + timeDelay; 
+			if(isStaggered){
+				fixedDelay = '';
+			}
+			var anim = 'animation: ' + kfName + ' ' + dur + timeDur + ' ' + $('#intro_animation_sl').val() + ' ' + fixedDelay + loops + ' ' + $('#intro_animation_direction').val() + ' ' + $('#intro_animation_fillmode').val() + ';' + _n;
+			s += '/* scene '+ sceneIn + ' ' + currentTranCiSSioner.name + ' IN */' + _n;
+			s += '.scene' + sceneIn  + ' .'+ currentTranCiSSioner.name + '{' + _n;
+			s += _t + anim;
+			s += _t + '-webkit-' + anim;
+			s += '}' + _n;
+			//stagger magic 
+			if(isStaggered){
+				for(i = 0; i < staggers; i++){
+					var staggerName = (staggerWithNthChild) ? currentTranCiSSioner.name + ':nth-child(' + (i + 1) + ')' : currentTranCiSSioner.name + (i + 1) ;
+					s += '/* scene ' + sceneIn + ' ' + staggerName + ' IN */' + _n;
+					s += '.scene' + sceneIn + ' .' + staggerName + '{' + _n;
+					s += _t + 'animation-delay: ' + (staggerDuration * (i+1)) + (staggerDuration >= 100?'ms':'s') + ';' + _n;
+					s += _t + '-webkit-animation-delay: ' + (staggerDuration * (i+1)) + (staggerDuration >= 100?'ms':'s') + ';' + _n;
+					s += '}' + _n;
+				}				
+			}
+			return s;
+		}
 		if(useMatrix < 1){
 			if(useMatrix == 0){
 				tempIn = tempIn.replace('@LEFT@', x1);
@@ -1351,7 +1564,6 @@ $(document).ready(function(){
 			}
 			tempIn = tempIn.replace('@MATRIX@', temp_mtrx);			
 		}
-		
 		//will-change
 		var willChangeArr = ['opacity'];
 		if(useMatrix < 1){
@@ -1391,19 +1603,23 @@ $(document).ready(function(){
 		}
 		s += '.scene' + sceneIn  + ' .'+ currentTranCiSSioner.name + '{' + _n;
 		var transIn = [];
+		var delayInFixed = $('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's';
+		if(isStaggered){
+			delayInFixed = '';
+		}
 		if(willChange.opacity){
 			s += _t + 'opacity: 1;' + _n;
-			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's')) ;
+			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' +  delayInFixed);
 		}
 		if(useMatrix < 0){
 			if(useMatrix == 0){
 				if(willChange.left){
 					s += _t + 'left: ' + $('#left_scene_txt').val() + 'px;' + _n;
-					transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+					transIn.push('left ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + delayInFixed);
 				}
 				if(willChange.top){
 					s += _t + 'top: ' + $('#top_scene_txt').val() + 'px;' + _n;
-					transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+					transIn.push('top ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + delayInFixed);
 				}				
 			}
 		}else{
@@ -1411,16 +1627,28 @@ $(document).ready(function(){
 			s += _t + 'transform: ' + currentTranCiSSioner.matrix + ';' + _n;
 			s += _t + '-webkit-transform: ' + currentTranCiSSioner.matrix  + ';' + _n;
 			s += _t + '-ms-transform: ' + currentTranCiSSioner.matrix  + ';' + _n;
-			transIn.push ('@TRANSFORM@ ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+			transIn.push('@TRANSFORM@ ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + delayInFixed);
 		}
 		if(filterIn != ' '){
 			s += _t + '-webkit-filter: none;' + _n;
-			transIn.push('-webkit-filter ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + ($('#delay_in_txt').val() == '0'?'':$('#delay_in_txt').val() + 's'));
+			transIn.push('-webkit-filter ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + delayInFixed);
 		}
 		s += _t + '/* duration: ' + $('#duration_in_txt').val() + ', ease: ' + $('#ease_in_sl option:selected').text() + ', delay: '+ $('#delay_in_txt').val() + ' */' + _n;
 		s += _t + 'transition: ' + transIn.join(', ').replace('@TRANSFORM@', 'transform') + ';' + _n;
 		s += _t + '-webkit-transition: ' + transIn.join(', ').replace('@TRANSFORM@', '-webkit-transform') + ';' + _n;
 		s += '}' + _n; 
+		//Stagger
+		var staggerDuration = +$('#delay_in_txt').val() || 0.5;
+		if(isStaggered){
+			for(i = 0; i < staggers; i++){
+				var staggerName = (staggerWithNthChild) ? currentTranCiSSioner.name + ':nth-child(' + (i + 1) + ')' : currentTranCiSSioner.name + (i + 1) ;
+				staggerIn += '/* scene ' + sceneIn + ' ' + staggerName + ' IN */' + _n;
+				staggerIn  += '.scene' + sceneIn + ' .' + staggerName + '{' + _n;
+				staggerIn  += _t + 'transition-delay: ' + fixDecimal(staggerDuration * (i+1)) + (staggerDuration >= 100?'ms':'s') + ';' + _n;
+				staggerIn  += _t + '-webkit-transition-delay: ' + fixDecimal(staggerDuration * (i+1)) + (staggerDuration >= 100?'ms':'s') + ';' + _n;
+				staggerIn  += '}' + _n;
+			}			
+		}
 		/* SCENE OUT */
 		var sceneOut = $('#scene_out_txt').val();
 		if(sceneOut > '0'){
@@ -1441,19 +1669,23 @@ $(document).ready(function(){
 				willChange.left = !useMatrix;
 			}
 			var transOut = [];
+			var delayOutFixed = $('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's';
+			if(isStaggered){
+				delayOutFixed = ' ';
+			}
 			if(willChange.opacity){
 				s += _t + 'opacity: '+ o2 + ';' + _n;
-				transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + delayOutFixed);
 			}
 			if(useMatrix < 1){
 				if(useMatrix == 0){
 					if(willChange.left){
 						s += _t + 'left: ' + x2 + ';'  + _n;
-						transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+						transOut.push('left ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + delayOutFixed);
 					}
 					if(willChange.top){
 						s += _t + 'top: ' + y2 + ';' + _n;
-						transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+						transOut.push('top ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + delayOutFixed);
 					}						
 				}
 			}else{
@@ -1473,7 +1705,7 @@ $(document).ready(function(){
 					s += _t + '-webkit-transform: ' + transformOutS  + ';' + _n;
 					s += _t + '-ms-transform: ' + transformOutS  + ';' + _n;
 				}
-				transOut.push ('@TRANSFORM@ ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));					
+				transOut.push('@TRANSFORM@ ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + delayOutFixed);					
 			}
 			if($toIN !== $toOUT){
 				var toOUT = _t + 'transform-origin: ' + $toOUT + ';' + _n;
@@ -1483,13 +1715,27 @@ $(document).ready(function(){
 			}
 			if(filterOut != ' '){
 				s += _t + '-webkit-filter: ' + filterOut + ';' + _n;
-				transOut.push('-webkit-filter ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ($('#delay_out_txt').val() == '0'?'':' ' + $('#delay_out_txt').val() + 's'));
+				transOut.push('-webkit-filter ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + delayOutFixed);
 			}
 			s += _t + '/* duration: ' + $('#duration_out_txt').val() + ', ease ' + $('#ease_out_sl option:selected').text() + ', delay: '+ $('#delay_out_txt').val() + ' */' + _n;
 			s += _t + 'transition: ' + transOut.join(', ').replace('@TRANSFORM@', 'transform') + ';' + _n;
 			s += _t + '-webkit-transition: ' + transOut.join(', ').replace('@TRANSFORM@', '-webkit-transform') + ';' + _n;
-			s += '}' + _n;			
+			s += '}' + _n;	
+			//Stagger
+			var staggerDuration = +$('#delay_out_txt').val() || 0.3;
+			if(isStaggered){
+				for(i = 0; i < staggers; i++){
+					var staggerName = (staggerWithNthChild) ? currentTranCiSSioner.name + ':nth-child(' + (i + 1) + ')' : currentTranCiSSioner.name + (i + 1) ;
+					staggerOut += '/* scene ' + sceneOut + ' ' + staggerName + ' OUT */' + _n;
+					staggerOut += '.scene' + sceneOut + ' .' + staggerName + '{' + _n;
+					staggerOut += _t + 'transition-delay: ' + fixDecimal(staggerDuration * (i+1)) + (staggerDuration >= 100?'ms':'s') + ';' + _n;
+					staggerOut += _t + '-webkit-transition-delay: ' + fixDecimal(staggerDuration * (i+1)) + (staggerDuration >= 100?'ms':'s') + ';' + _n;
+					staggerOut += '}' + _n;
+				}				
+			}
 		}
+		s += staggerIn;
+		s += staggerOut;
 		return s;
   	}
   	$('#scene_element_txt').change(function(evt){
@@ -1505,8 +1751,8 @@ $(document).ready(function(){
   		}
   		evt.preventDefault();
   	});
-  	$('#tranCiSSioner_app-button').click(function(evt){
-		$('#transition_css_txt').val(tranCiSSionerMagic());
+  	$('#trancissioner_app_button').click(function(evt){
+		$('#transition_css_txt').val(trancissionerMagic());
 		$('#transition_css_txt').select();
 		//return s;
   	});
@@ -1537,19 +1783,34 @@ $(document).ready(function(){
 	  	$('#ease_out_sl option[value="'+ob.e+'"]').attr('selected', 'selected');
 	  	$('input:radio[name="scene_out_rb"][value="'+ob.pos+'"]').prop('checked', 'checked');
   	});
-//Sprite Slicer
+//trancissioner animator
+$('#use_animation_ck').click(function(evt){
+	if($('#use_animation_ck').prop('checked')){
+		$('#intro_anim').show();
+	}else{
+		$('#intro_anim').hide();
+	}
+});
+/*
+  ____             _ _         ____  _ _               
+ / ___| _ __  _ __(_) |_ ___  / ___|| (_) ___ ___ _ __ 
+ \___ \| '_ \| '__| | __/ _ \ \___ \| | |/ __/ _ \ '__|
+  ___) | |_) | |  | | ||  __/  ___) | | | (_|  __/ |   
+ |____/| .__/|_|  |_|\__\___| |____/|_|_|\___\___|_|   
+       |_|                                             
+*/
 var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $guide2 = $('.ss_guide2'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
 var currentSpriteSlice = {target:null,name:'', x:0, y:0, width:0, height:0, css:''};
 var lastSSCut = 0;
 $('#spriteslicerbutton').click(function(evt){
 	//$cuts.val('');
 	lastSSCut = 0;
-	var $iLayer = $('#' + css.$currentLayer.attr('id') + constants.I_LAYER);
+	var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 	currentSpriteSlice = {
-		target:css.$currentLayer,
-  		name:css.$currentLayer.attr('id'),
-  		x:parseFloat(css.$currentLayer.css('left')),
-  		y:parseFloat(css.$currentLayer.css('top')),
+		target:data.$currentLayer,
+  		name:data.$currentLayer.attr('id'),
+  		x:parseFloat(data.$currentLayer.css('left')),
+  		y:parseFloat(data.$currentLayer.css('top')),
   		width:parseFloat($iLayer.css('width')),
   		height:parseFloat($iLayer.css('height')),
   		image: $iLayer.css('background-image'),
@@ -1614,7 +1875,6 @@ $('#ss_transition_ck').on('change', function(evt){
 	}
 });
 var currentSlices;
-var $slices = $('#ss_slices');
 function createSlices(){
 	var layered = $('#ss_layered_ck').prop('checked');
 	var direction = $('#ss_direction_sl').val();
@@ -1717,7 +1977,7 @@ function createSlices(){
 			slice.backgroundPositionY = y * -1;
 		}
 		var sliceImage = currentSpriteSlice;
-		s += _t + 'background-image: url("'+ css.images[currentSpriteSlice.name] + '");' + _n;
+		s += _t + 'background-image: url("'+ data.images[currentSpriteSlice.name] + '");' + _n;
 		s += _t + 'background-repeat: no-repeat;' + _n;
 		s += _t + 'background-position: ' + slice.backgroundPositionX + 'px ' + slice.backgroundPositionY + 'px;' + _n;
 		s += _t + 'background-size: ' + currentSpriteSlice.backgroundSize + ';' + _n;
@@ -1737,7 +1997,6 @@ function createSlices(){
 			}
 		}
 		s += '}' + _n;
-		//***
 		if(transition){
 			var sIn = (sliceIsScene)?parseInt(sceneIn) + i:sceneIn;
 			s += '/* scene ' + sIn + ' ' + name + ' APPEARS */' + _n;
@@ -1778,19 +2037,17 @@ function createSlices(){
 			s += '}' + _n;
 		}
 		currentSlices.push(slice);
-		}//**allowSlice
+		}
 	}
-	$slices.attr('max', currentSlices.length);
-	$slices.val(1);
 	$('#ss_code_txt').val(s).select();
 }
 $('#spriteSplicer_app_button').click(function(evt){
 	createSlices();
 });
 $('#ss_apply').click(function(evt){
-	var id = css.$currentLayer.attr('id'),
+	var id = data.$currentLayer.attr('id'),
 		$originalLayer = $(getElement(id)),
-		name = getLayerProperty(id, 'filename'),
+		filename = getLayerProperty(id, 'filename'),
 		src = getLayerProperty(id,'image-data'),
 		backgroundSize = getLayerProperty(id, 'background-size');
 	for(var i=0; i < currentSlices.length; i++){
@@ -1802,29 +2059,19 @@ $('#ss_apply').click(function(evt){
 			width = slice.width,
 			height = slice.height,
 			img = {
-				name: name,
 				width: width,
 				height: height,
 				src: src,
 				backgroundPositionX: slice.backgroundPositionX,
 				backgroundPositionY: slice.backgroundPositionY,
-				backgroundSize: backgroundSize
+				backgroundSize: backgroundSize,
+				filename: filename
 			};
 		createLayer(name, x, y, width, height, null, img);
 	}
 	destroyLayer(id);
 	$('.overlay').hide();
   	$('.spriteSlicer_tools').hide();
-	/*
-	var slice = currentSlices[parseInt($slices.val()) - 1];
-	$('#' + css.$currentLayer.attr('id') + constants.I_LAYER).css('background-position', slice.backgroundPositionX +'px ' + slice.backgroundPositionY + 'px');
-	$('#' + css.$currentLayer.attr('id')).css('top', slice.top + 'px').css('left', slice.left + 'px');
-	setWidth(slice.width);
-	setHeight(slice.height);
-	updateHUD(css.$currentLayer);
-	$('.overlay').hide();
-  	$('.spriteSlicer_tools').hide();
-  	*/
 });
 $('#ss_direction_sl').on('change', function(evt){$cuts.val('');});
 $('#ss_reset').click(function(evt){
