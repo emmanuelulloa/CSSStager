@@ -23,9 +23,10 @@
 		http://flixel.org/docs/org/flixel/FlxCamera.html
 		http://www.flashkit.com/movies/Components/Flash_V--_redesig-10378/index.php
 		-->
-		<div class="tranCiSSioner_tools">
+		<div class="timebrush_tools"></div>
+		<div class="trancissioner_tools">
 			<h1>tran<span class="blueText">C</span>i<span class="blueText">SS</span>ioner</h1>
-			<div id="tranCiSSioner_close" class="close"></div>
+			<div id="trancissioner_close" class="close"></div>
 			<div class="colWrapper">
 			<div class="col1">
 				<span class="row">
@@ -71,8 +72,8 @@
 						</tr>
 					</table>
 				</div>
-				<span class="row">
-					Transform origin:
+				<div class="position_transfom_data">
+				Transform origin:
 					<select id="to_in_sl">
 						<option value="50% 50%">center</option>
 						<option value="50% 0%">top</option>
@@ -84,8 +85,17 @@
 						<option value="0% 100%">bottom left</option>
 						<option value="100% 100%">bottom right</option>
 					</select>
-				Offset:<input id="offset_in_txt" type="number" value="10" class='numberInput' /><select id="pfx_in_sl"><option value="px">px</option><option value="%">%</option></select></span>
-				<span class="row">Rotate: <input type="number" id="rotate_in_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_in_txt" value="1" step="0.1" class="numberInput"></span>
+				<br />
+				Offset:<input id="offset_in_txt" type="number" value="10" class='numberInput' />
+				<select id="pfx_in_sl">
+					<option value="px">px</option>
+					<option value="%">%</option>
+				</select>
+				<br />
+				Rotate:<input type="number" id="rotate_in_txt" value="0" step="1" class="numberInput">deg
+				<br />
+				Scale:<input type="number" id="scale_in_txt" value="1" step="0.1" class="numberInput">	
+				</div>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span -->
 				<hr />
 				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
@@ -97,25 +107,102 @@
 			<div class="col2">
 				<!-- ELEMENT PROPERTIES & ANIMATIONS -->
 				<span class="row">Element class: <input id="scene_element_txt" type="text" value=".myDiv" /></span>
-				<span class="row"><label for="left_scene_txt">X:</label> <input id="left_scene_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_scene_txt"> Y:</label> <input id="top_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
-				<span class="row"><label id="width_scene_lbl" for="width_scene_txt">width:</label> <input id="width_scene_txt" type="number" size="4" value='0' class="numberInput" /> <label id="height_scene_lbl" for="width_scene_txt">height:</label> <input id="height_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
-				<!--span class="row"><input type="checkbox" name="use_animation_ck" id="use_animation_ck"><label for="use_animation_ck"> Use attention getter:</label></span>
-				<span class="row">
-					<select name="use_animation_sl" id="use_animation_sl">
-						<option value="">Horizontal</option>
-						<option value="">Vertical</option>
-						<option value="">Scale</option>
-						<option value="">Grow</option>
-						<option value="">Slow rotation</option>
-						<option value="">Buzz</option>
-						<option value="">Shake</option>
-						<option value="">Hard bounce</option>
-						<option value="">Cartoon bounce</option>
-						<option value="">Hang</option>
-						<option value="">Float</option>
-						<option value="">Flash</option>
+				<span class="row"><label for="left_scene_txt">X:</label> <input id="left_scene_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_scene_txt"> Y:</label> <input id="top_scene_txt" type="number" size="4" value='0' class="numberInput" /><label id="width_scene_lbl" for="width_scene_txt"> width:</label> <input id="width_scene_txt" type="number" size="4" value='0' class="numberInput" /> <label id="height_scene_lbl" for="width_scene_txt">height:</label> <input id="height_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
+				<hr />
+				<span class="row">Staggered delay for <input id="anim_trans_staggered" type="number" class="numberInput" min="1" value="1" step="1" /> elements. <input id="anim_trans_stagger_nthchild_ck" checked type="checkbox" /><label for="anim_trans_stagger_nthchild_ck"> Use :nth() child.</label></span>
+				<hr />
+				<input type="checkbox" id="use_animation_ck"><label for="use_animation_ck">Use intro animation.</label>
+				<div id="intro_anim" style="display:none;">
+					<span class="row"><label class="keyframe_label"><select id="intro_animation_frame1"><option value="0%">0%</option><option value="from">from</option></select></label><input id="intro_animation_ini" value="o:0" type="text" class="vii_box" /></span>
+					<span clsss="row"><label class="keyframe_label"><select id="intro_animation_frame2"><option value="100%">100%</option><option value="from">from</option><option value="50%">50%</option></select></label><input id="intro_animation_end" value="o:1" type="text" class="vii_box" /></span>
+					<span class="row"><input id="intro_animation_use_tween" type="checkbox"  />Tween in <input id="intro_animation_tween_frames" type="number" min="2" max="100" class="numberInput" value="20" /> frames, using  
+						<select id="intro_animation_tween_ease">
+							<option value="linear" selected>Linear</option>
+							<option value="easeOut">Ease out</option>
+							<option value="easeIn">Ease in</option>
+							<option value="easeInOut">Ease in out</option>
+							<option value="strongOut">Strong out</option>
+							<option value="strongIn">Strong in</option>
+							<option value="smoothStep">Smooth step</option>
+							<option value="elastic">Elastic</option>
+							<option value="spring">Spring</option>
+							<option value="swing">Swing</option>
+							<option value="expo">Expo</option>
+							<option value="circ">Circ</option>
+							<option value="sine">Sine</option>
+							<option value="bounce">Bounce</option>
+							<option value="snap">Snap</option>
+							<option value="comeback">Comeback</option>
+							<option value="bouncePast">Bounce past</option>
+							<option value="swingFrom">Swing from</option>
+							<option value="swingTo">Swing to</option>
+							<option value="swingFromTo">Swing from to</option>
+							<option value="quadraticIn">Quadratic in</option>
+							<option value="quadraticOut">Quadratic out</option>
+							<option value="quadraticInOut">Quadratic in out</option>
+							<option value="cubicIn">Cubic in</option>
+							<option value="cubicOut">Cubic out</option>
+							<option value="cubicInOut">Cubic in out</option>
+							<option value="quarticIn">Quartic in</option>
+							<option value="quarticOut">Quartic out</option>
+							<option value="quarticInOut">Quartic in out</option>
+							<option value="quinticIn">Quintic in</option>
+							<option value="quinticOut">Quintic out</option>
+							<option value="quinticInOut">Quintic in out</option>
+							<option value="sinusoidalIn">Sinusoidal in</option>
+							<option value="sinusoidalOut">Sinusoidal out</option>
+							<option value="sinusoidalInOut">Sinusoidal in out</option>
+							<option value="exponentialIn">Exponential in</option>
+							<option value="exponentialOut">Exponential out</option>
+							<option value="exponentialInOut">Exponential in out</option>
+							<option value="circularIn">Circular in</option>
+							<option value="circularOut">Circular out</option>
+							<option value="circularInOut">Circular in out</option>
+							<option value="elasticIn">Elasctic in</option>
+							<option value="elasticOut">Elastic out</option>
+							<option value="elasticInOut">Elastic in out</option>
+							<option value="strongElasticIn">Strong elastic in</option>
+							<option value="strongElasticOut">Strong elastic out</option>
+							<option value="backIn">Back in</option>
+							<option value="backOut">Back out</option>
+							<option value="backInOut">Back in out</option>
+							<option value="bounceIn">Bounce in</option>
+							<option value="bounceOut">Bounce out</option>
+							<option value="bounceInOut">Bounce in out</option>
+							<option value="comebackLinear">Comeback linear</option>
+							<option value="comebackOut">Comeback out</option>
+							<option value="comebackSmooth">Comeback smooth</option>
+							<option value="wobble">Wobble</option>
+							<option value="flicker">Flicker</option>
+							<option value="slowMotion">Slow motion</option>
+							<option value="slowMotionBack">Slow motion back</option>
+							<option value="hesitate">Hesitate</option>
+							<option value="random">Random</option>
+							<option value="mirror">Mirror</option>
+							<option value="reverse">Reverse</option>
+							<option value="wave">Wave</option>
+							<option value="pulse">Pulse</option>
+							<option value="blink">Blink</option>
+							<option value="stepped">Stepped</option>
+							<option value="pow">Power</option>
+						</select>
+					</span>
+					<span class="row">Duration: <input id="intro_animation_duration" value="2" min="0.5" type="number" class="numberInput" /> | Delay: <input id="intro_animation_delay" value="0" type="number" class="numberInput" /></span>
+					<span class="row">Ease: <select id="intro_animation_sl" /></select> Loops: <input id="intro_animation_loops" min="0" value="1" type="number" class="numberInput" /> * use 0 for infinite</span>
+					<span class="row">Direction: <select id="intro_animation_direction">
+						<option value="normal">Normal</option>
+						<option value="alternate">Alternate</option>
+						<option value="reverse-alternate">Reverse-alternate</option>
+						<option value="reverse">Reverse</option>
+					</select> 
+					Fill: <select id="intro_animation_fillmode">
+						<option value="both">Both</option>
+						<option value="none">None</option>
+						<option value="forwards">Forwards</option>
+						<option value="backwards">Backwards</option>
 					</select>
-				</span-->
+					</span>
+				</div>
 			</div>
 			<div class="col3">
 				<span class="row">
@@ -161,8 +248,8 @@
 						</tr>
 					</table>
 				</div>
-				<span class="row">
-					Transform origin:
+				<div class="position_transfom_data">
+				Transform origin:
 					<select id="to_out_sl">
 						<option value="50% 50%">center</option>
 						<option value="50% 0%">top</option>
@@ -174,8 +261,17 @@
 						<option value="0% 100%">bottom left</option>
 						<option value="100% 100%">bottom right</option>
 					</select>
-					Offset:<input id="offset_out_txt" type="number" value="10" class='numberInput' /><select id="pfx_out_sl"><option value="px">px</option><option value="%">%</option></select></span>
-				<span class="row">Rotate: <input type="number" id="rotate_out_txt" value="0" step="1" class="numberInput">deg | Scale: <input type="number" id="scale_out_txt" value="1" step="0.1" class="numberInput"></span>
+				<br />
+				Offset:<input id="offset_out_txt" type="number" value="10" class='numberInput' />
+				<select id="pfx_out_sl">
+					<option value="px">px</option>
+					<option value="%">%</option>
+				</select>
+				<br />
+				Rotate: <input type="number" id="rotate_out_txt" value="0" step="1" class="numberInput">deg
+				<br />
+				Scale: <input type="number" id="scale_out_txt" value="1" step="0.1" class="numberInput">
+				</div>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span -->
 				<hr />
 				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" step="0.1" class='numberInput'>s</span>
@@ -186,21 +282,20 @@
 			</div>
 			</div>
 			<div class="bottom">
-				<select id="tranCiSSioner_useMatrix_sl">
+				<select id="trancissioner_useMatrix_sl">
 					<option value="2">Transform operations</option>
 					<option value="1">Matrix operations</option>
 					<option value="0">Left/Top</option>
 					<option value="-1">No transform</option>
 				</select>
-				<!--input type="checkbox" id="tranCiSSioner_useMatrix_ck" checked /><label for="tranCiSSioner_useMatrix_ck">Use Matrix Operations</label--> |
-				<a href="#" id="tranCiSSioner_app-button" class="app-button">Create CSS</a>
-				<textarea id="transition_css_txt" class="output" cols="30" rows="10"></textarea>
+				<!--input type="checkbox" id="trancissioner_useMatrix_ck" checked /><label for="trancissioner_useMatrix_ck">Use Matrix Operations</label--> |
+				<a href="#" id="trancissioner_app_button" class="app-button">Create CSS</a>
+				<textarea id="transition_css_txt" class="output" cols="30" rows="8"></textarea>
 			<!--ul>
 				<li><a href="https://www.google.com/design/spec/animation/authentic-motion.html#authentic-motion-mass-weight" target="_blank">Animation guidelines by Google</a></li>
 				<li><a href="https://developers.google.com/web/fundamentals/look-and-feel/animations/?hl=en" target="_blank">Web Fundamentals: Animations by Google</a></li>
 			</ul -->				
 			</div>
-
 		</div>
 		<div class="spriteSlicer_tools">
 			<h1>Sprite<span class="greenText">Slicer<span class="greenText"></h1>
@@ -302,7 +397,7 @@
 				<!-- TABLE -->	
 				<span class="row"><a href="#" id="spriteSplicer_app_button" class="app-button">Create CSS</a></span>
 				<span class="row"><textarea id="ss_code_txt" class="output" cols="50" rows="13"></textarea></span>
-				<span class="row">Apply slice to current element:<input type="number" id="ss_slices" min="1" step="1" max="1" value="1" /> <a href="#" id="ss_apply" class="button">&lt; apply</a></span>
+				<a href="#" id="ss_apply" class="button">Create Slices</a></span>
 				<hr />
 				<span class="row"><a href="#" id="ss_reset" class="button">reset</a></span>
 			</div>
@@ -355,7 +450,33 @@
 					Custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' />
 				</span>
 				<span class="row">Background Color: <input id="bgColor_txt" type="color" value="#FFFFFF" class='numberInput' /> Border Color: <input id="borderColor_txt" type="color" value="#666666" class='numberInput' /></span>
-				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label> | <input type="checkbox" id="use_vcam_ck" /><label for="use_vcam_ck">Use VCAM</label></span>
+				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label> | <input type="checkbox" id="use_vcam_ck" /><label for="use_vcam_ck">Use VCAM</label><!--input type="checkbox" id="use_motionbrush_ck" /> | <label for="use_motionbrush_ck">Use Motion Brush</label--></span>
+			</div>
+			<div id="motionbrush" class="controls">
+				<span class="row"></span>
+				<span class="row">
+					Brush animation: <select id="brushMode_sl" onchange="checkAllBounds(false); setPreset(this.value);">
+						<option value="PRESET_NO_FRICTION">Follow mouse</option>
+						<option value="PRESET_STRONG_FRICTION">Friction</option>
+						<option value="PRESET_SPRING">Spring</option>
+						<option value="PRESET_WAVE">Around mouse</option>
+						<option value="PRESET_BOUNCE">Bounce</option>
+						<option value="PRESET_MISSILE">Missile</option>
+						<option value="PRESET_PONG">Pong</option>
+						<option value="PRESET_SIDE_TO_SIDE">Side to side</option>
+						<option value="PRESET_UP_AND_DOWN">Up and down</option>
+						<option value="PRESET_SPIRAL">Spiral</option>
+						<option value="PRESET_CLICK_POSITION">Click position</option>
+						<option value="PRESET_NONE">None</option>
+					</select>
+					Brush rotation: <select id="rotation_sl" onchange="setRotationPreset(this.value);">
+						<option value="ROTATION_NONE">None</option>
+						<option value="ROTATION_SPIN">Spin</option>
+						<option value="ROTATION_ORIENT_TO_PATH">Orient to path</option>
+						<option value="ROTATION_PENDULUM">Pendulum</option>
+						<option value="ROTATION_SWING">Swing</option>
+					</select>
+				</span>
 			</div>
 			<div id="vcam" class="controls vcam">
 				<span class="titleChar"><h1>V<span class="color">CAM</span></h1></span>
@@ -526,7 +647,7 @@ var tl = [
 </textarea>
 </div>
 
-		<p class="footer">&copy;2015 Emmanuel Ulloa</p>
+		<p class="footer">&copy;2016 Emmanuel Ulloa</p>
 		</div>
 		<div id="stage-container" class="stage-container">
 			<div id="stage" class="stage">
@@ -536,6 +657,7 @@ var tl = [
 	</div>
 	</div>
 <!--script src='js/spriteslicer.js' type='text/javascript'></script-->
+<script src='js/easings.js' type='text/javascript'></script>
 <script src='js/classanimator.js' type='text/javascript'></script>
 
 </body>
