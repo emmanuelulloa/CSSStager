@@ -1,0 +1,785 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+@import url(https://fonts.googleapis.com/css?family=Chango);
+//VARIABLES
+$dialog-corner: 10px;
+$button-corner: 3px;
+$color-1: crimson;
+$font-h1: 'Chango', cursive;
+$font-normal: 'Open Sans', Helvetica, Arial, sans-serif;
+$font-code: Monaco, "Courier New", Courier, MonoSpace;
+$bg-1: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAAHElEQVQIW2M8f/78fwYcgBEkaWhoyIhNftBJAgDsiht0x6jrLgAAAABJRU5ErkJggg==);
+$bg-2: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJ0lEQVQYV2M8c+bMfwYkYGxsjMxlYKSDgv///6O44ezZs6huoL0CAHomKYWYrWVpAAAAAElFTkSuQmCC);
+$bg-vcam: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAECAYAAACk7+45AAAAGUlEQVQIW2P8z/C/noGBgYERzgDxwCIwBgCRUQT/kkcDwAAAAABJRU5ErkJggg==);
+$bg-close: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQklEQVQYV5WQQQoAQAgC9f+PdulQVHRwuxQ5oEVJAgCSjL6r9BwueGgBXPDelV0Xun1GGrk23HP/g5a1dYz9HvfhD17FP/tzvfJcAAAAAElFTkSuQmCC);
+$bg-transform-origin: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAAPUlEQVQIW32OSQoAMAgDM/9/tCUtaheoh6BMjKKu2HrcT5EUEc1gMWsBgBxsKGiQsTYccOW8m9+blXZ/OwDWfiIFjeCl0wAAAABJRU5ErkJggg==);
+//MIXINS
+
+//UI
+.controls {
+	padding: 10px;
+	margin: 0 auto 1%;
+	border-radius: $dialog-corner;
+	width: 96%;
+	border: 1px solid #ddd;
+	box-shadow: 0px 0px 3px #999;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f1f1f1+50,e1e1e1+51,f6f6f6+100;White+Gloss+%231 */
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f1f1f1), color-stop(51%,#e1e1e1), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* W3C */
+	h2 {
+		font-size: 100%;
+		font-variant: small-caps;
+		font-weight: bold;
+		text-align: justify;
+		width: 100%;
+		display: block;
+		padding: 0;	
+	}
+	div, span{
+		font-size: 85%;
+		color:gray;
+		font-weight: bold;
+		line-height: 2;
+	}
+}
+
+#motionbrush, .vcam, .templates {
+	display: none;
+}
+
+//INIT
+.ui-pos {
+	display: inline-block;
+	width: 100px;
+}
+		/*Reset*/
+		html, body, div, span, ul, li, p, h1, h2, h3{
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+		body {
+			line-height: 1;
+		}
+		ol, ul {
+			list-style: none;
+		}
+		html, body {
+			height: 100%;
+		}
+		body{
+			font-family: $font-normal;
+  			font-size: 14px;
+  			transform-style: preserve-3d;
+			-webkit-transform-style: preserve-3d;
+			width: 100%;
+			background-color: #eee;
+			color: #555;
+		}
+		h1 {
+			font-family: $font-h1;
+			font-size: 200%;
+			font-weight: bold;
+			padding-top: 10px;
+			margin-bottom: 10px;
+		}
+		p{
+			font-size: 90%;
+			margin-bottom: 20px;
+		}
+		a {color:#555;}
+		.wrapper{
+			width: 620px;
+			padding-left: 16px;
+			padding-right: 16px;
+			margin: 0 auto;
+		}
+		.tagline {
+			font-weight: bold;
+			font-style: italic;
+		}
+		.instructions{
+			line-height: 1.1;
+		}
+		.instructions li{
+			display: block;
+			margin-bottom: 10px;
+		}
+		.button {
+			background-color: gainsboro;
+			color:grey;
+			border-radius: $button-corner;
+			text-decoration: none;
+			padding: 1px 3px;
+			margin: 5px;
+			box-shadow: 0px 0px 3px #999;
+			transition: all 0.3s ease;
+			-webkit-transition: all 0.3s ease;
+			position: relative;
+			display: inline-block;
+			min-width: 120px;
+			text-align: center;
+			cursor: pointer;
+		}
+		.button:hover, .button:focus{
+			box-shadow: 0px 0px 3px #FFF;
+			background-color: $color-1;
+			color:white;
+		}
+		/*Animations*/
+/* n:titleChar*11 dy:100ms e:linear d:0.4s to:cc kf:class|kf:0 rot:-45 op:0 sc:5|kf:66.67 sc:0.5 */
+@keyframes titleChar {
+	0% {
+		opacity : 0;
+		transform: scale(5) rotate(-45deg) ;
+	}
+	66.67% {
+		transform: scale(0.5) ;
+	}
+}
+@-webkit-keyframes titleChar {
+	0% {
+		opacity : 0;
+		-webkit-transform: scale(5) rotate(-45deg) ;
+	}
+	66.67% {
+		-webkit-transform: scale(0.5) ;
+	}
+}
+.logo {
+	border-radius: $button-corner;
+	margin-top: 5px;
+	color: #555;
+	padding: 8px;
+	width: 250px;
+}
+.titleChar {
+	transform-origin: center center;
+	-webkit-transform-origin: center center;
+	animation-name: titleChar;
+	animation-duration: 0.4s;
+	animation-timing-function: linear;
+	animation-iteration-count: 1;
+	animation-direction: normal;
+	animation-fill-mode: both;
+	animation-play-state: running;
+	-webkit-animation-name: titleChar;
+	-webkit-animation-duration: 0.4s;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-direction: normal;
+	-webkit-animation-fill-mode: both;
+	-webkit-animation-play-state: running;
+}
+.titleChar.colorized {
+	color: $color-1;
+}
+.layer {
+	display: block;
+	cursor: pointer;
+	position: absolute;
+	opacity: 1;
+	border: 1px solid transparent;
+}
+.selected{
+	border:1px solid #00a8ff;
+}
+.selected.svg{
+	border: 1px dashed limegreen;
+	padding: 0;
+	margin: 0;
+	cursor: move;
+}
+.numberInput{
+	width: 45px;
+}
+.row{
+	display: block;
+}
+.block-row{
+	display: block;
+	clear:both;
+	float:left;
+	width: 100%;
+	margin-bottom: 5px;
+}
+.dropTarget{
+	display: block;
+	float: left;
+	clear: both;
+	width: 90%;
+	min-width: 200px;
+	height: 20px;
+	margin: 2%;
+	padding: 3%;
+	border: 2px dashed #CCC;
+	border-radius: $dialog-corner;
+	background-color: transparent;
+	transition: background-color 0.3s ease-out;
+	-webkit-transition: background-color 0.3s ease-out;
+}
+.to_md {
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+	background-color: white;
+	border: 1px solid #ccc;
+	float: left;
+	cursor:crosshair;
+	position: relative;
+}
+.to_ctrl{
+	display: inline-block;
+	float: right;
+}
+.to_marker{
+	background: $bg-transform-origin no-repeat;
+	display: block;
+	width: 7px;
+	height: 7px;
+	position: relative;
+}
+.footer{
+	font-size: 85%;
+	display: block;
+	margin: 30px 0;
+}
+/*NEW DESIGN*/
+.app{
+	clear: left;
+	float: left;
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+.shell {
+	float:left;
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	background: $bg-1 repeat;
+}
+.tools{
+	float:left;
+	display: block;
+	width: 33%;
+	padding-left: 1%;
+	padding-right: 1%;
+	height: 100%;
+	overflow: auto;
+	background: #eee;
+}
+.stage-container{
+	float:left;
+	display: block;
+	width: 65%;
+	height: 100%;
+	overflow: auto;
+	-webkit-box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
+	-moz-box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
+	box-shadow: inset 6px 0px 5px 0px rgba(0,0,0,0.2);
+	position: relative;
+}
+.stage {
+	background-color: white;
+	border: 1px solid #555;
+	display: block;
+	width: 550px;
+	height: 400px;
+	box-shadow: 0px 0px 3px #999;
+	position: inherit;
+	margin: 0 auto;
+	vertical-align: middle;
+	margin-top: 10%;
+	margin-bottom: 10%;
+}
+.ui-info{
+	background-color: black;
+	border-radius: $dialog-corner;
+	font-size: 95%;
+	height: 20px;
+	font-weight: bold;
+	margin: 3px 0;
+	padding: 5px;
+	text-align: left;
+	border: 1px solid #ddd;
+	box-shadow: 0px 0px 3px #999;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f1f1f1+50,e1e1e1+51,f6f6f6+100;White+Gloss+%231 */
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f1f1f1), color-stop(51%,#e1e1e1), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* W3C */
+}
+		.output{
+			font-family: $font-code;
+			width: 97%;
+			color:#555;
+			margin: 0 auto;
+			text-align: left;
+			padding: 5px;
+			border: 1px solid #555;
+			display: inline-block;
+			white-space: pre;
+  			word-wrap: normal;
+			overflow: auto;
+			outline: none;
+		}
+		.output::selection{
+			color: skyblue;
+			background-color: #393939;
+			margin: 0;
+			padding: 0;
+		}
+		.document-properties{
+			display: block;
+			min-height: 180px;
+		}
+		.elements-properties{
+			display: none;
+			height: 390px;
+		}
+		.hideOverflow {
+			overflow: hidden;
+		}
+		.controls .left{
+			width: 49%;
+			padding-right: 1%;
+			float: left;
+			display: block;
+			text-align: right;
+			float: left;
+
+		}
+		.controls .right{
+			width: 49%;
+			padding-left: 1%;
+			float: right;
+			display: block;
+			text-align: left;
+			float: right;
+		}
+		.controls strong{
+			color: #555;
+			font-weight: bolder;
+		}
+		.controls .lbl {
+			display: inline-block;
+			width: 60px;
+		}
+		/* PLUG-INS */
+		.overlay{
+			background-color: rgba(0,0,0,0.7);
+			position: fixed;
+			display: none;
+			width: 100%;
+			height: 100%;
+			z-index: 999;
+			overflow: auto;
+		}
+		.overlay .close{
+			background-image: $bg-close;
+			background-repeat: no-repeat;
+			background-position: 5px 5px;
+			border-radius: $dialog-corner;
+			width: 20px;
+			height: 20px;
+			text-align: center;
+			color: #FFF;
+			background-color: #666;
+			font-weight: bold;
+			font-size: 30px;
+			position: absolute;
+			display: block;
+			top: 10px;
+			right: 10px;
+			cursor: pointer;
+		}
+		.overlay textarea{
+			width: 98%;
+		}
+		.overlay .row{
+			margin-bottom: 5px;
+		}
+		.overlay .lbl{
+			width: 75px;
+			display: inline-block;
+		}
+		.overlay hr{
+			width: 80%;
+			text-align: center;
+			border: 1px dashed #CCC;
+		}
+		.overlay .app-button{
+			color: white;
+			background-color: #666;
+			border-radius: $button-corner;
+			font-size: 14px;
+			font-weight: bold;
+			text-decoration: none;
+			padding: 8px;
+			margin: 3px;
+			display: inline-block;
+			transition: background-color 0.5s;
+			-webkit-transition: background-color 0.5s;
+		}
+		.overlay .bottom{
+			clear: both;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+		}
+		/* timebrush */
+		.timebrush_tools {
+			position: relative;
+			background-color: #FFF;
+			border-radius: $dialog-corner;
+			padding: 2%;
+			width: 80%;
+			height: 540px;
+			margin: 2% auto;
+			display: none;
+		}
+		/* trancissioner */
+		.trancissioner_tools {
+			position: relative;
+			background-color: #FFF;
+			border-radius: $dialog-corner;
+			padding: 2%;
+			width: 80%;
+			height: 540px;
+			margin: 2% auto;
+			display: none;
+		}
+		.trancissioner_tools hr{
+			border: 1px dashed #FFF;
+		}
+		.trancissioner_tools .blueText{
+			color: dodgerblue;
+		}
+		.trancissioner_tools .close{
+			background-color: dodgerblue;
+		}
+		.trancissioner_tools .colWrapper {
+			width: 100%;
+			height: 310px;
+			border-radius: $dialog-corner;
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+			box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+			-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.45);
+			/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f6f8f9+0,e5ebee+50,d7dee3+51,f5f7f9+100;White+Gloss */
+background: rgb(246,248,249); /* Old browsers */
+background: -moz-linear-gradient(top,  rgba(246,248,249,1) 0%, rgba(229,235,238,1) 50%, rgba(215,222,227,1) 51%, rgba(245,247,249,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(246,248,249,1)), color-stop(50%,rgba(229,235,238,1)), color-stop(51%,rgba(215,222,227,1)), color-stop(100%,rgba(245,247,249,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  rgba(246,248,249,1) 0%,rgba(229,235,238,1) 50%,rgba(215,222,227,1) 51%,rgba(245,247,249,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  rgba(246,248,249,1) 0%,rgba(229,235,238,1) 50%,rgba(215,222,227,1) 51%,rgba(245,247,249,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  rgba(246,248,249,1) 0%,rgba(229,235,238,1) 50%,rgba(215,222,227,1) 51%,rgba(245,247,249,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom,  rgba(246,248,249,1) 0%,rgba(229,235,238,1) 50%,rgba(215,222,227,1) 51%,rgba(245,247,249,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', endColorstr='#f5f7f9',GradientType=0 ); /* IE6-9 */
+
+		}
+		.trancissioner_tools .col1{
+			padding: 1%;
+			margin: 0;
+			float: left;
+			display: inline-block;
+			height: 100%;
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e6f0a3+0,d2e638+50,c3d825+51,dbf043+100;Green+Gloss+%232 */
+background: rgb(230,240,163); /* Old browsers */
+background: -moz-linear-gradient(top,  rgba(230,240,163,1) 0%, rgba(210,230,56,1) 50%, rgba(195,216,37,1) 51%, rgba(219,240,67,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,240,163,1)), color-stop(50%,rgba(210,230,56,1)), color-stop(51%,rgba(195,216,37,1)), color-stop(100%,rgba(219,240,67,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom,  rgba(230,240,163,1) 0%,rgba(210,230,56,1) 50%,rgba(195,216,37,1) 51%,rgba(219,240,67,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6f0a3', endColorstr='#dbf043',GradientType=0 ); /* IE6-9 */
+
+		}
+		.trancissioner_tools .col2{
+			padding: 1%;
+			margin: 0;
+			float: left;
+			display: inline-block;
+			text-align: left;
+		}
+		.trancissioner_tools .col3{
+			padding: 1%;
+			margin: 0;
+			float: right;
+			display: inline-block;
+			height: 100%;
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fcecfc+0,fba6e1+50,fd89d7+51,ff7cd8+100;Pink+Gloss+%232 */
+background: rgb(252,236,252); /* Old browsers */
+background: -moz-linear-gradient(top,  rgba(252,236,252,1) 0%, rgba(251,166,225,1) 50%, rgba(253,137,215,1) 51%, rgba(255,124,216,1) 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,236,252,1)), color-stop(50%,rgba(251,166,225,1)), color-stop(51%,rgba(253,137,215,1)), color-stop(100%,rgba(255,124,216,1))); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  rgba(252,236,252,1) 0%,rgba(251,166,225,1) 50%,rgba(253,137,215,1) 51%,rgba(255,124,216,1) 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  rgba(252,236,252,1) 0%,rgba(251,166,225,1) 50%,rgba(253,137,215,1) 51%,rgba(255,124,216,1) 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  rgba(252,236,252,1) 0%,rgba(251,166,225,1) 50%,rgba(253,137,215,1) 51%,rgba(255,124,216,1) 100%); /* IE10+ */
+background: linear-gradient(to bottom,  rgba(252,236,252,1) 0%,rgba(251,166,225,1) 50%,rgba(253,137,215,1) 51%,rgba(255,124,216,1) 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcecfc', endColorstr='#ff7cd8',GradientType=0 ); /* IE6-9 */
+
+		}
+		.position_transfom_data, #intro_anim {
+			padding:5px;
+			display: inline-block;
+			font-size:9px;
+			float: right;
+			text-align: justify;
+			input {
+				width:30px;
+			}
+			input, select {
+				font-size:9px;
+				margin: 2px;
+				color: #000;
+				background-color: #FFF;
+				border-radius: 3px;
+				border: none;
+			}
+		}
+		#intro_anim {
+			width: 100%;
+		}
+		.position_scene{
+			margin: 8px 0px;
+			float:left;
+		}
+		.position_scene_tbl{
+			border: 1px solid #FFF;
+			width: 100px;
+			text-align: center;
+			float:left;
+		}
+		.trancissioner_tools .app-button{
+			background-color: dodgerblue;
+		}
+		.trancissioner_tools .app-button:hover{
+			background-color: skyblue;
+		}
+		/* spriteSlicer */
+		.spriteSlicer_tools {
+			position: relative;
+			background-color: #FFF;
+			border-radius: $dialog-corner;
+			padding: 1% 1% 2% 1%;
+			width: 90%;
+			min-height: 85%;
+			height: auto;
+			margin: 2% auto;
+			display: none;
+			overflow: auto;
+		}
+		.spriteSlicer_tools .greenText{
+			color: mediumseagreen;
+		}
+		.spriteSlicer_tools .close{
+			background-color: mediumseagreen;
+		}
+		.spriteSlicer_tools .col1{
+			width:auto;
+			height: 100%;
+			padding: 0;
+			margin: 0;
+			float: left;
+			display: inline-block;
+			overflow: auto;
+		}
+		.spriteSlicer_tools .col2{
+			padding: 0;
+			margin: 0 0 0 20px;
+			float: left;
+			display: inline-block;
+		}
+		.spriteSlicer_tools .app-button{
+			background-color: mediumseagreen;
+		}
+		.spriteSlicer_tools .app-button:hover{
+			background-color: seagreen;
+		}
+		.spriteSlicer_tools .trans-table {
+			width: 500px;
+			margin: 0;
+			padding: 3px;
+			display: none;
+		}
+		.spriteSlicer_tools .trans-table td {
+			text-align: right;
+			margin: 0;
+			padding: 3px;
+			font-weight: bold;
+			font-size: 10px;
+		}
+		.spriteSlicer_tools .trans-table .col-in{
+			text-align: left;
+			background-color: rgb(230,240,163);
+			width: 200px;
+		}
+		.spriteSlicer_tools .trans-table .col-out{
+			text-align: left;
+			background-color: rgb(252,236,252);
+			width: 200px;
+		}
+		#ss_code_txt {
+			width: 95%;
+			height: 40%;
+		}
+		#ss_cuts_txt {
+			border: none;
+			outline: none;
+			font-weight: bold;
+			font-size: 12px;
+			color: seagreen;
+			width: 95%;
+			border: 1px dotted mediumseagreen;
+			border-radius: $dialog-corner;
+			padding: 3px;
+			margin: 3px;
+		}
+		.ss_container {
+			border: 1px solid #999;
+			background-image: $bg-2;
+			background-repeat: repeat;
+			width: 96%;
+			margin-right: 2%;
+			margin-left: 2%;
+			margin-bottom: 0;
+			margin-left: 0;
+			padding: 0;
+			display: block;
+			cursor:row-resize;
+			position: relative;
+			overflow: auto;
+		}
+		.ss_image {
+			background-color: transparent;
+			background-repeat: no-repeat;
+		}
+		.ss_guide {
+			width: 100%;
+			height: 12px;
+			display: block;
+			position: absolute;
+			border-top: 1px dashed limegreen;
+			margin: 0;
+			padding: 0;
+			top: 0px;
+			left: 0px;
+			font-size: 10px;
+			text-align: center;
+			color: white;
+			background-color: rgba(0,0,0,0.3);
+			font-family: $font-code;
+		}
+		.ss_guide2{
+			color: mediumseagreen;
+			font-size: 20px;
+			font-family: $font-code;
+			font-weight: bold;
+			padding-bottom: 3px;
+		}
+		.ss_guide_vert{
+			width: 1px;
+			height: 1px;
+			position: absolute;
+			border-left: 1px dashed fuchsia;
+			margin: 0;
+			padding: 0;
+			top: 0px;
+			left: 0px;
+		}
+		/* misc */
+		.ui-button, .ui-button:visited {
+			outline: none;
+			border: none;
+			display: inline-block;
+			text-align: center;
+			background-color: dodgerblue;
+			font-weight: bold;
+			font-size: 16px;
+			color: white;
+			border-radius: 50%;
+			width: 16px;
+			height: 16px;
+			text-decoration: none;
+			margin: 0;
+			padding: 1px;
+		}
+		.ui-button:hover, .ui-button:focus, .ui-button:active {
+			background-color: skyblue;
+		}
+		/* VCAM */
+		.vcam h1{
+			margin: 0;
+			padding: 0;
+		}
+		.vcam .color{
+			color: fuchsia;
+		}
+		.vcam .link{
+			margin: 0;
+			padding: 0;
+			display: inline-block;
+			text-align: center;
+			border-radius: 50%;
+			width: 20px;
+			height: 20px;
+			font-size: 10px;
+			color: #FFF;
+			font-weight: bolder;
+			text-decoration: none;
+			box-shadow: 0px 0px 3px #999;
+			background-color: fuchsia;
+		}
+		.vcam .lbl{
+			width: 50px;
+			display: inline-block;
+			text-align: center;
+			font-weight: 700;
+		}
+		.vcam_ui {
+			display: none;
+			background-color: transparent;
+			border: 1px solid fuchsia;
+			position: absolute;
+			background-image: $bg-vcam;
+			background-repeat: repeat;
+			z-index: 9999;
+			cursor:not-allowed;
+		}
+		#new_svg_txt {
+			width: 300px;
+			border: none;
+			background-color: gray;
+			color: white;
+			border-radius: $button-corner;
+		}
+		#new_svg_btn {
+			background-color: $color-1;
+			border: none;
+			border-radius: $button-corner;
+			margin-left: 2px;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+		}
+		#intro_anim .vii_box {
+			width: 250px;
+			font-family: $font-code;
+		}
+		.keyframe_label {
+			width: 70px;
+			display:inline-block;
+		}
