@@ -106,14 +106,13 @@ a {
   color: grey;
   border-radius: 3px;
   text-decoration: none;
-  padding: 1px 3px;
-  margin: 5px;
+  padding: 2px 8px;
+  margin: 2px;
   box-shadow: 0px 0px 3px #999;
   transition: all 0.3s ease;
   -webkit-transition: all 0.3s ease;
   position: relative;
   display: inline-block;
-  min-width: 120px;
   text-align: center;
   cursor: pointer; }
 
@@ -169,19 +168,23 @@ a {
   cursor: pointer;
   position: absolute;
   opacity: 1;
-  border: 1px solid transparent; }
+  outline: 1px solid transparent; }
 
 .selected {
-  border: 1px solid #00a8ff; }
+  outline: 1px solid #00a8ff; }
 
 .selected.svg {
-  border: 1px dashed limegreen;
+  outline: 1px dashed limegreen;
   padding: 0;
   margin: 0;
   cursor: move; }
 
 .numberInput {
   width: 45px; }
+
+.numberInputSmall {
+  font-size: 9px;
+  width: 40px; }
 
 .row {
   display: block; }
@@ -338,7 +341,7 @@ a {
 
 .elements-properties {
   display: none;
-  height: 390px; }
+  height: 430px; }
 
 .hideOverflow {
   overflow: hidden; }
@@ -374,7 +377,7 @@ a {
   display: none;
   width: 100%;
   height: 100%;
-  z-index: 999;
+  z-index: 8000;
   overflow: auto; }
 
 .overlay .close {
@@ -429,17 +432,6 @@ a {
   padding: 0;
   margin: 0; }
 
-/* timebrush */
-.timebrush_tools {
-  position: relative;
-  background-color: #FFF;
-  border-radius: 10px;
-  padding: 2%;
-  width: 80%;
-  height: 540px;
-  margin: 2% auto;
-  display: none; }
-
 /* trancissioner */
 .trancissioner_tools {
   position: relative;
@@ -449,7 +441,11 @@ a {
   width: 80%;
   height: 540px;
   margin: 2% auto;
-  display: none; }
+  display: none;
+  font-size: 11px; }
+
+.trancissioner_tools input, .trancissioner_tools select {
+  font-size: 11px; }
 
 .trancissioner_tools hr {
   border: 1px dashed #FFF; }
@@ -667,7 +663,7 @@ a {
   margin-left: 0;
   padding: 0;
   display: block;
-  cursor: row-resize;
+  cursor: crosshair;
   position: relative;
   overflow: auto; }
 
@@ -764,7 +760,7 @@ a {
   position: absolute;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAECAYAAACk7+45AAAAGUlEQVQIW2P8z/C/noGBgYERzgDxwCIwBgCRUQT/kkcDwAAAAABJRU5ErkJggg==);
   background-repeat: repeat;
-  z-index: 9999;
+  z-index: 5000;
   cursor: not-allowed; }
 
 #new_svg_txt {
@@ -790,5 +786,33 @@ a {
 .keyframe_label {
   width: 70px;
   display: inline-block; }
+
+/* mocapbrush */
+#mocapbrush_canvas {
+  outline: 2px solid #00ff33;
+  display: none;
+  background-color: transparent;
+  position: absolute;
+  z-index: 5000;
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAZklEQVQYV52Qyw3AMAhDYaawEzsxEztRgQRykvZSDlGEHz8zEQV9B7eUnwEj9hrm4uYptaEUsaDh6ujutNaqKSfYuf+gmZGqznm5Rk65Or4Z0GDdgnsijMd0vmAMEdnsQe00fwx/AEpNMQdAcIrEAAAAAElFTkSuQmCC), crosshair; }
+
+.mocapbrush_tools {
+  position: relative;
+  background-color: #FFF;
+  border-radius: 10px;
+  padding: 2%;
+  width: 95%;
+  margin: 2% auto;
+  display: none; }
+  .mocapbrush_tools h1 {
+    margin: 0;
+    padding: 0; }
+    .mocapbrush_tools h1 .color {
+      color: #00ff33; }
+
+#quick_transform_txt {
+  font-family: Monaco, "Courier New", Courier, MonoSpace;
+  font-size: 9px;
+  width: 340px; }
 
 /*# sourceMappingURL=classanimator.css.map */
