@@ -23,7 +23,6 @@
 		http://flixel.org/docs/org/flixel/FlxCamera.html
 		http://www.flashkit.com/movies/Components/Flash_V--_redesig-10378/index.php
 		-->
-		<div class="timebrush_tools"></div>
 		<div class="trancissioner_tools">
 			<h1>tran<span class="blueText">C</span>i<span class="blueText">SS</span>ioner</h1>
 			<div id="trancissioner_close" class="close"></div>
@@ -42,7 +41,7 @@
 					</select>
 				</span>
 				<hr />
-				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_in_txt" value="0" class='numberInput'></span>
+				<span class="row"><label for="" class="lbl">Opacity:</label> <input type="number" name="" id="opacity_in_txt" value="0" min="0" max="1" step="0.1" class='numberInput'><input id="linear_opacity_in_ck" type="checkbox" checked ><label for="linear_opacity_in_ck">Use linear opacity</label></span>
 				<span class="row">
 					<input type="checkbox" id="tcss_blur_in_ck" value="blur(10px)" /><label for="tcss_blur_ck">Blur </label>
 					| Fade effect: 
@@ -75,15 +74,6 @@
 				<div class="position_transfom_data">
 				Transform origin:
 					<select id="to_in_sl">
-						<option value="50% 50%">center</option>
-						<option value="50% 0%">top</option>
-						<option value="50% 100%">bottom</option>
-						<option value="0% 50%">left</option>
-						<option value="100% 50%">right</option>
-						<option value="0% 0%">top left</option>
-						<option value="100% 0%">top right</option>
-						<option value="0% 100%">bottom left</option>
-						<option value="100% 100%">bottom right</option>
 					</select>
 				<br />
 				Offset:<input id="offset_in_txt" type="number" value="10" class='numberInput' />
@@ -98,6 +88,10 @@
 				</div>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span -->
 				<hr />
+				<span class="row">Time preset: 
+				<select id="time_in_preset">
+				</select>
+				</span>
 				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
 					<select id="ease_in_sl">
@@ -107,7 +101,7 @@
 			<div class="col2">
 				<!-- ELEMENT PROPERTIES & ANIMATIONS -->
 				<span class="row">Element class: <input id="scene_element_txt" type="text" value=".myDiv" /></span>
-				<span class="row"><label for="left_scene_txt">X:</label> <input id="left_scene_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_scene_txt"> Y:</label> <input id="top_scene_txt" type="number" size="4" value='0' class="numberInput" /><label id="width_scene_lbl" for="width_scene_txt"> width:</label> <input id="width_scene_txt" type="number" size="4" value='0' class="numberInput" /> <label id="height_scene_lbl" for="width_scene_txt">height:</label> <input id="height_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
+				<span class="row"><label for="left_scene_txt">X:</label> <input id="left_scene_txt" type="number" size="4" value='0' class="numberInput" /><label for="top_scene_txt"> Y:</label> <input id="top_scene_txt" type="number" size="4" value='0' class="numberInput" /><label id="width_scene_lbl" for="width_scene_txt"> width:</label> <input id="width_scene_txt" type="number" size="4" value='0' class="numberInput" /> <label id="height_scene_lbl" for="height_scene_txt">height:</label> <input id="height_scene_txt" type="number" size="4" value='0' class="numberInput" /></span>
 				<hr />
 				<span class="row">Staggered delay for <input id="anim_trans_staggered" type="number" class="numberInput" min="1" value="1" step="1" /> elements. <input id="anim_trans_stagger_nthchild_ck" checked type="checkbox" /><label for="anim_trans_stagger_nthchild_ck"> Use :nth() child.</label></span>
 				<hr />
@@ -218,7 +212,7 @@
 					</select>
 				</span>
 				<hr />
-				<span class="row"><label class="lbl">Opacity:</label> <input type="number" name="" id="opacity_out_txt" value="0" class='numberInput'></span>
+				<span class="row"><label class="lbl">Opacity:</label> <input type="number" name="" id="opacity_out_txt" value="0" min="0" max="1" step="0.1"  class='numberInput'><input id="linear_opacity_out_ck" type="checkbox" checked ><label for="linear_opacity_out_ck">Use linear opacity</label></span>
 				<span class="row">
 					<input type="checkbox" id="tcss_blur_out_ck" value="blur(10px)" /><label for="tcss_blur_ck">Blur </label>
 					| Fade effect: 
@@ -251,15 +245,6 @@
 				<div class="position_transfom_data">
 				Transform origin:
 					<select id="to_out_sl">
-						<option value="50% 50%">center</option>
-						<option value="50% 0%">top</option>
-						<option value="50% 100%">bottom</option>
-						<option value="0% 50%">left</option>
-						<option value="100% 50%">right</option>
-						<option value="0% 0%">top left</option>
-						<option value="100% 0%">top right</option>
-						<option value="0% 100%">bottom left</option>
-						<option value="100% 100%">bottom right</option>
 					</select>
 				<br />
 				Offset:<input id="offset_out_txt" type="number" value="10" class='numberInput' />
@@ -274,6 +259,10 @@
 				</div>
 				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span -->
 				<hr />
+				<span class="row">Time preset: 
+				<select id="time_out_preset">
+				</select>
+				</span>
 				<span class="row"><label for="" class="lbl">Duration:</label><input id="duration_out_txt" type="number" value="0.3" step="0.1" class='numberInput'>s | <label for="" class="lbl">Delay:</label><input id="delay_out_txt" type="number" value="0" step="0.1" class='numberInput'>s</span>
 				<span class="row"><label for="" class="lbl">Ease:</label>
 					<select id="ease_out_sl">
@@ -322,78 +311,80 @@
 				<span class="row"><input type="checkbox" id="ss_layered_ck"><label for="ss_layered_ck">Layered (sprites will have the same position)</label></span>
 				<hr />
 				<!-- TABLE -->
-<span class="row"><input type="checkbox" id="ss_transition_ck" ><label for="ss_transition_ck">Add transitions.</label></span>
-<table class="trans-table" cellpadding="0" cellspacing="0" border="0">
-	<tr>
-		<td align="left" valign="top">&nbsp;</td>
-		<td align="left" valign="top" class="col-in"><strong>IN</strong></td>
-		<td align="left" valign="top" class="col-out"><strong>OUT</strong></td>
-	</tr>
-	<tr>
-		<td align="left" valign="top">Scene:</td>
-		<td align="left" valign="top" class="col-in"><input type="number" id="ss_scene_in_txt" value="1" class="numberInput" /></td>
-		<td align="left" valign="top" class="col-out"><input type="number" id="ss_scene_out_txt" value="2" class="numberInput" /></td>
-	</tr>
-	<tr>
-		<td align="left" valign="top">Preset:</td>
-		<td align="left" valign="top" class="col-in">
-			<select id="ss_trans_in">
-				<option value="none" selected>Opacity only</option>
-				<option value="translate(-100%, 0)">Left</option>
-				<option value="translate(100%, 0)">Right</option>
-				<option value="translate(0, -100%)">Up</option>
-				<option value="translate(0, 100%)">Down</option>
-				<option value="scale(.3,.3)">Zoom in</option>
-				<option value="scale(2,2)">Zoom out</option>
-				<option value="rotate(-90deg)">Rotate in</option>
-				<option value="rotate(90deg)">Rotate out</option>
-				<option value="rotate(-2turn)">Spin in</option>
-				<option value="rotate(2turn)">Spin out</option>
-			</select>
-		</td>
-		<td align="left" valign="top" class="col-out">
-			<select id="ss_trans_out">
-				<option value="none" selected>Opacity only</option>
-				<option value="translate(-100%, 0)">Left</option>
-				<option value="translate(100%, 0)">Right</option>
-				<option value="translate(0, -100%)">Up</option>
-				<option value="translate(0, 100%)">Down</option>
-				<option value="scale(.3,.3)">Zoom in</option>
-				<option value="scale(2,2)">Zoom out</option>
-				<option value="rotate(-90deg)">Rotate in</option>
-				<option value="rotate(90deg)">Rotate out</option>
-				<option value="rotate(-2turn)">Spin in</option>
-				<option value="rotate(2turn)">Spin out</option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" valign="top">Ease:</td>
-		<td align="left" valign="top" class="col-in">
-		<select id="ss_ease_in">					
-		</select>
-		</td>
-		<td align="left" valign="top" class="col-out">
-		<select id="ss_ease_out">					
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" valign="top">Time:</td>
-		<td align="left" valign="top" class="col-in">
-			<input type="number" id="ss_delay_in" step="0.1" min="0.2" value="0.5" class="numberInput"/>s
-		</td>
-		<td align="left" valign="top" class="col-out">
-			<input type="number" id="ss_delay_out" step="0.1" min="0.1" value="0.3" class="numberInput"/>s
-		</td>
-	</tr>
-	<tr>
-		<td align="left" valign="top" colspan="3"><input type="checkbox" id="ss_staggered_ck" /><label for="ss_staggered_ck">Staggered delay</label></td>
-	</tr>
-	<tr>
-		<td align="left" valign="top" colspan="3"><input type="checkbox" id="ss_scene_per_slice_ck"><label for="ss_scene_per_slice_ck">Each slice is a scene</label></td>
-	</tr>
-</table>				
+				<span class="row"><input type="checkbox" id="ss_transition_ck" ><label for="ss_transition_ck">Add transitions.</label></span>
+				<table class="trans-table" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td align="left" valign="top">&nbsp;</td>
+						<td align="left" valign="top" class="col-in"><strong>IN</strong></td>
+						<td align="left" valign="top" class="col-out"><strong>OUT</strong></td>
+					</tr>
+					<tr>
+						<td align="left" valign="top">Scene:</td>
+						<td align="left" valign="top" class="col-in"><input type="number" id="ss_scene_in_txt" value="1" class="numberInput" /></td>
+						<td align="left" valign="top" class="col-out"><input type="number" id="ss_scene_out_txt" value="2" class="numberInput" /></td>
+					</tr>
+					<tr>
+						<td align="left" valign="top">Preset:</td>
+						<td align="left" valign="top" class="col-in">
+							<select id="ss_trans_in">
+								<option value="none" selected>Opacity only</option>
+								<option value="translate(-100%, 0)">Left</option>
+								<option value="translate(100%, 0)">Right</option>
+								<option value="translate(0, -100%)">Up</option>
+								<option value="translate(0, 100%)">Down</option>
+								<option value="scale(.3,.3)">Zoom in</option>
+								<option value="scale(2,2)">Zoom out</option>
+								<option value="rotate(-90deg)">Rotate in</option>
+								<option value="rotate(90deg)">Rotate out</option>
+								<option value="rotate(-2turn)">Spin in</option>
+								<option value="rotate(2turn)">Spin out</option>
+							</select>
+						</td>
+						<td align="left" valign="top" class="col-out">
+							<select id="ss_trans_out">
+								<option value="none" selected>Opacity only</option>
+								<option value="translate(-100%, 0)">Left</option>
+								<option value="translate(100%, 0)">Right</option>
+								<option value="translate(0, -100%)">Up</option>
+								<option value="translate(0, 100%)">Down</option>
+								<option value="scale(.3,.3)">Zoom in</option>
+								<option value="scale(2,2)">Zoom out</option>
+								<option value="rotate(-90deg)">Rotate in</option>
+								<option value="rotate(90deg)">Rotate out</option>
+								<option value="rotate(-2turn)">Spin in</option>
+								<option value="rotate(2turn)">Spin out</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td align="left" valign="top">Ease:</td>
+						<td align="left" valign="top" class="col-in">
+						<select id="ss_ease_in">					
+						</select>
+						</td>
+						<td align="left" valign="top" class="col-out">
+						<select id="ss_ease_out">					
+						</select>
+						</td>
+					</tr>
+					<tr>
+						<td align="left" valign="top">Duration:</td>
+						<td align="left" valign="top" class="col-in">
+							<input type="number" id="ss_duration_in" step="0.1" min="0.1" value="0.5" class="numberInput"/>s 
+							Delay: <input type="number" id="ss_delay_in" step="0.1" min="0.1" value="0.1" class="numberInput"/>s
+						</td>
+						<td align="left" valign="top" class="col-out">
+							<input type="number" id="ss_duration_out" step="0.1" min="0.1" value="0.3" class="numberInput"/>s 
+							Delay: <input type="number" id="ss_delay_out" step="0.1" min="0.1" value="0.1" class="numberInput"/>s
+						</td>
+					</tr>
+					<tr>
+						<td align="left" valign="top" colspan="3"><input type="checkbox" id="ss_staggered_ck" /><label for="ss_staggered_ck">Staggered delay</label></td>
+					</tr>
+					<tr>
+						<td align="left" valign="top" colspan="3"><input type="checkbox" id="ss_scene_per_slice_ck"><label for="ss_scene_per_slice_ck">Each slice is a scene</label></td>
+					</tr>
+				</table>				
 				<!-- TABLE -->	
 				<span class="row"><a href="#" id="spriteSplicer_app_button" class="app-button">Create CSS</a></span>
 				<span class="row"><textarea id="ss_code_txt" class="output" cols="50" rows="13"></textarea></span>
@@ -447,46 +438,50 @@
 					</select>	
 				</span>
 				<span class="row">
-					Custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' />
+					Custom size: <input type="number" size="4" value='550' id='width_txt' class='numberInput' /> x <input type="text" value='400' id='height_txt' class='numberInput' /> <input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label>
 				</span>
 				<span class="row">Background Color: <input id="bgColor_txt" type="color" value="#FFFFFF" class='numberInput' /> Border Color: <input id="borderColor_txt" type="color" value="#666666" class='numberInput' /></span>
-				<span class="row"><input id="overflow_ck" type="checkbox" /><label for="overflow_ck">Hide off-stage objects.</label> | <input type="checkbox" id="use_vcam_ck" /><label for="use_vcam_ck">Use VCAM</label><!--input type="checkbox" id="use_motionbrush_ck" /> | <label for="use_motionbrush_ck">Use Motion Brush</label--></span>
+				<span class="row"><strong>More tools: </strong> <input type="checkbox" id="use_vcam_ck" /><label for="use_vcam_ck">VCAM</label> | <input type="checkbox" id="use_mocapbrush_ck" /><label for="use_mocapbrush_ck">MoCapBrush</label></span>
 			</div>
-			<div id="motionbrush" class="controls">
-				<span class="row"></span>
-				<span class="row">
-					Brush animation: <select id="brushMode_sl" onchange="checkAllBounds(false); setPreset(this.value);">
-						<option value="PRESET_NO_FRICTION">Follow mouse</option>
-						<option value="PRESET_STRONG_FRICTION">Friction</option>
-						<option value="PRESET_SPRING">Spring</option>
-						<option value="PRESET_WAVE">Around mouse</option>
-						<option value="PRESET_BOUNCE">Bounce</option>
-						<option value="PRESET_MISSILE">Missile</option>
-						<option value="PRESET_PONG">Pong</option>
-						<option value="PRESET_SIDE_TO_SIDE">Side to side</option>
-						<option value="PRESET_UP_AND_DOWN">Up and down</option>
-						<option value="PRESET_SPIRAL">Spiral</option>
-						<option value="PRESET_CLICK_POSITION">Click position</option>
-						<option value="PRESET_NONE">None</option>
-					</select>
-					Brush rotation: <select id="rotation_sl" onchange="setRotationPreset(this.value);">
-						<option value="ROTATION_NONE">None</option>
-						<option value="ROTATION_SPIN">Spin</option>
-						<option value="ROTATION_ORIENT_TO_PATH">Orient to path</option>
-						<option value="ROTATION_PENDULUM">Pendulum</option>
-						<option value="ROTATION_SWING">Swing</option>
+			<div class="controls mocapbrush_tools">
+				<span class="titleChar"><h1>MoCap<span class="color">Brush</span></h1></span>
+				<span class="row">Scene: <input id="mocap_scene" value="1" min="0" type="number" class="numberInput"> Max frames: <input id="mocap_frames_txt" min="2" max="100" value="30" type="number" class="numberInput"> | <input type="checkbox" id="mocap_reverse_ck" /><label for="mocap_reverse_ck">Reverse frames</label></span>
+				<span class="row">Brush animation: 
+					<select id='mocap_brush_animation_sl'>
+						<option value="exact">Exact</option>
+						<option value="follow">Follow</option>
+						<option value="spring">Spring</option>
+					</select> Brush rotation:
+					<select id="mocap_brush_rotation_sl">
+						<option value="none">None</option>
+						<option value="orient">Orient to path</option>
+						<option value="swing">Swing</option>
 					</select>
 				</span>
+				<span class="row">Ease: <input id="mocap_ease" min="0.01" step="0.1" value="0.08" type="number" class="numberInput"> Spring: <input id="mocap_spring" min="0.01" step="0.1" value="0.9" type="number" class="numberInput"></span>
+				<span class="row">Loops:<input id="mocap_animation_loops" min="0" value="1" type="number" class="numberInput"> Direction:<select id="mocap_animation_direction">
+						<option value="normal">Normal</option>
+						<option value="alternate">Alternate</option>
+						<option value="reverse-alternate">Reverse-alternate</option>
+						<option value="reverse">Reverse</option>
+					</select> Fill:<select id="mocap_animation_fillmode">
+						<option value="both">Both</option>
+						<option value="none">None</option>
+						<option value="forwards">Forwards</option>
+						<option value="backwards">Backwards</option>
+					</select></span>
+				<span class="row"><textarea id="mocap_result" class="output" cols="30" rows="10"></textarea></span>
+				<span class="row"><a href="#" id="reset_mocap_btn" class="button">Reset</a></span>
 			</div>
 			<div id="vcam" class="controls vcam">
 				<span class="titleChar"><h1>V<span class="color">CAM</span></h1></span>
 				<span class="row">Name: <input type="text" value="vcam" id="vcam_name" /> Scene: <input type="number" value="1" step="1" min="1" id="vcam_scene" class="numberInput" /><a href="#" class="button" id="vcam_capture" style="display:none;">Capture NEXT Scene</a></span> 
 				<span class="row">Apply matrix to vcam: <input type="text" id="vcam_matrix"></span>
-				<span class="row"><a href="#" class="link" id="pan_lt">&lt;</a><span class="lbl">PAN</span><a href="#" class="link" id="pan_gt">&gt;</a> <input type="number" id="pan_txt" class="numberInput" value="0" step="1" /></span>
-				<span class="row"><a href="#" class="link" id="tilt_lt">&lt;</a><span class="lbl">TILT</span><a href="#" class="link" id="tilt_gt">&gt;</a> <input type="number" id="tilt_txt" class="numberInput" value="0" step="1" /></span>
-				<span class="row"><a href="#" class="link" id="zoom_lt">-</a><span class="lbl">ZOOM</span><a href="#" class="link" id="zoom_gt">+</a> <input type="number" id="zoom_txt" class="numberInput" value="1" step="0.1" /></span>
-				<span class="row"><a href="#" class="link" id="roll_lt">&lt;</a><span class="lbl">ROLL</span><a href="#" class="link" id="roll_gt">&gt;</a> <input type="number" id="roll_txt" class="numberInput" value="0" step="1" /></span>
-				<span class="row">Duration:<input id="vcam_duration_in_txt" type="number" value="1" step="0.1" class='numberInput'>s | Delay:<input id="vcam_delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | Ease:
+				<span class="row"><a href="#" class="link" id="pan_lt">&lt;</a><span class="lbl">PAN</span><a href="#" class="link" id="pan_gt">&gt;</a> <input type="number" id="pan_txt" class="numberInput" value="0" step="1" /><span class="lbl">X:</span><input id="vcam_x_txt" value="0" step="1"  type="number" class="numberInputSmall"></span>
+				<span class="row"><a href="#" class="link" id="tilt_lt">&lt;</a><span class="lbl">TILT</span><a href="#" class="link" id="tilt_gt">&gt;</a> <input type="number" id="tilt_txt" class="numberInput" value="0" step="1" /><span class="lbl">Y:</span><input id="vcam_y_txt" value="0" step="1"  type="number" class="numberInputSmall"></span>
+				<span class="row"><a href="#" class="link" id="zoom_lt">-</a><span class="lbl">ZOOM</span><a href="#" class="link" id="zoom_gt">+</a> <input type="number" id="zoom_txt" class="numberInput" value="1" step="0.1" /><span class="lbl">Scale:</span><input id="vcam_scale_txt" min="0.01" value="1" step="0.1"  type="number" class="numberInputSmall"></span>
+				<span class="row"><a href="#" class="link" id="roll_lt">&lt;</a><span class="lbl">ROLL</span><a href="#" class="link" id="roll_gt">&gt;</a> <input type="number" id="roll_txt" class="numberInput" value="0" step="1" /><span class="lbl">Rotate:</span><input id="vcam_rotate_txt" value="0" step="1" min="-360" max="360" type="number" class="numberInputSmall"></span>
+				<span class="row">Duration:<input id="vcam_duration_in_txt" type="number" value="1" step="0.1" min="0" class='numberInput'>s | Delay:<input id="vcam_delay_in_txt" type="number" value="0.5" step="0.1" class='numberInput'>s | Ease:
 				<select id="vcam_ease_in_sl">
 				</select>
 				</span>
@@ -529,13 +524,14 @@
 				</div>
 				<div class="right">
 					<h2>Transform:</h2>
-					<span class="row"><label for="sc_rng" class="lbl">Scale:</label> <input id="sc_rng" type="range" value='100' min='0' max='200' /></span>
-					<span class="row"><label for="rot_rng" class="lbl">Rotation:</label> <input id="rot_rng" type="range" value='0' min='-180' max='180' /></span>
-					<span class="row"><label for="sk_rng" class="lbl">Skew:</label> <input id="sk_rng" type="range" value='0' min='-60' max='60' /></span>
-					<span class="row"><label for="rot_txt">Rotation: </label><input type="number" size="4" value='0' class="numberInput" id="rot_txt"> deg</span>
-					<span class="row"><label for="scx_txt">Scale X:</label> <input id="scx_txt" type="number" size="4" value='1' step="0.1" class="numberInput" /><label for="scy_txt"> Scale Y:</label> <input id="scy_txt" type="number" size="4" value='1' step="0.1" class="numberInput" /></span>
-					<span class="row"><label for="x_txt">Translate X:</label> <input id="x_txt" type="number" size="4" value='0' class="numberInput" />px</span>
-					<span class="row"><label for="y_txt">Translate Y:</label> <input id="y_txt" type="number" size="4" value='0' class="numberInput" />px</span>
+					<span class="row"><label for="sc_rng" class="lbl">Scale:</label><input id="sc_rng" type="range" value='100' min='0' max='200' /></span>
+					<span class="row"><label for="rot_rng" class="lbl">Rotation:</label><input id="rot_rng" type="range" value='0' min='-180' max='180' /></span>
+					<span class="row"><label for="sk_rng" class="lbl">Skew:</label><input id="sk_rng" type="range" value='0' min='-60' max='60' /></span>
+					<span class="row">Squash &amp; Stretch</span>
+					<span class="row"><input id="squash_stretch_rng" type="range" value='50' min='0' max='100' /></span>
+					<span class="row"><label for="rot_txt" class="lbl">Rotation:</label> <input type="number" size="4" value='0' class="numberInputSmall" id="rot_txt"> deg</span>
+					<span class="row"><label for="scx_txt" class="lbl">Scale</label>X:<input id="scx_txt" type="number" size="4" value='1' step="0.1" class="numberInputSmall" /><label for="scy_txt"> Y:</label> <input id="scy_txt" type="number" size="4" value='1' step="0.1" class="numberInputSmall" /></span>
+					<span class="row"><label for="x_txt" class="lbl">Translate</label>X:<input id="x_txt" type="number" size="4" value='0' class="numberInputSmall" /><label for="y_txt"> Y:</label> <input id="y_txt" type="number" size="4" value='0' class="numberInputSmall" /></span>
 					<span class="row"><a href="#" id="switchLT2T" class="button">Switch left/top to translate</a></span>
 					<div class="block-row">
 						<h2>Transform Origin</h2>
@@ -544,12 +540,7 @@
 						</div>
 						<div class="to_ctrl">
 						<span class="row">
-							<select name="toPos_sl" id="toPos_sl">
-							<option value="50% 50%" selected >center</option>
-							<option value="50% 0%">top</option>
-							<option value="50% 100%">bottom</option>
-							<option value="0% 50%">left</option>
-							<option value="100% 50%">right</option>
+							<select id="toPos_sl">
 							</select>
 						</span>
 						<span class="row"><label for="tox_txt">X:</label> <input id="tox_txt" type="text" size="4" value='0' class="numberInput" /></span>
@@ -558,6 +549,8 @@
 					</div>
 					<span class="row"><a href="#" id="resetbutton" class="button">RESET</a></span>
 				</div>
+				<div class="row" style="clear:both;">Transform from commands to matrix:<br/>
+					<a id="set_quick_transform_txt_btn" href="#" class="button">set</a><input id="quick_transform_txt" type="text" value="none"><a id="get_quick_transform_txt_btn" href="#" class="button">get</a></div>
 			</div>
 		<div class="row">Get your code (html/css):</div>
 		<div class="row"><input id="onlycss_ck" type="checkbox" checked /><label for="onlycss_ck">Only CSS</label> | <input type="checkbox" id="toPos_ck" checked /><label for="toPos_ck">Transform Origin in %</label> | Scenes: <input type="number" id="scenes_txt" value="3" min="1" step="1" class="numberInput" /></div>
@@ -567,6 +560,28 @@
 		</div>
 <div class="templates">
 <!-- easing template -->
+				<select id="time_template">
+					<option value="1">Select</option>
+					<option value="0">instantly / no delay</option>
+					<option value="0.05">immediately</option>
+					<option value="0.1">quickly</option>
+					<option value="0.2">promptly</option>
+					<option value="0.4">fast</option>
+					<option value="0.5">normal</option>
+					<option value="0.6">slow</option>
+					<option value="3.2">paused</option>
+				</select>
+				<select id="to_template">
+					<option value="50% 50%">center</option>
+					<option value="50% 0%">top</option>
+					<option value="50% 100%">bottom</option>
+					<option value="0% 50%">left</option>
+					<option value="100% 50%">right</option>
+					<option value="0% 0%">top left</option>
+					<option value="100% 0%">top right</option>
+					<option value="0% 100%">bottom left</option>
+					<option value="100% 100%">bottom right</option>
+				</select>
 					<select id="easing_template">
 						<option value="ease">ease</option>
 						<option value="ease-out" selected >ease-out</option>
@@ -633,9 +648,23 @@
 					</select>
 <!-- easing template -->
 <textarea class="bnr">
-//bnr.js
-var bnr=function(){return{_D:{html5:"querySelector"in document&&"addEventListener"in window,ie:-1!=navigator.userAgent.toLowerCase()?parseInt(navigator.userAgent.toLowerCase().split("msie")[1]):0},detect:function(e){return this._D[e]},ready:function(e){return"complete"===document.readyState?e():(document.addEventListener("DOMContentLoaded",e,!1),this)},$:function(e){return document.getElementById(e)||document.getElementsByClassName(e)||document.getElementsByTagName(e)||document.querySelector(e)||document.querySelectorAll(e)},appendClass:function(e,t){e.className+=" "+t},setClass:function(e,t){e.className=t},on:function(e,t,n){e.addEventListener(t,n,!1)},off:function(e,t,n){e.removeEventListener(t,n,!1)},_T:{F:2e3,L:0,T:[],D:0,M:null},timeline:function(e,t){if("string"==typeof e){var n={loops:this._T.L,duration:this._T.D,timeline:this._T.M};return n[e]}if("boolean"!=typeof e||e!==!1){this._T.T=[],this._T.D=0,this._T.M=e,this._T.L++,t&&(this._T.F=t);for(var i=this,o=0;o<e.length;o++){var s=e[o][1],r=e[o][0]<10?e[o][0]*i._T.F:e[o][0]?e[o][0]:i._T.F;this._T.T.push(setTimeout(s,i._T.D+=Math.abs(r)))}}else for(var o=0;o<this._T.T.length;o++)clearTimeout(this._T.T[o])}}}();
-//ANIMATION
+/*
+  _                _     
+ | |__  _ __  _ __(_)___ 
+ | '_ \| '_ \| '__| / __|
+ | |_) | | | | |_ | \__ \
+ |_.__/|_| |_|_(_)/ |___/
+                |__/     
+*/
+var bnr=(function(){return{_D:{html5 : 'querySelector' in document && 'addEventListener' in window,mobile : /Mobi/i.test(window.navigator.userAgent) || window.matchMedia("only screen and (max-width: 760px)").matches,ie : (navigator.userAgent.toLowerCase() !=-1) ? parseInt(navigator.userAgent.toLowerCase().split('msie')[1]) : 0},detect : function(val){return this._D[val]},ready: function(fn){if (document.readyState==='complete'){return fn();}document.addEventListener('DOMContentLoaded', fn, false);return this;},$:function(S){return document.getElementById(S) || document.getElementsByClassName(S) || document.getElementsByTagName(S) || document.querySelector(S) || document.querySelectorAll(S);},_PL:{img:{tag:'img',parent:'body',attr:{src:'@URL@'}},css:{tag:'link',parent:'head',attr:{'rel':'stylesheet', 'type':'text-css', 'href':'@URL@'}},js:{tag:'script',parent:'head',attr:{'type':'text/javascript','src':'@URL@'}}},politeLoad : function(src, parent){var p, e, xts='js css png gif jpg'.split(' ');for(var i=0; i < xts.length; i++){if(src.indexOf('.' + xts[i]) !=-1){switch(xts[i]){case 'png':case 'gif':case 'jpg':p=this._PL.img;break;default:p=this._PL[xts[i]];break;}break;}}el=document.createElement(p.tag);for(var prop in p.attr){el.setAttribute(prop, p.attr[prop].replace('@URL@', src));}if(!parent){parent=document.getElementsByTagName(p.parent)[0];}parent.appendChild(el);},resetElement: function(el){el.parentNode.replaceChild(el.cloneNode(true),el);},appendClass: function(el, c){el.className +=' ' + c;return this;},setClass: function(el, c){el.className=c;return this;},wait: function(fn, d){d=d || 1;return setTimeout(fn, Math.round(d*1000));},on: function(el,evt,f){el.addEventListener(evt,f,false);return this;},off: function(el,evt,f){el.removeEventListener(evt,f,false);return this;},_T :{F: 2000,L: 0,T: [],D: 0,M: null,O: []},timeline: function(val,fd){if(fd){this._T.F=fd;}if (typeof val==='string'){var map={'loops': this._T.L, 'duration': this._T.D, 'timeline': this._T.M, 'now': ((!this._T.N)?0:new Date().getTime() - this._T.N)}; if(val==='restart'){this.timeline(this._T.O, this._T.F); return true;}if(val==='halt'){for (var i=0; i < this._T.T.length; i++){clearTimeout(this._T.T[i]);}return false;}return map[val];}this._T.T=[];this._T.D=0;this._T.M=val;this._T.L++;if(!this._T.N){this._T.N=new Date().getTime();}this._T.O=val;var me=this;for(var i=0; i < val.length; i++){var f=val[i][1], ff=(val[i][0] < 100) ? val[i][0] * me._T.F : (!val[i][0])? me._T.F : val[i][0];this._T.T.push(setTimeout(f, me._T.D +=Math.abs(ff)));}return this;}};})();
+/*
+     _    _   _ ___ __  __    _  _____ ___ ___  _   _ 
+    / \  | \ | |_ _|  \/  |  / \|_   _|_ _/ _ \| \ | |
+   / _ \ |  \| || || |\/| | / _ \ | |  | | | | |  \| |
+  / ___ \| |\  || || |  | |/ ___ \| |  | | |_| | |\  |
+ /_/   \_\_| \_|___|_|  |_/_/   \_\_| |___\___/|_| \_|
+
+*/
 var $banner = bnr.$('banner')[0];
 var $cta = bnr.$('cta')[0];
 var frameDuration = 3000;
@@ -652,12 +681,13 @@ var tl = [
 		<div id="stage-container" class="stage-container">
 			<div id="stage" class="stage">
 				<div id="vcam_ui" class="vcam_ui"></div>
+				<canvas id="mocapbrush_canvas"></canvas>
 			</div>
 		</div>
 	</div>
 	</div>
-<!--script src='js/spriteslicer.js' type='text/javascript'></script-->
 <script src='js/easings.js' type='text/javascript'></script>
+<script src='js/utils.js' type='text/javascript'></script>
 <script src='js/classanimator.js' type='text/javascript'></script>
 
 </body>
