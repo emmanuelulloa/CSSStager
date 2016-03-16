@@ -5,13 +5,16 @@ $(document).ready(function(){
 	//http://www.html5rocks.com/en/tutorials/file/dndfiles/
 	//http://blog.teamtreehouse.com/reading-files-using-the-html5-filereader-api
 	//http://keithclark.co.uk/articles/calculating-element-vertex-data-from-css-transforms/
+	//https://www.lightningdesignsystem.com/design/motion/
+	//https://www.lightningdesignsystem.com/resources/tokens/#category-time
 	var data = {
 		container : {width:550,height:400,bgColor:'#FFF',borderColor:'#666'},
 		background : {file:null},
 		layers : [],
 		layersByName : {},
 		images: {},
-		svg: {},
+		isSVG: {},
+		elementCounter: 0,
 		imageInfo : {},
 		layerTransforms : {},
 		$currentLayer : null,
@@ -20,11 +23,15 @@ $(document).ready(function(){
 	classanimator.data = data;
 	var $stage = $('#stage'),
 		$vcam_ui = $('#vcam_ui'),
+		$mocapBrush_canvas = $('#mocapbrush_canvas'),
 		$uiPos = $('.ui-pos'),
 		$size_sl = $('#size_sl'),
 		$width_txt = $('#width_txt'),
 		$height_txt = $('#height_txt'),
 		$guide_fl = $('#guide_fl');
+	var dynamicStyles = document.createElement("style");
+	dynamicStyles.type = "text/css";
+	document.getElementsByTagName("head")[0].appendChild(dynamicStyles);
 	//FUNCTIONS
 	function getElement(i){
 		return document.getElementById(i);
@@ -43,13 +50,8 @@ $(document).ready(function(){
 		$('#new_svg_txt').select();
 	});
 	$('#new_svg_btn').click(function(evt){
-		//var args = ($('#new_svg_txt').val()).split(',');
-		//var box = createLayer(null,parseInt(args[0]),parseInt(args[1]),parseInt(args[2]),parseInt(args[3]),args[4]);
-		var container = createLayer(null,0,0,'auto','auto');
-		var inner = document.getElementById(container.id + constants.I_LAYER);
-		inner.innerHTML = $('#new_svg_txt').val();
-		$(container).addClass('svg');
-		data.svg[container.id] = true;
+		//createLayer(name, x, y, width, height, bgColor, img, svg)
+		var container = createLayer(null, 0, 0, 'auto', 'auto', null, null, $('#new_svg_txt').val());
 		selectLayer(getLayer(container.id));
 		openTools();
 		populateSelectMenu();
@@ -70,12 +72,14 @@ $(document).ready(function(){
 		delete data.layerTransforms[name];
 		delete data.layersByName[name];
 		delete data.resetInfo[name];
-		delete data.svg[name];
+		delete data.isSVG[name];
 		populateSelectMenu();
 	}
-	function createLayer(name, x, y, width, height, bgColor, img){
+	function createLayer(name, x, y, width, height, bgColor, img, svg){
+		var tag = (svg)? "svg_":"div_";
 		if(!name){
-			name = "div_" + Math.round(Math.random() * 1000);
+			name = tag + data.elementCounter;//Math.round(Math.random() * 1000)
+			data.elementCounter++;
 		}
 		data.layersByName[name] = name;
 		var draggableLayer = document.createElement('div');
@@ -155,6 +159,13 @@ $(document).ready(function(){
 		});
 		data.layerTransforms[name] = {};
 		data.layers.push(draggableLayer);
+		//SVG
+		data.isSVG[name] = false;
+		if(svg){
+			$(imageLayer).html(svg);
+			$draggableLayer.addClass('svg');
+			data.isSVG[name] = svg;
+		}
 		selectLayer(draggableLayer);
 		return draggableLayer;
 	}
@@ -362,6 +373,7 @@ $(document).ready(function(){
 		$width_txt.val(data.container.width);
 		$height_txt.val(data.container.height);
 		$stage.css('width', data.container.width + 'px').css('height', data.container.height + 'px');
+		changeMocapBrushCanvasSize();
 		changeVCAMSize();
 	}
 	function changeColors(bg,col){
@@ -373,7 +385,7 @@ $(document).ready(function(){
 		$('.to_md').css('background-color', bg);
 	}
 	function setLayerBorder($layer, op){
-		$layer.css('border', '1px dashed rgba(255, 0, 255, ' + (1 - op) + ')');
+		$layer.css('outline', '1px dashed rgba(255, 0, 255, ' + (1 - op) + ')');
 	}
 	function deselect(){
 		$('#scale_txt').val(100);
@@ -386,7 +398,7 @@ $(document).ready(function(){
 		data.$currentLayer = $(el);
 		data.$currentLayer.focus();
 		data.$currentLayer.addClass('selected');
-		data.$currentLayer.css('z-index',getNextHighestDepth());
+		data.$currentLayer.css('z-index', getNextHighestDepth());
 		updateHUD(data.$currentLayer);
 	}
 	function updateHUD($layer){
@@ -400,41 +412,41 @@ $(document).ready(function(){
 		var op = parseFloat($iLayer.css('opacity'));
 		$('#opacity_rng').val(Math.round(op * 100) + '');
 		setLayerBorder($oLayer,op);
-		$('#w_txt').val($iLayer.css('width').replace('px',''));
-		$('#h_txt').val($iLayer.css('height').replace('px',''));
-		if($iLayer.css('background-image') != 'none'){
-		var backgroundSize = $iLayer.css('background-size').split(' ');
-		$('#bgw_txt').val(backgroundSize[0].replace('px',''));
-		$('#bgh_txt').val(backgroundSize[1].replace('px',''));
-		var bgpos = $iLayer.css('background-position').split(' ');
-		$('#bgx_txt').val(bgpos[0].replace('px',''));
-		$('#bgy_txt').val(bgpos[1].replace('px',''));
-		//Transform Origin thumbnail
-		var w = parseFloat($iLayer.css('width')), 
-			h = parseFloat($iLayer.css('height')), 
-			b = Math.max(w,h), 
-			ratio = 1, 
-			backgroundSize = {width:100,height:100};
-		if(b == w){
-			ratio = (100/w);
-			backgroundSize.height = ratio * h;
-		}else{
-			ratio = (100/h);
-			backgroundSize.width = ratio * w;
+		//BACKGROUND
+		if($iLayer.css('background-image') != 'none' && !data.isSVG[name]){
+			$('#w_txt').val($iLayer.css('width').replace('px',''));
+			$('#h_txt').val($iLayer.css('height').replace('px',''));
+			var backgroundSize = $iLayer.css('background-size').split(' ');
+			$('#bgw_txt').val(backgroundSize[0].replace('px',''));
+			$('#bgh_txt').val(backgroundSize[1].replace('px',''));
+			var bgpos = $iLayer.css('background-position').split(' ');
+			$('#bgx_txt').val(bgpos[0].replace('px',''));
+			$('#bgy_txt').val(bgpos[1].replace('px',''));
+			//Transform Origin thumbnail
+			var w = parseFloat($iLayer.css('width')), 
+				h = parseFloat($iLayer.css('height')), 
+				b = Math.max(w,h), 
+				ratio = 1, 
+				backgroundSize = {width:100,height:100};
+			if(b == w){
+				ratio = (100/w);
+				backgroundSize.height = ratio * h;
+			}else{
+				ratio = (100/h);
+				backgroundSize.width = ratio * w;
+			}
+			$('.to_md').css('background-image', $iLayer.css('background-image'));
+			$('.to_md').css('background-repeat', 'no-repeat');
+			$('.to_md').css('background-size', backgroundSize.width + 'px ' + backgroundSize.height + 'px');
+			var to = getLayerProperty($layer, 'transform-origin').split(' ');//$iLayer.css('transform-origin').split(' ');
+			$('#tox_txt').val(to[0]);
+			$('#toy_txt').val(to[1]);
+			var tox = parseFloat(to[0]);
+			var toy = parseFloat(to[1]);
+			var rx = tox/w, ry = toy/h;
+			$('.to_marker').css('left', Math.round(rx * backgroundSize.width) + 'px');
+			$('.to_marker').css('top', Math.round(ry * backgroundSize.height) + 'px');			
 		}
-		$('.to_md').css('background-image', $iLayer.css('background-image'));
-		$('.to_md').css('background-repeat', 'no-repeat');
-		$('.to_md').css('background-size', backgroundSize.width + 'px ' + backgroundSize.height + 'px');
-		var to = getLayerProperty($layer, 'transform-origin').split(' ');//$iLayer.css('transform-origin').split(' ');
-		$('#tox_txt').val(to[0]);
-		$('#toy_txt').val(to[1]);
-		var tox = parseFloat(to[0]);
-		var toy = parseFloat(to[1]);
-		var rx = tox/w, ry = toy/h;
-		$('.to_marker').css('left', Math.round(rx * backgroundSize.width) + 'px');
-		$('.to_marker').css('top', Math.round(ry * backgroundSize.height) + 'px');			
-		}
-
 		//TRANSFORMS
 		if(layerTransform){
 			if(layerTransform.translate){
@@ -458,7 +470,6 @@ $(document).ready(function(){
 		}else{
 			resetTransformControls();
 		}
-
 		$('#htmlOutput_txt').val(createHTML());
 	}
 	function resetTransformControls(){
@@ -486,6 +497,15 @@ $(document).ready(function(){
 		$('#ss_ease_out').html($easing_template).val('ease-in');
 		$('#vcam_ease_in_sl').html($easing_template).val('linear');
 		$('#intro_animation_sl').html($easing_template).val('linear');
+		//Set up the time presets
+		var $time_template = $('#time_template').html();
+		$('#time_in_preset').html($time_template);
+		$('#time_out_preset').html($time_template);
+		//Set up transform-origin presets
+		var $to_template = $('#to_template').html();
+		$('#to_in_sl').html($to_template).val('50% 50%');
+		$('#to_out_sl').html($to_template).val('50% 50%');
+		$('#toPos_sl').html($to_template).val('50% 50%');
 		$stage.on('mousemove', function(evt){
 			var posX = Math.round(evt.pageX - $stage.offset().left);
 			var posY = Math.round(evt.pageY - $stage.offset().top);
@@ -642,7 +662,7 @@ $(document).ready(function(){
 			}
 			layerTransform.translate.y = parseFloat($this.val());
 			$iLayer.css('transform', createTransform(layerTransform));
-			$iLayer.$currentLayer.css('-webkit-transform', createTransform(layerTransform));
+			$iLayer.css('-webkit-transform', createTransform(layerTransform));
 			updateHUD(data.$currentLayer);
 		});
 		$('#scx_txt').change(function(evt){
@@ -674,8 +694,8 @@ $(document).ready(function(){
 			var ratio = parseFloat($this.val())/100;
 			var name = data.$currentLayer.attr('id');
 			data.imageInfo[name].scale = ratio;
-			var w = Math.round(fixDecimal(data.imageInfo[name].width * data.imageInfo[name].scale)) + 'px';
-			var h = Math.round(fixDecimal(data.imageInfo[name].height * data.imageInfo[name].scale)) + 'px';
+			var w = Math.ceil(fixDecimal(data.imageInfo[name].width * data.imageInfo[name].scale)) + 'px';
+			var h = Math.ceil(fixDecimal(data.imageInfo[name].height * data.imageInfo[name].scale)) + 'px';
 			var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
 			$iLayer.css('width', w);
 			$iLayer.css('height', h);
@@ -938,12 +958,13 @@ $(document).ready(function(){
 			s += '<div class="' + $('#vcam_name').val() + '">' + _n;
 			for(var i = 0; i < data.layers.length; i++){
 				var divName = $(data.layers[i]).attr('id');
-				s += _t + '<div class="' + divName + '">';
-				if(data.svg[divName]){
-					s +=  _n + getLayerProperty(divName, 'svg') + _n; 
+				if(data.isSVG[divName]){
+					s += _t + '<div class="' + divName + '">';
+					s += _n + getLayerProperty(divName, 'svg') + _n; 
+					s += _t + '</div>' + _n;
+				}else{
+					s += _t + '<div class="' + divName + '"></div>' + _n;
 				}
-				s += _t + '</div>' + _n;
-				
 			}
 			s += '</div>' + _n;
 			s += '</div>' + _n;
@@ -1031,10 +1052,10 @@ $(document).ready(function(){
 			return $iLayer.css('background-size');
 		}
 		if(prop == 'width'){
-			return parseInt($layer.css('width')) - 2;
+			return parseInt($layer.css('width'));
 		}
 		if(prop == 'height'){
-			return parseInt($layer.css('height')) - 2;
+			return parseInt($layer.css('height'));
 		}
 		if(prop == 'left'){
 			return parseInt($layer.css('left'));
@@ -1060,8 +1081,8 @@ $(document).ready(function(){
 		if(prop == 'transform-origin%' || prop == 'transformOrigin%'){
 			var raw = $iLayer.css('transform-origin') || $iLayer.css('-webkit-transform-origin');
 			var to = raw.split(' ');
-			var x = Math.round((parseInt(to[0]) / (parseInt($layer.css('width'))  - 2)) * 100);
-			var y = Math.round((parseInt(to[1]) / (parseInt($layer.css('height')) - 2)) * 100);
+			var x = Math.round((parseInt(to[0]) / (parseInt($layer.css('width')))) * 100);
+			var y = Math.round((parseInt(to[1]) / (parseInt($layer.css('height')))) * 100);
 			return x + '% ' + y + '%';
 		}
 		if(prop == 'opacity'){
@@ -1087,17 +1108,17 @@ $(document).ready(function(){
 			var top = getLayerProperty($layer, 'top') + 'px';
 			var w = getLayerProperty($layer, 'width') + 'px';
 			var h = getLayerProperty($layer, 'height') + 'px';
-			var filename = getLayerProperty($layer, 'filename');//data.layersByName[name]
 			s += '.' + name + '{' + _n;
 			s += _t + 'opacity: ' + ( tCSS ? '@OPACITY@': op ) + ';' + _n;
 			s += _t + 'display: block;' + _n;
 			s += _t + 'position: absolute;' + _n;
 			s += _t + 'left: ' + (tCSS?'@LEFT@': left ) + ';' + _n;
 			s += _t + 'top: ' + (tCSS?'@TOP@': top ) + ';' + _n;
-			if(!data.svg[name]){
+			if(!data.isSVG[name]){
 				s += _t + 'width: ' + w + ';' + _n;
 				s += _t + 'height: ' + h + ';' + _n;
 			}
+			s += _t + '/* ORIGIN */' + _n;
 			if(tCSS){
 				s += '@TO@';
 			}else{
@@ -1106,30 +1127,32 @@ $(document).ready(function(){
 				s += _t + '-ms-transform-origin: ' + to + ';' + _n;				
 			}
 			s += _t + '/* BACKGROUND */' + _n;
-			if(data.images[name]){
-				s += _t + 'background-image: url("'+ filename + '");' + _n;
-				s += _t + 'background-repeat: no-repeat;' + _n;
-				s += _t + 'background-position: ' + getLayerProperty($layer, 'background-position') + ';' + _n;
-				s += _t + 'background-size: ' + getLayerProperty($layer, 'background-size')+ ';' + _n;
-			}else if(data.imageInfo[name]){
-				s += _t + 'background-image: url("'+ data.imageInfo[name].filename + '");' + _n;
-				s += _t + 'background-repeat: no-repeat;' + _n;
-				s += _t + 'background-position: ' + data.imageInfo[name].backgroundPosition + ';' + _n;
-				s += _t + 'background-size: ' +  data.imageInfo[name].backgroundSize + ';' + _n;
+			
+			if(!data.isSVG[name]){
+				var filename = getLayerProperty($layer, 'filename');//data.layersByName[name]	
+				if(data.images[name]){
+					s += _t + 'background-image: url("'+ filename + '");' + _n;
+					s += _t + 'background-repeat: no-repeat;' + _n;
+					s += _t + 'background-position: ' + getLayerProperty($layer, 'background-position') + ';' + _n;
+					s += _t + 'background-size: ' + getLayerProperty($layer, 'background-size')+ ';' + _n;
+				}else if(data.imageInfo[name]){
+					s += _t + 'background-image: url("'+ data.imageInfo[name].filename + '");' + _n;
+					s += _t + 'background-repeat: no-repeat;' + _n;
+					s += _t + 'background-position: ' + data.imageInfo[name].backgroundPosition + ';' + _n;
+					s += _t + 'background-size: ' +  data.imageInfo[name].backgroundSize + ';' + _n;
+				}				
 			}
 			s += _t + '/* TRANSFORM */' + _n;
 			if(tCSS){
 				s += '@MATRIX@';
+			}else if(transform != 'none'){
+				s += _t + 'transform: ' + transform + ';' + _n;
+				s += _t + '-webkit-transform: ' + transform + ';' + _n;
+				s += _t + '-ms-transform: ' + transform + ';' + _n;	
 			}else{
-				if(transform != 'none'){
-					s += _t + 'transform: ' + transform + ';' + _n;
-					s += _t + '-webkit-transform: ' + transform + ';' + _n;
-					s += _t + '-ms-transform: ' + transform + ';' + _n;	
-				}else{
-					s += _t + 'transform: none;' + _n;
-					s += _t + '-webkit-transform: none;' + _n;
-					s += _t + '-ms-transform: none;' + _n;	
-				}
+				s += _t + 'transform: none;' + _n;
+				s += _t + '-webkit-transform: none;' + _n;
+				s += _t + '-ms-transform: none;' + _n;	
 			}
 			s += (tCSS)?'@FILTER@':'';
 			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
@@ -1157,7 +1180,7 @@ $(document).ready(function(){
 		s += _t + 'position: absolute;' + _n;
 		s += _t + 'overflow: hidden;' + _n;
 		s += _t + 'width: ' + (data.container.width - 2) + 'px;' + _n;
-		s += _t + 'height: ' + (data.container.height -2) + 'px;' + _n;
+		s += _t + 'height: ' + (data.container.height - 2) + 'px;' + _n;
 		s += _t + 'background-color: ' + data.container.bgColor + ';' + _n;
 		if(data.background.file){
 			s += _t + 'background-image: url(' + data.background.file.name + ');' + _n;
@@ -1416,6 +1439,9 @@ $(document).ready(function(){
 		var staggerWithNthChild = $('#anim_trans_stagger_nthchild_ck').prop('checked');
 		var staggerIn = '';
 		var staggerOut = '';
+		//LINEAR OPACITY
+		var linearOpacityIn = $('#linear_opacity_in_ck').prop('checked');
+		var linearOpacityOut = $('#linear_opacity_out_ck').prop('checked');
 		var sm = sideMap(sideIn, offsetIn);
 		var sceneIn = $('#scene_in_txt').val();
 		var x1 = 0, y1 = 0, o1 = 0;
@@ -1450,6 +1476,7 @@ $(document).ready(function(){
 				var endObj = getVii($('#intro_animation_end').val());
 				if(!compareVii(iniObj, endObj)){
 					$('#intro_animation_end').css('border','1px solid red');
+					return 'Your initial and end values seem to be different, make sure they both exist in the start and end frames.';
 				}else{
 					$('#intro_animation_end').css('border','');
 				}
@@ -1593,7 +1620,11 @@ $(document).ready(function(){
 		s += tempIn;
 		/* SCENE IN */
 		s += '/* scene '+ sceneIn + ' ' + currentTranCiSSioner.name + ' IN */' + _n;
-		willChange = {'opacity':true, 'left': false, 'top': false};
+		willChange = {
+			'opacity':true, 
+			'left': false, 
+			'top': false
+		};
 		if(sideIn == 'tl' || sideIn == 'tr' || sideIn == 'bl' || sideIn == 'br'){
 			willChange.left = willChange.top = !useMatrix;
 		}else if(sideIn == 'top' || sideIn == 'bottom'){
@@ -1609,7 +1640,8 @@ $(document).ready(function(){
 		}
 		if(willChange.opacity){
 			s += _t + 'opacity: 1;' + _n;
-			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' +  delayInFixed);
+			var opInEase = linearOpacityIn ? 'linear': $('#ease_in_sl').val();
+			transIn.push('opacity ' + $('#duration_in_txt').val() + 's' + ' ' + opInEase + ' ' +  delayInFixed);
 		}
 		if(useMatrix < 0){
 			if(useMatrix == 0){
@@ -1632,6 +1664,9 @@ $(document).ready(function(){
 		if(filterIn != ' '){
 			s += _t + '-webkit-filter: none;' + _n;
 			transIn.push('-webkit-filter ' + $('#duration_in_txt').val() + 's' + ' ' + $('#ease_in_sl').val() + ' ' + delayInFixed);
+		}
+		if(+$('#duration_in_txt').val()){
+			
 		}
 		s += _t + '/* duration: ' + $('#duration_in_txt').val() + ', ease: ' + $('#ease_in_sl option:selected').text() + ', delay: '+ $('#delay_in_txt').val() + ' */' + _n;
 		s += _t + 'transition: ' + transIn.join(', ').replace('@TRANSFORM@', 'transform') + ';' + _n;
@@ -1675,7 +1710,8 @@ $(document).ready(function(){
 			}
 			if(willChange.opacity){
 				s += _t + 'opacity: '+ o2 + ';' + _n;
-				transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + $('#ease_out_sl').val() + delayOutFixed);
+				var opOutEase = linearOpacityIn ? 'linear': $('#ease_in_sl').val();
+				transOut.push('opacity ' + $('#duration_out_txt').val() + 's' + ' ' + opOutEase + delayOutFixed);
 			}
 			if(useMatrix < 1){
 				if(useMatrix == 0){
@@ -1791,6 +1827,12 @@ $('#use_animation_ck').click(function(evt){
 		$('#intro_anim').hide();
 	}
 });
+$('#time_in_preset, #time_out_preset').change(function(evt){
+	var preset = $(evt.target).val();
+	var pfx = $(evt.target).attr('id') == 'time_in_preset' ? 'in' : 'out';
+	$('#duration_' + pfx + '_txt').val(preset);
+	$('#delay_' + pfx + '_txt').val('0');
+});
 /*
   ____             _ _         ____  _ _               
  / ___| _ __  _ __(_) |_ ___  / ___|| (_) ___ ___ _ __ 
@@ -1802,6 +1844,76 @@ $('#use_animation_ck').click(function(evt){
 var $guideX = $('.ss_guide_vert'), $guideY = $('.ss_guide'), $guide2 = $('.ss_guide2'), $ss_container = $('.ss_container'), $ss_image = $('.ss_image'), $cuts = $('#ss_cuts_txt');
 var currentSpriteSlice = {target:null,name:'', x:0, y:0, width:0, height:0, css:''};
 var lastSSCut = 0;
+var timeCutType = 'none';//none, column, row, random, vertical, horizontal
+var timeCutDirection = 'forwards';
+var timeCutRow = 1;
+var timeCutCol = 1;
+$cuts.on('blur', function(evt){
+	var $this = $(evt.target);
+	var val = $this.val();
+	val = val.toLowerCase().replace(/ /g,'');
+	if(val.indexOf('x') != -1){
+		var s = '';
+		var raw = $this.val();
+		raw = raw.replace('vertical','').replace('horizontal','').replace('row','').replace('column','').replace('random','').replace('reverse', '').split('x');
+		var col = +raw[0];
+		var row = +raw[1];
+		timeCutCol = col;
+		timeCutRow = row;
+		var total = col * raw;
+		var wStep = Math.round(currentSpriteSlice.width / col);
+		var hStep = Math.round(currentSpriteSlice.height / row);
+		var cuts = [];
+		if(val.indexOf('vertical') != -1){
+			timeCutType = 'vertical';
+		}else if(val.indexOf('column') != -1){
+			timeCutType = 'column';
+		}else if(val.indexOf('horizontal') != -1){
+			timeCutType = 'horizontal';
+		}else if(val.indexOf('row') != -1){
+			timeCutType = 'row';
+		}else if(val.indexOf('random') != -1){
+			timeCutType = 'random';
+		}
+		if(val.indexOf('reverse') != -1){
+			timeCutDirection = 'backwards';
+		}
+		if(timeCutType == 'none' || timeCutType == 'horizontal' || timeCutType == 'row'){
+			for (var i = 0; i < row; i++){
+				for (var ii = 0; ii < col; ii++){
+					var obj = {
+						x: ii * wStep,
+						y: i * hStep,
+						width: wStep,
+						height: hStep
+					};	
+					cuts.push(obj);
+				}
+			}
+		}else{
+			for (var i = 0; i < col; i++){
+				for (var ii = 0; ii < row; ii++){
+					var obj = {
+						x: i * wStep,
+						y: ii * hStep,
+						width: wStep,
+						height: hStep
+					};	
+					cuts.push(obj);
+				}	
+			}			
+		}
+		for(var j=0; j < cuts.length; j++){
+			var o = cuts[j];
+			s += o.x + ':' + o.y + ',' + (o.width + o.x) + ':' + (o.height + o.y);
+			if(j != cuts.length - 1){
+				s += ',';
+			}
+		}
+		$this.val(s);
+		$('#ss_direction_sl').val('box');
+	}
+});
 $('#spriteslicerbutton').click(function(evt){
 	//$cuts.val('');
 	lastSSCut = 0;
@@ -1857,12 +1969,12 @@ $ss_container.on('click', function(evt){
 	var direction = $('#ss_direction_sl').val();
 	var cuts;
 	if(direction == 'horizontal'){
-		cuts = $cuts.val() + posY + ',';
+		cuts = $cuts.val() + utils.clamp(posY,0,data.container.height) + ',';
 	}else if (direction == 'vertical'){
-		cuts = $cuts.val() + posX + ',';
+		cuts = $cuts.val() + utils.clamp(posX,0,data.container.width) + ',';
 	}else{
 		//box
-		cuts = $cuts.val() + posX + ':' + posY  + ',';
+		cuts = $cuts.val() + utils.clamp(posX,0,data.container.width) + ':' + utils.clamp(posY,0,data.container.height)  + ',';
 	}
 	$cuts.val(cuts);
 });
@@ -1885,10 +1997,14 @@ function createSlices(){
 	var sliceIsScene = $('#ss_scene_per_slice_ck').prop('checked');
 	var sceneIn = $('#ss_scene_in_txt').val();
 	var sceneOut = $('#ss_scene_out_txt').val();
+	var durIn = parseFloat($('#ss_duration_in').val());
+	var durOut = parseFloat($('#ss_duration_out').val());
 	var staggerIn = parseFloat($('#ss_delay_in').val());
 	var staggerOut = parseFloat($('#ss_delay_out').val());
 	var cutsCollection = $cuts.val().split(',');
-	cutsCollection[cutsCollection.length - 1] = currentSpriteSlice.height + '';
+	var onlyOpacity = $('#ss_trans_in').val() == 'none';
+	var transIn = $('#ss_trans_in').val();
+	var transOut = $('#ss_trans_out').val();
 	var s = '',
 		_n = '\n',
 		_t = '\t';
@@ -1909,9 +2025,49 @@ function createSlices(){
 	s += '/* SPRITES: ' + direction + ' ' + $cuts.val() + ' */' + _n;
 	var max = (direction == 'box')? cutsCollection.length - 1:cutsCollection.length;
 	var boxCount = 1;
+	//Do time cuts
+	var staggeredDelays = [];
+	var timeCutCount = 1;
 	for(var i=0; i < max; i++){
+		//timeCutType == 'none';
+		var o = {
+			ini:(staggered)?fixDecimal(staggerIn * (i+1)):staggerIn, 
+			end:(staggered)?fixDecimal(staggerOut * (i+1)):staggerOut
+		};
+		if(timeCutType == 'row'){
+			o.ini = fixDecimal(staggerIn * timeCutCount);
+			o.end = fixDecimal(staggerOut * timeCutCount);
+			if((i+1) % timeCutRow == 0){
+				++timeCutCount;
+			}
+		}else if(timeCutType == 'column'){
+			o.ini = fixDecimal(staggerIn * timeCutCount);
+			o.end = fixDecimal(staggerOut * timeCutCount);
+			if((i+1) % timeCutCol == 0){
+				++timeCutCount;
+			}
+		}else if(timeCutType == 'random'){
+			o.ini = fixDecimal(staggerIn * Math.random());
+			o.end = fixDecimal(staggerOut * Math.random());
+		}
+		staggeredDelays.push(o);
+	}
+	if(timeCutDirection == 'backwards'){
+		staggeredDelays = staggeredDelays.reverse();
+	}
+	var staggeredDelaysCount = 0;
+	//***
+	if(direction == 'horizontal'){
+		cutsCollection[cutsCollection.length - 1] = currentSpriteSlice.height;
+	}else if(direction == 'vertical'){
+		cutsCollection[cutsCollection.length - 1] = currentSpriteSlice.width;
+	}
+	for(i=0; i < max; i++){
 		var allowSlice = direction == 'horizontal' || direction == 'vertical' || direction == 'box'  && (i + 1)%2 != 0;
 		if(allowSlice){
+		var staggeredDelayIn = staggeredDelays[staggeredDelaysCount].ini;
+		var staggeredDelayOut = staggeredDelays[staggeredDelaysCount].end;
+		++staggeredDelaysCount;	
 		var slice = {
 			top: 0,
 			left: 0,
@@ -1944,7 +2100,7 @@ function createSlices(){
 			s += _t + 'top: ' + slice.top + 'px;' + _n;
 			s += _t + 'width: ' + slice.width + 'px;' + _n;
 			s += _t + 'height: ' + slice.height + 'px;' + _n;
-			pos.y += (layered)?0:slice.height;
+			pos.y += (layered) ? 0:slice.height;
 			slice.backgroundPositionY = offset.y * -1;
 		}else if (direction == 'vertical'){
 			val.x = parseInt(cutsCollection[i]);
@@ -1956,7 +2112,7 @@ function createSlices(){
 			s += _t + 'top: ' + slice.top + 'px;' + _n;
 			s += _t + 'width: ' + slice.width + 'px;' + _n;
 			s += _t + 'height: ' + slice.height + 'px;' + _n;
-			pos.x += (layered)?0:slice.width;
+			pos.x += (layered) ? 0 : slice.width;
 			slice.backgroundPositionX = offset.x * -1;
 		}else{
 			var xy = cutsCollection[i].split(':');
@@ -1976,7 +2132,12 @@ function createSlices(){
 			slice.backgroundPositionX = x * -1;
 			slice.backgroundPositionY = y * -1;
 		}
+		s += _t + '/* ORIGIN */' + _n;
+		s += _t + 'transform-origin: 50% 50%;' + _n;
+		s += _t + '-webkit-transform-origin: 50% 50%;' + _n;
+		s += _t + '-ms-transform-origin:  50% 50%;' + _n;	
 		var sliceImage = currentSpriteSlice;
+		s += _t + '/* BACKGROUND */' + _n;
 		s += _t + 'background-image: url("'+ data.images[currentSpriteSlice.name] + '");' + _n;
 		s += _t + 'background-repeat: no-repeat;' + _n;
 		s += _t + 'background-position: ' + slice.backgroundPositionX + 'px ' + slice.backgroundPositionY + 'px;' + _n;
@@ -1984,57 +2145,62 @@ function createSlices(){
 		slice.backgroundSize = currentSpriteSlice.backgroundSize;
 		offset.x = val.x;
 		offset.y = val.y;
-		var transIn = $('#ss_trans_in').val();
-		var transOut = $('#ss_trans_out').val();
-		var onlyOpacity = transIn == 'none' && transOut == 'none';
+		s += _t + '/* TRANSFORM */' + _n;	
 		if(transition){
 			if(onlyOpacity){
 				s += _t + 'will-change: opacity;' + _n;
 			}else{
-				s += _t + 'will-change: opacity, transform;' + _n;
 				s += _t + 'transform: ' + transIn + ';' + _n;
 				s += _t + '-webkit-transform: ' + transIn + ';' + _n;
+				s += _t + 'will-change: opacity, transform;' + _n;
 			}
+		}else{
+			s += _t + 'transform: none;' + _n;
+			s += _t + '-webkit-transform: none;' + _n;
+			s += _t + '-ms-transform: none;' + _n;
 		}
 		s += '}' + _n;
 		if(transition){
 			var sIn = (sliceIsScene)?parseInt(sceneIn) + i:sceneIn;
 			s += '/* scene ' + sIn + ' ' + name + ' APPEARS */' + _n;
 			s += '.scene' + sIn + ' .' + name + '{' + _n;
-			var staggeredDelay = (staggered)?(Math.round(((i + 1) * staggerIn) * 100)/100):staggerIn;
+			
 			var trans;
 			s += _t + 'opacity: 1;' + _n;
 			if(onlyOpacity){
-				trans = 'transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's;' + _n;
-				s += _t + '/* duration: ' + staggerIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
+				trans = 'transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's;' + _n;
+				s += _t + '/* duration: ' + durIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
 				s += _t + trans;
 				s += _t + '-webkit-' + trans;
 			}else{
 				s += _t + 'transform: none;' + _n;
 				s += _t + '-webkit-transform: none;' + _n;
-				s += _t + '/* duration: ' + staggerIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
-				s += _t + 'transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's, transform ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's; '+ _n;
-				s += _t + '-webkit-transition: opacity ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's, -webkit-transform ' + staggerIn + 's ' + easeIn + ' ' + staggeredDelay + 's; '+ _n;
+				s += _t + '/* duration: ' + durIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
+				s += _t + 'transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's, transform ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's; '+ _n;
+				s += _t + '-webkit-transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's, -webkit-transform ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's; '+ _n;
 			}
 			s += '}' + _n;
 			var sOut = (sliceIsScene)?parseInt(sceneOut) + i:sceneOut;
-			s += '/* scene ' + sOut + ' ' + name + ' DISAPPEARS */' + _n;
-			s += '.scene' + sOut + ' .' + currentSpriteSlice.name + ( i + 1 ) + '{' + _n;
-			s += _t + 'opacity: 0;' + _n;
-			staggeredDelay = (staggered)?(Math.round(((i + 1) * staggerOut) * 100)/100):staggerOut;
-			if(onlyOpacity){
-				trans = 'transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's;' + _n;
-				s += _t + '/* duration: ' + staggerOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
-				s += _t + trans;
-				s += _t + '-webkit-' + trans;
-			}else{
-				s += _t + 'transform: ' + transOut + ';' + _n;
-				s += _t + '-webkit-transform: ' + transOut + ';' + _n;
-				s += _t + '/* duration: ' + staggerOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
-				s += _t + 'transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's, transform ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's; '+ _n;
-				s += _t + '-webkit-transition: opacity ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's, -webkit-transform ' + staggerOut + 's ' + easeOut + ' ' + staggeredDelay + 's; '+ _n;
+			if(sOut)
+			{
+				s += '/* scene ' + sOut + ' ' + name + ' DISAPPEARS */' + _n;
+				s += '.scene' + sOut + ' .' + name + '{' + _n;
+				s += _t + 'opacity: 0;' + _n;
+				
+				if(onlyOpacity){
+					trans = 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's;' + _n;
+					s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
+					s += _t + trans;
+					s += _t + '-webkit-' + trans;
+				}else{
+					s += _t + 'transform: ' + transOut + ';' + _n;
+					s += _t + '-webkit-transform: ' + transOut + ';' + _n;
+					s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
+					s += _t + 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's; '+ _n;
+					s += _t + '-webkit-transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, -webkit-transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's; '+ _n;
+				}
+				s += '}' + _n;				
 			}
-			s += '}' + _n;
 		}
 		currentSlices.push(slice);
 		}
@@ -2076,7 +2242,372 @@ $('#ss_apply').click(function(evt){
 $('#ss_direction_sl').on('change', function(evt){$cuts.val('');});
 $('#ss_reset').click(function(evt){
 	$cuts.val('');
-});	
+});
+/*Quick Transform*/
+function getCurrentILayer(){
+	return $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+}
+function getCurrentTransform(){
+	var $iLayer = getCurrentILayer();
+	return 'transform: ' + $iLayer.css('transform') + '; -webkit-transform: ' + $iLayer.css('-webkit-transform') + ';';
+}
+$('#set_quick_transform_txt_btn').click(function(evt){
+	var $this = $(evt.target);
+	getCurrentILayer().css('transform', $('#quick_transform_txt').val());
+	getCurrentILayer().css('-webkit-transform', $('#quick_transform_txt').val());
+	evt.preventDefault();
+});
+$('#get_quick_transform_txt_btn').click(function(evt){
+	var $this = $(evt.target);
+	$('#quick_transform_txt').val(getCurrentTransform()).select();
+	evt.preventDefault();
+});
+/*Squash and Stretch*/
+$('#squash_stretch_rng').on('change', function(evt){
+	var $this = $(evt.target);
+	var value = +$this.val();
+	var squash = 0.2, stretch = 1.8, distance = stretch - squash, ratio = value/100, inverseRatio = 1 - ratio;
+	var layerTransform = data.layerTransforms[data.$currentLayer.attr('id')];
+	layerTransform.scale = {x:fixDecimal(inverseRatio * distance + squash), y:fixDecimal(ratio * distance + squash)};
+	var $iLayer = $('#' + data.$currentLayer.attr('id') + constants.I_LAYER);
+	var createdTransform = createTransform(layerTransform);
+	$iLayer.css('transform', createdTransform);
+	$iLayer.css('-webkit-transform', createdTransform);
+	updateHUD(data.$currentLayer);
+});
+/*
+  __  __  ___   ____    _    ____    ____  ____  _   _ ____  _   _ 
+ |  \/  |/ _ \ / ___|  / \  |  _ \  | __ )|  _ \| | | / ___|| | | |
+ | |\/| | | | | |     / _ \ | |_) | |  _ \| |_) | | | \___ \| |_| |
+ | |  | | |_| | |___ / ___ \|  __/  | |_) |  _ <| |_| |___) |  _  |
+ |_|  |_|\___/ \____/_/   \_\_|     |____/|_| \_\\___/|____/|_| |_|
+                                                                   
+*/
+var mocapBrush_canvas_el =  document.getElementById('mocapbrush_canvas');
+var $mocapBrushTools = $('.mocapbrush_tools');
+var mocapBrush_ctx = mocapBrush_canvas_el.getContext('2d');
+var currentMocapBrush;
+function changeMocapBrushCanvasSize(){
+	$mocapBrush_canvas.attr('width', data.container.width).attr('height', data.container.height);
+	mocapBrush_ctx = mocapBrush_canvas_el.getContext('2d');
+}
+$('#use_mocapbrush_ck').click(function(evt){
+	if(data.$currentLayer){
+		var $this = $(evt.target);
+		changeMocapBrushCanvasSize();
+		if($this.prop('checked')){
+			$(mocapBrush_canvas_el).css('display', 'block');
+			$mocapBrushTools.slideDown();
+		}else{
+			$(mocapBrush_canvas_el).css('display', 'none');
+			$mocapBrushTools.slideUp();
+			//mocapBrush_ctx.clearRect(0, 0, data.container.width, data.container.height);
+		}
+		currentMocapBrush = data.$currentLayer;		
+	}
+});
+$('#reset_mocap_btn').click(function(evt){
+	if(currentMocapBrush){
+		var $iLayer = $('#' + currentMocapBrush.attr('id') + constants.I_LAYER);
+		$iLayer.css('transform', 'none');
+		$iLayer.css('-webkit-transform', 'none');
+	}
+	resetPreviewMocap();
+	evt.preventDefault();
+});
+var mocapBrushPositions = [];
+var mocapTransforms = [];
+var mocapBrushMouse = {
+	isDown : false,
+	x: 0,
+	y: 0,
+	prevX: 0,
+	prevY: 0,
+	time: {a:0, b:0}
+};
+var mocapBrushInitialPoint;
+function setMocapBrushPosition(x, y){
+	mocapBrushMouse.prevX = mocapBrushMouse.x;
+	mocapBrushMouse.prevY = mocapBrushMouse.y;
+	mocapBrushMouse.x = x;
+	mocapBrushMouse.y = y;
+}
+function setMocapBrushPositionByEvent(evt){
+	setMocapBrushPosition(Math.round(evt.pageX - $stage.offset().left), Math.round(evt.pageY - $stage.offset().top));
+}
+function addMocapBrushPoint(x, y){
+	setMocapBrushPosition(x,y);
+	mocapBrushPositions.push({x:x, y:y});
+}
+function addMocapBrushPointByEvent(evt){
+	setMocapBrushPositionByEvent(evt)
+	addMocapBrushPoint(mocapBrushMouse.x, mocapBrushMouse.y);
+}
+function previewMocap(code, classname){
+	if(currentMocapBrush){
+		var $iLayer = $('#' + currentMocapBrush.attr('id') + constants.I_LAYER);
+		dynamicStyles.innerHTML = code;
+		$iLayer.addClass(classname);
+	}
+}
+function resetPreviewMocap(){
+	if(currentMocapBrush){
+		var $iLayer = $('#' + currentMocapBrush.attr('id') + constants.I_LAYER);
+		dynamicStyles.innerHTML = '';
+		$iLayer.attr('class', '');
+	}
+}
+function calculateMocapInitialDistance(x,y){
+	if(currentMocapBrush){
+		var obj = {x:0,y:0};
+		var l = parseInt(currentMocapBrush.css('left'));
+		var t = parseInt(currentMocapBrush.css('top'));
+		obj.x = (x - l);
+		obj.y = (y - t);
+		return obj;
+	}
+	return {x:x, y:y};
+}
+function getMocapFixedPoint(x,y){
+	var l = parseInt(currentMocapBrush.css('left'));
+	var t = parseInt(currentMocapBrush.css('top'));
+	var diffX = mocapBrushInitialPoint.x + l;
+	var diffY = mocapBrushInitialPoint.y + t
+	return {
+		x: fixDecimal(x - diffX), 
+		y: fixDecimal(y - diffY),
+		dx: fixDecimal(diffX),
+		dy: fixDecimal(diffY)
+	};
+}
+function animateMocapBrush(x,y,rotation){
+	if(currentMocapBrush){
+		var layerTransform = data.layerTransforms[currentMocapBrush.attr('id')];
+		layerTransform.translate = getMocapFixedPoint(x,y);
+		if(rotation){
+			layerTransform.rotate = rotation;
+		}
+		var createdTransform = createTransform(layerTransform);
+		var $iLayer = $('#' + currentMocapBrush.attr('id') + constants.I_LAYER);
+		$iLayer.css('transform', createdTransform);
+		$iLayer.css('-webkit-transform', createdTransform);
+		mocapTransforms.push(createdTransform);
+	}
+}
+var mocapMode = '';
+var mocapModes = {
+	EXACT : 'exact',
+	FOLLOW : 'follow',
+	SPRING : 'spring'
+};
+var mocapRotation = '';
+var mocapRotations = {
+	NONE : 'none',
+	ORIENT : 'orient',
+	SWING : 'swing'
+}
+var mocapInterval;
+var mocapTransformObj = {
+	x:0, 
+	y:0,
+	rotation: 0,
+	swingX: 0,
+	speedX: 0,
+	speedY: 0
+};
+var mocapPhysics = {
+	ease:0.1,
+	spring:0.9
+};
+function mocapDistance(pos, target){
+	return target - pos;
+}
+function mocapEase(range, ease){
+	return range * ease;
+}
+function mocapSpring(range, ease, spring, speed){
+	return speed * spring + range * ease;
+}
+function mocapOrientToPath(dx, dy){
+	return Math.atan2(dy,dx);
+}
+function mocapSwing(){
+	var angle = 0;
+	if(mocapTransformObj.swingX != mocapBrushMouse.x){
+		angle = (mocapBrushMouse.x - mocapTransformObj.swingX);
+	}else{
+		angle *= mocapPhysics.ease;
+	}
+	mocapTransformObj.swingX = mocapBrushMouse.x;
+	return angle;
+}
+function mocapLoop(){
+	var fixedPoint = getMocapFixedPoint(mocapBrushMouse.x,mocapBrushMouse.y);
+	mocapPhysics.ease = parseFloat($('#mocap_ease').val());
+	mocapPhysics.spring = parseFloat($('#mocap_spring').val());
+	var rotation = 0;
+	var dx = 0, dy = 0;
+	if(mocapMode == mocapModes.FOLLOW){
+		dx = mocapDistance(mocapTransformObj.x, fixedPoint.x);
+		dy = mocapDistance(mocapTransformObj.y, fixedPoint.y);
+		mocapTransformObj.x += mocapEase(dx, mocapPhysics.ease);
+		mocapTransformObj.y += mocapEase(dy, mocapPhysics.ease);
+	}else if(mocapMode == mocapModes.SPRING){
+		dx = mocapDistance(mocapTransformObj.x, fixedPoint.x);
+		dy = mocapDistance(mocapTransformObj.y, fixedPoint.y);
+		mocapTransformObj.speedX = mocapSpring(dx, mocapPhysics.ease, mocapPhysics.spring, mocapTransformObj.speedX);
+		mocapTransformObj.speedY = mocapSpring(dy, mocapPhysics.ease, mocapPhysics.spring, mocapTransformObj.speedY);
+		mocapTransformObj.x += mocapTransformObj.speedX;
+		mocapTransformObj.y += mocapTransformObj.speedY;
+	}
+	if(mocapRotation == mocapRotations.ORIENT){
+		rotation = mocapOrientToPath(dx, dy)  * 57.2958;
+	}else if(mocapRotation == mocapRotations.SWING){
+		rotation = mocapSwing();
+	}
+	//Normalize coordinates and sent to animate the mocapbrush
+	animateMocapBrush(mocapTransformObj.x + fixedPoint.dx, mocapTransformObj.y + fixedPoint.dy, rotation);
+	mocapInterval = setTimeout(mocapLoop,16);
+}
+$mocapBrush_canvas.on('mousedown', function(evt){
+	resetPreviewMocap();
+	mocapBrushPositions = [];
+	mocapTransforms = [];
+	if(currentMocapBrush){
+		var $iLayer = $('#' + currentMocapBrush.attr('id') + constants.I_LAYER);
+		$iLayer.css('transform', 'none');
+		$iLayer.css('-webkit-transform', 'none');
+	}
+	mocapBrushMouse.isDown = true;
+	addMocapBrushPointByEvent(evt);
+	mocapBrushInitialPoint = calculateMocapInitialDistance(mocapBrushMouse.x, mocapBrushMouse.y);
+	mocapBrush_ctx.moveTo(mocapBrushMouse.x, mocapBrushMouse.y);
+	mocapBrushMouse.time.a = new Date().getTime();
+	mocapMode = $('#mocap_brush_animation_sl').val();
+	mocapRotation = $('#mocap_brush_rotation_sl').val();
+	mocapTransformObj = {
+		x: 0, 
+		y: 0,
+		rotation: 0,
+		speedX: 0,
+		speedY: 0
+	};
+	if(mocapMode == mocapModes.FOLLOW || mocapMode == mocapModes.SPRING){
+		
+		mocapLoop();
+	}
+});
+$mocapBrush_canvas.on('mousemove', function(evt){
+	if(mocapBrushMouse.isDown){
+		if(mocapMode == mocapModes.EXACT){
+			addMocapBrushPointByEvent(evt);
+			drawMocapBrush();
+			var rotation = 0;
+			if(mocapRotation == mocapRotations.ORIENT){
+				rotation = mocapOrientToPath(mocapBrushMouse.x, mocapBrushMouse.y) * 57.2958;
+			}
+			animateMocapBrush(mocapBrushMouse.x, mocapBrushMouse.y, rotation);
+		}else if(mocapMode){
+			addMocapBrushPointByEvent(evt);
+			drawMocapBrush();
+		}
+	}
+});
+function mocapMouseEnd(evt){
+	if(mocapMode == mocapModes.FOLLOW || mocapMode == mocapModes.SPRING){
+		clearTimeout(mocapInterval);
+	}
+	addMocapBrushPointByEvent(evt);
+	mocapBrushMouse.isDown = false;
+	mocapBrushMouse.time.b = new Date().getTime();
+	createMocapBrushFrames();
+	updateHUD(currentMocapBrush);	
+}
+$mocapBrush_canvas.on('mouseup', mocapMouseEnd);
+$mocapBrush_canvas.on('mouseleave', function(evt){
+	if(mocapBrushMouse.isDown){
+		mocapMouseEnd(evt);
+	}
+});
+
+function drawMocapBrush(){
+	mocapBrush_ctx.clearRect(0, 0, data.container.width, data.container.height);
+	mocapBrush_ctx.strokeStyle = '#00ff33';
+	mocapBrush_ctx.lineJoin = 'round';
+	mocapBrush_ctx.lineWidth = 3;
+	
+	for(var i = 0; i < mocapBrushPositions.length; i++){
+		mocapBrush_ctx.beginPath();
+		if(i){
+			var prevPoint = mocapBrushPositions[i - 1];
+			mocapBrush_ctx.moveTo(prevPoint.x, prevPoint.y);
+		}
+		var point = mocapBrushPositions[i];
+		mocapBrush_ctx.lineTo(point.x, point.y);
+		mocapBrush_ctx.closePath();
+		mocapBrush_ctx.stroke();
+	}
+}
+function createMocapBrushFrames(){
+	var s = '',
+			_n = '\n',
+			_t = '\t';
+	var keyframes = '';
+	var positionsQty = mocapTransforms.length;
+	if($('#mocap_reverse_ck').prop('checked')){
+		mocapTransforms.reverse();
+	}
+	var framesQty = +$('#mocap_frames_txt').val();
+	var percentStep = 0;
+	var percentCount = 0;
+	var transforms_arr = [];
+	var kfPercents_arr = [];
+	var kfName = currentMocapBrush.attr('id') + '-mocap';
+	keyframes += '@keyframes ' + kfName + ' {' + _n;
+	if(positionsQty > framesQty){
+		//reduce the quantity of keyframes
+		var tempMocapTransforms = [];
+		var frameStep = Math.ceil(positionsQty/framesQty);
+		for(var i = 0; i < positionsQty; i+=frameStep){
+			tempMocapTransforms.push(mocapTransforms[i]);
+		}
+		positionsQty = tempMocapTransforms.length;
+		mocapTransforms = [];
+		mocapTransforms = tempMocapTransforms;
+	}
+	percentStep = (positionsQty - 1) / framesQty;
+	for(var i = 0; i < positionsQty; i++){
+		var per = Math.round(i/(positionsQty-1) * 100);
+		kfPercents_arr.push(per);
+		transforms_arr.push(mocapTransforms[i]);
+		keyframes += _t + per + '%{' + _n;
+		keyframes += _t + _t + 'transform: ' + mocapTransforms[i] + ';' + _n;
+		keyframes += _t + '}' + _n;
+	}
+	keyframes += '}' + _n;
+	keyframes += '@-webkit-keyframes ' + kfName + '{' + _n;
+	for(var i = 0; i < transforms_arr.length; i++){
+		keyframes += _t + kfPercents_arr[i] + '%{' + _n;
+		keyframes += _t + _t + '-webkit-transform: ' + transforms_arr[i] + ';' + _n;
+		keyframes += _t + '}' + _n;
+	}
+	keyframes += '}' + _n;
+	s += keyframes;
+	var previewCode = keyframes;
+	var previewName = 'myClass-' + Math.round(Math.random() * 9999);
+	previewCode += '.' + previewName + '{';
+	var mocapScene = (+$('#mocap_scene').val() > 0)?'.scene'+$('#mocap_scene').val() + ' ':'';
+	s +=  mocapScene + '.' + currentMocapBrush.attr('id') + '{' + _n;
+	s += _t + 'animation: ' + kfName + ' ' + (mocapBrushMouse.time.b - mocapBrushMouse.time.a) + 'ms ' + $('#mocap_animation_loops').val() + ' ' + $('#mocap_animation_direction').val() + ' ' + $('#mocap_animation_fillmode').val() + ';'+ _n;
+	s += _t + '-webkit-animation: ' + kfName + ' ' + (mocapBrushMouse.time.b - mocapBrushMouse.time.a) + 'ms ' + $('#mocap_animation_loops').val() + ' ' + $('#mocap_animation_direction').val() + ' ' + $('#mocap_animation_fillmode').val() + ';'+ _n;
+	previewCode += 'animation: ' + kfName + ' ' + (mocapBrushMouse.time.b - mocapBrushMouse.time.a) + 'ms 1;';
+	previewCode += '-webkit-animation: ' + kfName + ' ' + (mocapBrushMouse.time.b - mocapBrushMouse.time.a) + 'ms 1;';
+	s += '}' + _n;
+	previewCode += '}';
+	$('#mocap_result').val(s);
+	previewMocap(previewCode, previewName);
+	return;	
+}
 	//init
 	onHUDEvents();
 });
