@@ -2041,8 +2041,8 @@ function createSlices(){
 	var staggerOut = parseFloat($('#ss_delay_out').val());
 	var cutsCollection = $cuts.val().split(',');
 	var onlyOpacity = $('#ss_trans_in').val() == 'none';
-	var transIn = $('#ss_trans_in').val();
-	var transOut = $('#ss_trans_out').val();
+	var transIn = ($('#ss_trans_in').val() == 'none')?'transform: none; -webkit-transform: none;' : $('#ss_trans_in').val();
+	var transOut = ($('#ss_trans_out').val() == 'none')?'transform: none; -webkit-transform: none;' : $('#ss_trans_out').val();
 	var s = '',
 		_n = '\n',
 		_t = '\t';
@@ -2215,10 +2215,10 @@ function createSlices(){
 			var trans;
 			s += _t + 'opacity: 1;' + _n;
 			if(onlyOpacity){
-				trans = 'transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's;' + _n;
+				trans = 'transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's;';
 				s += _t + '/* duration: ' + durIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', '+ trans + ' */' + _n;
-				s += _t + trans;
-				s += _t + '-webkit-' + trans;
+				s += _t + trans + _n;
+				s += _t + '-webkit-' + trans + _n;
 			}else{
 				s += _t + 'transform: none;' + _n;
 				s += _t + '-webkit-transform: none;' + _n;
@@ -2235,10 +2235,10 @@ function createSlices(){
 				s += _t + 'opacity: 0;' + _n;
 				
 				if(onlyOpacity){
-					trans = 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's;' + _n;
+					trans = 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's;';
 					s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ utils.replaceAll(utils.replaceAll(transOut, '@PREFIX@', ''),'@TWEEN-ORIGIN@', '') + ' */' + _n;
-					s += _t + trans;
-					s += _t + '-webkit-' + trans;
+					s += _t + trans + _n;
+					s += _t + '-webkit-' + trans + _n;
 				}else{
 					if(utils.hasString(transOut, '@TWEEN-ORIGIN@')){
 						s += _t + utils.replaceAll(utils.replaceAll(transOut, '@PREFIX@', ''),'@TWEEN-ORIGIN@', '') + _n;
