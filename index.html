@@ -86,7 +86,8 @@
 				<br />
 				Scale:<input type="number" id="scale_in_txt" value="1" step="0.1" class="numberInput">	
 				</div>
-				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_in_txt"></span -->
+				<hr />
+				<div class="row">Use preset: <select id="preset_in_sl"></select></div>
 				<hr />
 				<span class="row">Time preset: 
 				<select id="time_in_preset">
@@ -257,7 +258,8 @@
 				<br />
 				Scale: <input type="number" id="scale_out_txt" value="1" step="0.1" class="numberInput">
 				</div>
-				<!--span class="row"><label for="" class="lbl">Transform:</label><input type="text" name="" id="matrix_out_txt"></span -->
+				<hr />
+				<div class="row">Use preset: <select id="preset_out_sl"></select></div>
 				<hr />
 				<span class="row">Time preset: 
 				<select id="time_out_preset">
@@ -327,32 +329,10 @@
 						<td align="left" valign="top">Preset:</td>
 						<td align="left" valign="top" class="col-in">
 							<select id="ss_trans_in">
-								<option value="none" selected>Opacity only</option>
-								<option value="translate(-100%, 0)">Left</option>
-								<option value="translate(100%, 0)">Right</option>
-								<option value="translate(0, -100%)">Up</option>
-								<option value="translate(0, 100%)">Down</option>
-								<option value="scale(.3,.3)">Zoom in</option>
-								<option value="scale(2,2)">Zoom out</option>
-								<option value="rotate(-90deg)">Rotate in</option>
-								<option value="rotate(90deg)">Rotate out</option>
-								<option value="rotate(-2turn)">Spin in</option>
-								<option value="rotate(2turn)">Spin out</option>
 							</select>
 						</td>
 						<td align="left" valign="top" class="col-out">
 							<select id="ss_trans_out">
-								<option value="none" selected>Opacity only</option>
-								<option value="translate(-100%, 0)">Left</option>
-								<option value="translate(100%, 0)">Right</option>
-								<option value="translate(0, -100%)">Up</option>
-								<option value="translate(0, 100%)">Down</option>
-								<option value="scale(.3,.3)">Zoom in</option>
-								<option value="scale(2,2)">Zoom out</option>
-								<option value="rotate(-90deg)">Rotate in</option>
-								<option value="rotate(90deg)">Rotate out</option>
-								<option value="rotate(-2turn)">Spin in</option>
-								<option value="rotate(2turn)">Spin out</option>
 							</select>
 						</td>
 					</tr>
@@ -560,6 +540,56 @@
 		</div>
 <div class="templates">
 <!-- easing template -->
+				<select id="transitions_presets_template">
+					<option value="none" selected>Opacity only</option>
+					<optgroup label='2D'>
+						<option value="@PREFIX@transform: translate(-100%, 0);">Left</option>
+						<option value="@PREFIX@transform: translate(100%, 0);">Right</option>
+						<option value="@PREFIX@transform: translate(0, -100%);">Up</option>
+						<option value="@PREFIX@transform: translate(0, 100%);">Down</option>
+						<option value="@PREFIX@transform: scale(.6,.6);">Zoom in</option>
+						<option value="@PREFIX@transform: scale(1.8,1.8)">Zoom out</option>
+						<option value="@PREFIX@transform: scale(0.01)">Grow</option>
+						<option value="@PREFIX@transform: rotate(-90deg);">Rotate in</option>
+						<option value="@PREFIX@transform: rotate(90deg);">Rotate out</option>
+						<option value="@PREFIX@transform: rotate(-2turn);">Spin in</option>
+						<option value="@PREFIX@transform: rotate(2turn);">Spin out</option>
+						<option value="@PREFIX@transform-origin: 0% 0%; @PREFIX@transform: rotate(-60deg);">Fan</option>
+						<option value="@PREFIX@transform-origin: 0% 0%; @PREFIX@transform: skewY(-30deg );">Papercut</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@transform-origin: 200% 500%; @PREFIX@transform: scale(0, 0) rotate(270deg);">Magic</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@transform-origin: 0% 100%; @PREFIX@transform: scale(0, 0) rotate(360deg) translateY(-100%);">Twister In Down</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@transform-origin: 0% 100%; @PREFIX@transform: scale(0, 0) rotate(360deg) translateY(100%);">Twister In Up</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@transform-origin: 0% 100%; @PREFIX@transform: scale(0, 0) translate(-700px, 0px);">Swap</option>		
+					</optgroup>
+					<optgroup label='3D'>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 0%; @PREFIX@transform: perspective(400px) rotateX(90deg);">Page Top</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 0%; @PREFIX@transform: perspective(400px) rotateX(-90deg);">Page Top Back</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 100%; @PREFIX@transform: perspective(400px) rotateX(90deg);">Page Bottom</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 100%; @PREFIX@transform: perspective(400px) rotateX(-90deg);">Page Bottom Back</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 0% 50%; @PREFIX@transform: perspective(400px) rotateX(90deg);">Page Left</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 0% 50%; @PREFIX@transform: perspective(400px) rotateX(-90deg);">Page Left Back</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 100% 50%; @PREFIX@transform: perspective(400px) rotateX(90deg);">Page Right</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 100% 50%; @PREFIX@transform: perspective(400px) rotateX(-90deg);">Page Right Back</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 100%; @PREFIX@transform: perspective(800px) rotateX(-180deg) translateZ(300px);">Rotate Down</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 100%; @PREFIX@transform: perspective(800px) rotateX(180deg) translateZ(300px);">Rotate Up</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 0%; @PREFIX@transform: perspective(800px) rotateY(-180deg) translateZ(300px);">Rotate Right</option>
+						<option value="@TWEEN-ORIGIN@@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 0%; @PREFIX@transform: perspective(800px) rotateY(180deg) translateZ(300px);">Rotate Left</option>	
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 50%; @PREFIX@transform: perspective(500px) rotateY(1turn);">Flip</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 50%; @PREFIX@transform: perspective(400px) rotateX(85deg);">Flip in X</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 50%; @PREFIX@transform: perspective(400px) rotateY(80deg);">Flip in Y</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@transform-origin: 50% 50%; @PREFIX@transform: perspective(200px) scale(3) translateY(180px) rotateX(80deg);">Star Wars</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform-origin: 100% 50%; @PREFIX@transform: perspective(300px) translate3d( 0, -100px, -100px ) rotateX( 90deg );">Card</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 0% 50%; @PREFIX@transform-origin: 0% 0%; @PREFIX@transform: rotateY( 90deg );">Curl</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform-origin: 0% 0%; @PREFIX@transform: perspective(400px) rotateX( -80deg );">Flip top</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform-origin: 50% 50% -50px; @PREFIX@transform: perspective(400px) rotateX( -180deg );">Fly</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform-origin: 100% 50%; @PREFIX@transform: perspective(300px) translate3d( 0, 100px, -100px ) rotateX( -90deg );">Fly Simple</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform-origin: 50% 50% -50px; @PREFIX@transform: perspective(400px) rotateX( -180deg );">Reversed Fly</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform-origin: 50% 50%; @PREFIX@transform: perspective(600px) rotateY( -180deg );">Helix</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform-origin: 50% 50%; @PREFIX@transform: perspective(400px)  rotate3d( 80,70,10,-180deg );">Twirl</option>
+						<option value="@PREFIX@backface-visibility: hidden; @PREFIX@perspective-origin: 50% 50%; @PREFIX@transform: perspective(800px) translateY( 100% ) translateZ(-200px);">Tilt</option>
+					</optgroup>	
+
+				</select>
 				<select id="time_template">
 					<option value="1">Select</option>
 					<option value="0">instantly / no delay</option>
@@ -600,6 +630,8 @@
 						<option value="cubic-bezier(0.485, 0.155, 0.24, 1.245)">bounce in</option>
 						<option value="cubic-bezier(0.485, 0.155, 0.515, 0.845)">bounce out</option>
 						<option value="cubic-bezier(0.76, -0.245, 0.24, 1.245)">bounce in out</option>
+						<option value="cubic-bezier(0.260, 0.860, 0.440, 0.985)">wave</option>
+						<option value="cubic-bezier(0.390, 0.575, 0.565, 1.000)">fan</option>
 						<optgroup label='Chrome easings:'>
 							<option value="cubic-bezier(0.4,0,1,1)">fast out</option>
 							<option value="cubic-bezier(0,0,0.2,1)">slow in</option>
@@ -656,7 +688,7 @@
  |_.__/|_| |_|_(_)/ |___/
                 |__/     
 */
-var bnr=(function(){return{_D:{html5 : 'querySelector' in document && 'addEventListener' in window,mobile : /Mobi/i.test(window.navigator.userAgent) || window.matchMedia("only screen and (max-width: 760px)").matches,ie : (navigator.userAgent.toLowerCase() !=-1) ? parseInt(navigator.userAgent.toLowerCase().split('msie')[1]) : 0},detect : function(val){return this._D[val]},ready: function(fn){if (document.readyState==='complete'){return fn();}document.addEventListener('DOMContentLoaded', fn, false);return this;},$:function(S){return document.getElementById(S) || document.getElementsByClassName(S) || document.getElementsByTagName(S) || document.querySelector(S) || document.querySelectorAll(S);},_PL:{img:{tag:'img',parent:'body',attr:{src:'@URL@'}},css:{tag:'link',parent:'head',attr:{'rel':'stylesheet', 'type':'text-css', 'href':'@URL@'}},js:{tag:'script',parent:'head',attr:{'type':'text/javascript','src':'@URL@'}}},politeLoad : function(src, parent){var p, e, xts='js css png gif jpg'.split(' ');for(var i=0; i < xts.length; i++){if(src.indexOf('.' + xts[i]) !=-1){switch(xts[i]){case 'png':case 'gif':case 'jpg':p=this._PL.img;break;default:p=this._PL[xts[i]];break;}break;}}el=document.createElement(p.tag);for(var prop in p.attr){el.setAttribute(prop, p.attr[prop].replace('@URL@', src));}if(!parent){parent=document.getElementsByTagName(p.parent)[0];}parent.appendChild(el);},resetElement: function(el){el.parentNode.replaceChild(el.cloneNode(true),el);},appendClass: function(el, c){el.className +=' ' + c;return this;},setClass: function(el, c){el.className=c;return this;},wait: function(fn, d){d=d || 1;return setTimeout(fn, Math.round(d*1000));},on: function(el,evt,f){el.addEventListener(evt,f,false);return this;},off: function(el,evt,f){el.removeEventListener(evt,f,false);return this;},_T :{F: 2000,L: 0,T: [],D: 0,M: null,O: []},timeline: function(val,fd){if(fd){this._T.F=fd;}if (typeof val==='string'){var map={'loops': this._T.L, 'duration': this._T.D, 'timeline': this._T.M, 'now': ((!this._T.N)?0:new Date().getTime() - this._T.N)}; if(val==='restart'){this.timeline(this._T.O, this._T.F); return true;}if(val==='halt'){for (var i=0; i < this._T.T.length; i++){clearTimeout(this._T.T[i]);}return false;}return map[val];}this._T.T=[];this._T.D=0;this._T.M=val;this._T.L++;if(!this._T.N){this._T.N=new Date().getTime();}this._T.O=val;var me=this;for(var i=0; i < val.length; i++){var f=val[i][1], ff=(val[i][0] < 100) ? val[i][0] * me._T.F : (!val[i][0])? me._T.F : val[i][0];this._T.T.push(setTimeout(f, me._T.D +=Math.abs(ff)));}return this;}};})();
+var bnr=(function(){return{_D:{html5 : 'querySelector' in document && 'addEventListener' in window,mobile : /Mobi/i.test(window.navigator.userAgent) || window.matchMedia("only screen and (max-width: 760px)").matches,ie : (navigator.userAgent.toLowerCase() !=-1) ? parseInt(navigator.userAgent.toLowerCase().split('msie')[1]) : 0},detect : function(val){return this._D[val]},ready: function(fn){if (document.readyState==='complete'){return fn();}document.addEventListener('DOMContentLoaded', fn, false);return this;},$:function(S){return document.getElementById(S) || document.getElementsByClassName(S) || document.getElementsByTagName(S) || document.querySelector(S) || document.querySelectorAll(S);},_PL:{img:{tag:'img',parent:'body',attr:{src:'@URL@'}},css:{tag:'link',parent:'head',attr:{'rel':'stylesheet', 'type':'text/css', 'href':'@URL@'}},js:{tag:'script',parent:'head',attr:{'type':'text/javascript','src':'@URL@'}}},politeLoad : function(src, parent){var p, e, xts='js css png gif jpg'.split(' ');for(var i=0; i < xts.length; i++){if(src.indexOf('.' + xts[i]) !=-1){switch(xts[i]){case 'png':case 'gif':case 'jpg':p=this._PL.img;break;default:p=this._PL[xts[i]];break;}break;}}el=document.createElement(p.tag);for(var prop in p.attr){el.setAttribute(prop, p.attr[prop].replace('@URL@', src));}if(!parent){parent=document.getElementsByTagName(p.parent)[0];}parent.appendChild(el);},resetElement: function(el){el.parentNode.replaceChild(el.cloneNode(true),el);},appendClass: function(el, c){el.className +=' ' + c;return this;},setClass: function(el, c){el.className=c;return this;},wait: function(fn, d){d=d || 1;return setTimeout(fn, Math.round(d*1000));},on: function(el,evt,f){el.addEventListener(evt,f,false);return this;},off: function(el,evt,f){el.removeEventListener(evt,f,false);return this;},_T :{F: 2000,L: 0,T: [],D: 0,M: null,O: []},timeline: function(val,fd){if(fd){this._T.F=fd;}if (typeof val==='string'){var map={'loops': this._T.L, 'duration': this._T.D, 'timeline': this._T.M, 'now': ((!this._T.N)?0:new Date().getTime() - this._T.N)}; if(val==='restart'){this.timeline(this._T.O, this._T.F); return true;}if(val==='halt'){for (var i=0; i < this._T.T.length; i++){clearTimeout(this._T.T[i]);}return false;}return map[val];}this._T.T=[];this._T.D=0;this._T.M=val;this._T.L++;if(!this._T.N){this._T.N=new Date().getTime();}this._T.O=val;var me=this;for(var i=0; i < val.length; i++){var f=val[i][1], ff=(val[i][0] < 100) ? val[i][0] * me._T.F : (!val[i][0])? me._T.F : val[i][0];this._T.T.push(setTimeout(f, me._T.D +=Math.abs(ff)));}return this;}};})();
 /*
      _    _   _ ___ __  __    _  _____ ___ ___  _   _ 
     / \  | \ | |_ _|  \/  |  / \|_   _|_ _/ _ \| \ | |
