@@ -489,6 +489,7 @@ $(document).ready(function(){
 		$('#' + data.$currentLayer.attr('id') + constants.I_LAYER).css('height', val + 'px');
 	}
 	function onHUDEvents(){
+		//TEMPLATE
 		//Set up all the easing menus
 		var $easing_template = $('#easing_template').html();
 		$('#ease_in_sl').html($easing_template).val('ease-out');
@@ -506,6 +507,12 @@ $(document).ready(function(){
 		$('#to_in_sl').html($to_template).val('50% 50%');
 		$('#to_out_sl').html($to_template).val('50% 50%');
 		$('#toPos_sl').html($to_template).val('50% 50%');
+		//Set up presets
+		var $presets_template = $('#transitions_presets_template').html();
+		$('#ss_trans_in').html($presets_template).val('none');
+		$('#ss_trans_out').html($presets_template).val('none');
+		$('#preset_in_sl').html($presets_template).val('none');
+		$('#preset_out_sl').html($presets_template).val('none');
 		$stage.on('mousemove', function(evt){
 			var posX = Math.round(evt.pageX - $stage.offset().left);
 			var posY = Math.round(evt.pageY - $stage.offset().top);
@@ -1090,7 +1097,7 @@ $(document).ready(function(){
 		}
 		return null;
 	}
-	function getLayerClass($layer, tCSS){
+	function getLayerClass($layer, tCSS, isTwoPart){
 		//tCSS is for use in trancissioner
 		var s = '',
 			_n = '\n',
@@ -1118,19 +1125,10 @@ $(document).ready(function(){
 				s += _t + 'width: ' + w + ';' + _n;
 				s += _t + 'height: ' + h + ';' + _n;
 			}
-			s += _t + '/* ORIGIN */' + _n;
-			if(tCSS){
-				s += '@TO@';
-			}else{
-				s += _t + 'transform-origin: ' + to + ';' + _n;
-				s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
-				s += _t + '-ms-transform-origin: ' + to + ';' + _n;				
-			}
 			s += _t + '/* BACKGROUND */' + _n;
-			
 			if(!data.isSVG[name]){
 				var filename = getLayerProperty($layer, 'filename');//data.layersByName[name]	
-				if(data.images[name]){
+				if(data.images[name] || tCSS){
 					s += _t + 'background-image: url("'+ filename + '");' + _n;
 					s += _t + 'background-repeat: no-repeat;' + _n;
 					s += _t + 'background-position: ' + getLayerProperty($layer, 'background-position') + ';' + _n;
@@ -1142,21 +1140,61 @@ $(document).ready(function(){
 					s += _t + 'background-size: ' +  data.imageInfo[name].backgroundSize + ';' + _n;
 				}				
 			}
-			s += _t + '/* TRANSFORM */' + _n;
-			if(tCSS){
-				s += '@MATRIX@';
-			}else if(transform != 'none'){
-				s += _t + 'transform: ' + transform + ';' + _n;
-				s += _t + '-webkit-transform: ' + transform + ';' + _n;
-				s += _t + '-ms-transform: ' + transform + ';' + _n;	
-			}else{
-				s += _t + 'transform: none;' + _n;
-				s += _t + '-webkit-transform: none;' + _n;
-				s += _t + '-ms-transform: none;' + _n;	
+			if(!isTwoPart){
+				s += _t + '/* ORIGIN */' + _n;
+				if(tCSS){
+					s += '@TO@';
+				}else{
+					s += _t + 'transform-origin: ' + to + ';' + _n;
+					s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
+					s += _t + '-ms-transform-origin: ' + to + ';' + _n;				
+				}
+				s += _t + '/* TRANSFORM */' + _n;
+				if(tCSS){
+					s += '@MATRIX@';
+				}else if(transform != 'none'){
+					s += _t + 'transform: ' + transform + ';' + _n;
+					s += _t + '-webkit-transform: ' + transform + ';' + _n;
+					s += _t + '-ms-transform: ' + transform + ';' + _n;	
+				}else{
+					s += _t + 'transform: none;' + _n;
+					s += _t + '-webkit-transform: none;' + _n;
+					s += _t + '-ms-transform: none;' + _n;	
+				}
+				s += (tCSS)?'@FILTER@':'';
+				s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
 			}
-			s += (tCSS)?'@FILTER@':'';
-			s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
-			s += '}' + _n;		
+			
+			s += '}' + _n;	
+			//is two part class
+			if(isTwoPart){
+				s += '.' + name + '{' + _n;
+				s += _t + '/* ORIGIN */' + _n;
+				if(tCSS){
+					s += '@TO@';
+				}else{
+					s += _t + 'transform-origin: ' + to + ';' + _n;
+					s += _t + '-webkit-transform-origin: ' + to + ';' + _n;
+					s += _t + '-ms-transform-origin: ' + to + ';' + _n;				
+				}
+				s += _t + '/* TRANSFORM */' + _n;
+				if(tCSS){
+					s += '@MATRIX@';
+				}else if(transform != 'none'){
+					s += _t + 'transform: ' + transform + ';' + _n;
+					s += _t + '-webkit-transform: ' + transform + ';' + _n;
+					s += _t + '-ms-transform: ' + transform + ';' + _n;	
+				}else{
+					s += _t + 'transform: none;' + _n;
+					s += _t + '-webkit-transform: none;' + _n;
+					s += _t + '-ms-transform: none;' + _n;	
+				}
+				s += _t + '/* FILTERS */' + _n;
+				s += (tCSS)?'@FILTER@':'';
+				s += _t + '/* WILL CHANGE */' + _n;
+				s += (tCSS)?_t + 'will-change: @WILL_CHANGE@;' + _n:'';
+				s += '}' + _n;	
+			}	
 		return s;
 	}
 	function createCSS(){
@@ -1301,7 +1339,7 @@ $(document).ready(function(){
   			height:parseFloat(data.$currentLayer.css('height')),
   			x:parseFloat(data.$currentLayer.css('left')),
   			y:parseFloat(data.$currentLayer.css('top')),
-  			css:getLayerClass(data.$currentLayer, true),
+  			css:getLayerClass(data.$currentLayer, true, true),
   			matrix:getLayerProperty(data.$currentLayer, 'transform'),
   			to:getLayerProperty(data.$currentLayer, 'transform-origin')
   		};
@@ -1776,7 +1814,7 @@ $(document).ready(function(){
   	}
   	$('#scene_element_txt').change(function(evt){
   		var nn = $(evt.target).val();
-  		currentTranCiSSioner.css = currentTranCiSSioner.css.replace('.' + currentTranCiSSioner.name, '.' + nn);
+  		currentTranCiSSioner.css = utils.replaceAll(currentTranCiSSioner.css, '.' + currentTranCiSSioner.name, '.' + nn);
   		currentTranCiSSioner.name = nn;
   	});
   	$('#ss_next_scene').click(function(evt){
@@ -1969,12 +2007,12 @@ $ss_container.on('click', function(evt){
 	var direction = $('#ss_direction_sl').val();
 	var cuts;
 	if(direction == 'horizontal'){
-		cuts = $cuts.val() + utils.clamp(posY,0,data.container.height) + ',';
+		cuts = $cuts.val() + utils.clamp(posY,0,currentSpriteSlice.height) + ',';
 	}else if (direction == 'vertical'){
-		cuts = $cuts.val() + utils.clamp(posX,0,data.container.width) + ',';
+		cuts = $cuts.val() + utils.clamp(posX,0,currentSpriteSlice.width) + ',';
 	}else{
 		//box
-		cuts = $cuts.val() + utils.clamp(posX,0,data.container.width) + ':' + utils.clamp(posY,0,data.container.height)  + ',';
+		cuts = $cuts.val() + utils.clamp(posX,0,currentSpriteSlice.width) + ':' + utils.clamp(posY,0,currentSpriteSlice.height)  + ',';
 	}
 	$cuts.val(cuts);
 });
@@ -2150,9 +2188,18 @@ function createSlices(){
 			if(onlyOpacity){
 				s += _t + 'will-change: opacity;' + _n;
 			}else{
-				s += _t + 'transform: ' + transIn + ';' + _n;
-				s += _t + '-webkit-transform: ' + transIn + ';' + _n;
-				s += _t + 'will-change: opacity, transform;' + _n;
+				if(utils.hasString(transIn, '@TWEEN-ORIGIN@')){
+					s += _t + utils.replaceAll(utils.replaceAll(transIn, '@PREFIX@', ''),'@TWEEN-ORIGIN@','') + _n;
+					s += _t + utils.replaceAll(utils.replaceAll(transIn, '@PREFIX@', '-webkit-'),'@TWEEN-ORIGIN@','') + _n;
+					s += _t + utils.replaceAll(utils.replaceAll(transIn, '@PREFIX@', '-ms-'),'@TWEEN-ORIGIN@','') + _n;
+					s += _t + 'will-change: opacity, transform, transform-origin, -webkit-transform, -webkit-transform-origin;' + _n;	
+				}else{
+					s += _t + utils.replaceAll(transIn,'@PREFIX@', '') + _n;
+					s += _t + utils.replaceAll(transIn,'@PREFIX@', '-webkit-') + _n;
+					s += _t + utils.replaceAll(transIn,'@PREFIX@', '-ms-') + _n;
+					s += _t + 'will-change: opacity, transform;' + _n;	
+				}
+				
 			}
 		}else{
 			s += _t + 'transform: none;' + _n;
@@ -2169,13 +2216,13 @@ function createSlices(){
 			s += _t + 'opacity: 1;' + _n;
 			if(onlyOpacity){
 				trans = 'transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's;' + _n;
-				s += _t + '/* duration: ' + durIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
+				s += _t + '/* duration: ' + durIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', '+ trans + ' */' + _n;
 				s += _t + trans;
 				s += _t + '-webkit-' + trans;
 			}else{
 				s += _t + 'transform: none;' + _n;
 				s += _t + '-webkit-transform: none;' + _n;
-				s += _t + '/* duration: ' + durIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', transform: '+ transIn + ' */' + _n;
+				s += _t + '/* duration: ' + durIn + ', ease: ' + $('#ss_ease_in option:selected').text() + ', '+ utils.replaceAll(utils.replaceAll(transIn, '@PREFIX@', ''),'@TWEEN-ORIGIN@','') + ' */' + _n;
 				s += _t + 'transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's, transform ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's; '+ _n;
 				s += _t + '-webkit-transition: opacity ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's, -webkit-transform ' + durIn + 's ' + easeIn + ' ' + staggeredDelayIn + 's; '+ _n;
 			}
@@ -2189,15 +2236,25 @@ function createSlices(){
 				
 				if(onlyOpacity){
 					trans = 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's;' + _n;
-					s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
+					s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ utils.replaceAll(utils.replaceAll(transOut, '@PREFIX@', ''),'@TWEEN-ORIGIN@', '') + ' */' + _n;
 					s += _t + trans;
 					s += _t + '-webkit-' + trans;
 				}else{
-					s += _t + 'transform: ' + transOut + ';' + _n;
-					s += _t + '-webkit-transform: ' + transOut + ';' + _n;
-					s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ transOut + ' */' + _n;
-					s += _t + 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's; '+ _n;
-					s += _t + '-webkit-transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, -webkit-transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's; '+ _n;
+					if(utils.hasString(transOut, '@TWEEN-ORIGIN@')){
+						s += _t + utils.replaceAll(utils.replaceAll(transOut, '@PREFIX@', ''),'@TWEEN-ORIGIN@', '') + _n;
+						s += _t + utils.replaceAll(utils.replaceAll(transOut, '@PREFIX@', '-webkit-'),'@TWEEN-ORIGIN@', '') + _n;
+						s += _t + utils.replaceAll(utils.replaceAll(transOut, '@PREFIX@', '-ms-'),'@TWEEN-ORIGIN@', '') + _n;
+						s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', '+ utils.replaceAll(utils.replaceAll(transOut, '@PREFIX@', ''),'@TWEEN-ORIGIN@', '') + ' */' + _n;
+						s += _t + 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, transform-origin ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's;' + _n;
+						s += _t + '-webkit-transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, -webkit-transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, -webkit-transform-origin ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's;' + _n;		
+					}else{
+						s += _t + utils.replaceAll(transOut, '@PREFIX@', '') + _n;
+						s += _t + utils.replaceAll(transOut, '@PREFIX@', '-webkit-') + _n;
+						s += _t + utils.replaceAll(transOut, '@PREFIX@', '-ms-') + _n;
+						s += _t + '/* duration: ' + durOut + ', ease: ' + $('#ss_ease_out option:selected').text() + ', transform: '+ utils.replaceAll(transOut, '@PREFIX@', '') + ' */' + _n;
+						s += _t + 'transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's; '+ _n;
+						s += _t + '-webkit-transition: opacity ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's, -webkit-transform ' + durOut + 's ' + easeOut + ' ' + staggeredDelayOut + 's; '+ _n;	
+					}
 				}
 				s += '}' + _n;				
 			}
